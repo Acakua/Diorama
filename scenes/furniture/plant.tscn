@@ -1,0 +1,122 @@
+[gd_scene format=3]
+
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/plant_pot.tres" id="1_plant_pot"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/soil.tres" id="2_soil"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="3_shoes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/plant_leaf.tres" id="4_plant_leaf"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/foliage_dark.tres" id="5_foliage_dark"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(0.38, 1.1, 0.38)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+top_radius = 0.17
+bottom_radius = 0.13
+height = 0.34
+radial_segments = 10
+rings = 1
+material = ExtResource("1_plant_pot")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+top_radius = 0.185
+bottom_radius = 0.185
+height = 0.04
+radial_segments = 10
+rings = 1
+material = ExtResource("1_plant_pot")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+top_radius = 0.16
+bottom_radius = 0.16
+height = 0.01
+radial_segments = 10
+rings = 1
+material = ExtResource("2_soil")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+top_radius = 0.015
+bottom_radius = 0.02
+height = 0.4
+radial_segments = 5
+rings = 1
+material = ExtResource("3_shoes")
+
+[sub_resource type="SphereMesh" id="SphereMesh_6"]
+radius = 0.22
+height = 0.44
+radial_segments = 7
+rings = 4
+material = ExtResource("4_plant_leaf")
+
+[sub_resource type="SphereMesh" id="SphereMesh_7"]
+radius = 0.17
+height = 0.34
+radial_segments = 7
+rings = 4
+material = ExtResource("4_plant_leaf")
+
+[sub_resource type="SphereMesh" id="SphereMesh_8"]
+radius = 0.18
+height = 0.36
+radial_segments = 7
+rings = 4
+material = ExtResource("5_foliage_dark")
+
+[sub_resource type="SphereMesh" id="SphereMesh_9"]
+radius = 0.13
+height = 0.26
+radial_segments = 7
+rings = 4
+material = ExtResource("4_plant_leaf")
+
+[sub_resource type="SphereMesh" id="SphereMesh_10"]
+radius = 0.14
+height = 0.28
+radial_segments = 7
+rings = 4
+material = ExtResource("5_foliage_dark")
+
+[node name="Plant" type="Node3D"]
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.55, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="Pot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Rim" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.33, 0)
+mesh = SubResource("CylinderMesh_3")
+
+[node name="Soil" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.348, 0)
+mesh = SubResource("CylinderMesh_4")
+
+[node name="Stem" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.52, 0)
+mesh = SubResource("CylinderMesh_5")
+
+[node name="Leaves1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.15, 0, 0, 0, 1, 0, 0.64, 0)
+mesh = SubResource("SphereMesh_6")
+
+[node name="Leaves2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.1, 0, 0, 0, 1, 0.12, 0.86, 0.05)
+mesh = SubResource("SphereMesh_7")
+
+[node name="Leaves3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, -0.1, 0.8, -0.08)
+mesh = SubResource("SphereMesh_8")
+
+[node name="Leaves4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1.2, 0, 0, 0, 1, 0.02, 1.02, -0.02)
+mesh = SubResource("SphereMesh_9")
+
+[node name="Leaves5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.1, 0, 0, 0, 0.9, 0, 0, 0, 1, -0.14, 0.56, 0.1)
+mesh = SubResource("SphereMesh_10")

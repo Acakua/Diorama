@@ -1,0 +1,51 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="1_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/paper.tres" id="2_paper"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/radio_body.tres" id="3_radio_body"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/art_sky.tres" id="4_art_sky"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/brass.tres" id="5_brass"]
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_1"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.32, 0.44, 0.006)
+bevel = 0.001
+material = ExtResource("2_paper")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.32, 0.1, 0.007)
+bevel = 0.001
+material = ExtResource("3_radio_body")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.26, 0.14, 0.004)
+bevel = 0.001
+material = ExtResource("4_art_sky")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+top_radius = 0.008
+bottom_radius = 0.008
+height = 0.01
+radial_segments = 6
+rings = 1
+material = ExtResource("5_brass")
+
+[node name="Calendar" type="Node3D"]
+
+[node name="Sheet" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.003)
+mesh = SubResource("PrimitiveMesh_1")
+
+[node name="Header" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0.0035)
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="Photo" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0.007)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="Pin" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0.205, 0.01)
+mesh = SubResource("CylinderMesh_4")

@@ -1,0 +1,215 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/interactive_door.gd" id="1_interactive_door"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="2_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/trim.tres" id="3_trim"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_walnut.tres" id="4_wood_walnut"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/door_paint.tres" id="5_door_paint"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/brass.tres" id="6_brass"]
+[ext_resource type="AudioStream" path="res://assets/audio/door_open.wav" id="7_door_open"]
+[ext_resource type="AudioStream" path="res://assets/audio/door_close.wav" id="8_door_close"]
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_1"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.025, 2.1, 0.2)
+bevel = 0.004
+material = ExtResource("3_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.9, 0.025, 0.2)
+bevel = 0.004
+material = ExtResource("3_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.9, 0.014, 0.22)
+bevel = 0.004
+material = ExtResource("4_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.08, 2.155, 0.025)
+bevel = 0.006
+material = ExtResource("3_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(1.08, 0.09, 0.03)
+bevel = 0.008
+material = ExtResource("3_trim")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6"]
+size = Vector3(0.84, 2.06, 0.05)
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.84, 2.06, 0.045)
+bevel = 0.008
+material = ExtResource("5_door_paint")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_8"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.6, 0.82, 0.012)
+bevel = 0.005
+material = ExtResource("3_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_9"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.6, 0.66, 0.012)
+bevel = 0.005
+material = ExtResource("3_trim")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_10"]
+top_radius = 0.028
+bottom_radius = 0.028
+height = 0.012
+radial_segments = 12
+rings = 1
+material = ExtResource("6_brass")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_11"]
+top_radius = 0.009
+bottom_radius = 0.009
+height = 0.03
+radial_segments = 8
+rings = 1
+material = ExtResource("6_brass")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
+script = ExtResource("2_bevel_box_mesh")
+size = Vector3(0.12, 0.02, 0.02)
+bevel = 0.007
+material = ExtResource("6_brass")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_13"]
+size = Vector3(0.86, 2, 0.07)
+
+[node name="Door" type="Node3D" node_paths=PackedStringArray("interaction_point")]
+script = ExtResource("1_interactive_door")
+interaction_name = "Door"
+reach_style = &"pull"
+interaction_point = NodePath("DoorPivot/InteractPoint")
+
+[node name="Frame" type="Node3D" parent="."]
+
+[node name="JambL" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.4375, 1.05, -0.1)
+mesh = SubResource("PrimitiveMesh_1")
+
+[node name="JambR" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4375, 1.05, -0.1)
+mesh = SubResource("PrimitiveMesh_1")
+
+[node name="JambTop" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0875, -0.1)
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="Threshold" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, -0.1)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="CasingRoomL" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48, 1.0775, 0.0125)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="CasingRoomR" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 1.0775, 0.0125)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="CasingRoomTop" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, 0.0125)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="CasingHallL" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48, 1.0775, -0.2125)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="CasingHallR" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 1.0775, -0.2125)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="CasingHallTop" type="MeshInstance3D" parent="Frame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.12, -0.2125)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="DoorPivot" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.42, 0, -0.01)
+
+[node name="DoorBody" type="StaticBody3D" parent="DoorPivot"]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorPivot/DoorBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 1.04, -0.0225)
+shape = SubResource("BoxShape3D_6")
+
+[node name="Panel" type="MeshInstance3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 1.04, -0.0225)
+mesh = SubResource("PrimitiveMesh_7")
+
+[node name="UpperRoom" type="MeshInstance3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 1.52, 0.004)
+mesh = SubResource("PrimitiveMesh_8")
+
+[node name="LowerRoom" type="MeshInstance3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0.52, 0.004)
+mesh = SubResource("PrimitiveMesh_9")
+
+[node name="UpperHall" type="MeshInstance3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 1.52, -0.049)
+mesh = SubResource("PrimitiveMesh_8")
+
+[node name="LowerHall" type="MeshInstance3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.42, 0.52, -0.049)
+mesh = SubResource("PrimitiveMesh_9")
+
+[node name="Handle" type="Node3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.77, 1, -0.0225)
+
+[node name="RoseRoom" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.0285)
+mesh = SubResource("CylinderMesh_10")
+
+[node name="NeckRoom" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.045)
+mesh = SubResource("CylinderMesh_11")
+
+[node name="LeverRoom" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, 0.058)
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="RoseHall" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.0285)
+mesh = SubResource("CylinderMesh_10")
+
+[node name="NeckHall" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -0.045)
+mesh = SubResource("CylinderMesh_11")
+
+[node name="LeverHall" type="MeshInstance3D" parent="DoorPivot/Handle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.05, 0, -0.058)
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="InteractPoint" type="Marker3D" parent="DoorPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.77, 1, -0.0225)
+
+[node name="DoorwayArea" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 2
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DoorwayArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.0325)
+shape = SubResource("BoxShape3D_13")
+
+[node name="SfxOpen" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1, 0)
+stream = ExtResource("7_door_open")
+volume_db = -4
+unit_size = 3
+
+[node name="SfxClose" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 1, 0)
+stream = ExtResource("8_door_close")
+volume_db = -2
+unit_size = 3

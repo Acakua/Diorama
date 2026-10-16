@@ -1,0 +1,619 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/room/room_controller.gd" id="1_room_controller"]
+[ext_resource type="PackedScene" path="res://scenes/room/ceiling_lamp.tscn" id="2_ceiling_lamp"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="3_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/plinth.tres" id="4_plinth"]
+[ext_resource type="ShaderMaterial" path="res://assets/materials/floor_planks.tres" id="5_floor_planks"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wall_lower.tres" id="6_wall_lower"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wall_upper.tres" id="7_wall_upper"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wall_upper_left.tres" id="8_wall_upper_left"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wall_cut.tres" id="9_wall_cut"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/trim.tres" id="10_trim"]
+[ext_resource type="ShaderMaterial" path="res://assets/materials/floor_hall.tres" id="11_floor_hall"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wall_hall.tres" id="12_wall_hall"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/outside_ground.tres" id="13_outside_ground"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/foliage_dark.tres" id="14_foliage_dark"]
+[ext_resource type="PackedScene" path="res://scenes/room/window.tscn" id="15_window"]
+[ext_resource type="PackedScene" path="res://scenes/room/door.tscn" id="16_door"]
+[ext_resource type="PackedScene" path="res://scenes/room/light_switch.tscn" id="17_light_switch"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/bed.tscn" id="18_bed"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/bedside_table.tscn" id="19_bedside_table"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/desk.tscn" id="20_desk"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/chair.tscn" id="21_chair"]
+[ext_resource type="PackedScene" path="res://scenes/room/cabinet.tscn" id="22_cabinet"]
+[ext_resource type="PackedScene" path="res://scenes/room/radio.tscn" id="23_radio"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/rug.tscn" id="24_rug"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/plant.tscn" id="25_plant"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/trunk.tscn" id="26_trunk"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/picture.tscn" id="27_picture"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/calendar.tscn" id="28_calendar"]
+[ext_resource type="PackedScene" path="res://scenes/furniture/wall_clock.tscn" id="29_wall_clock"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/rug_border.tres" id="30_rug_border"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="31_player"]
+[ext_resource type="Script" path="res://scripts/camera/iso_camera.gd" id="32_iso_camera"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="33_hud"]
+
+[sub_resource type="Environment" id="Environment_1"]
+background_mode = 1
+background_color = Color(0.045, 0.05, 0.068, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.5, 0.7, 1)
+ambient_light_energy = 0.38
+tonemap_mode = 2
+tonemap_white = 6
+ssao_enabled = true
+ssao_radius = 0.7
+ssao_intensity = 1.6
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.05
+glow_hdr_threshold = 1
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8.9, 0.3, 6.9)
+bevel = 0.03
+material = ExtResource("4_plinth")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8, 0.06, 6)
+bevel = 0.002
+material = ExtResource("5_floor_planks")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(4.05, 0.9, 0.2)
+bevel = 0.01
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(4.05, 2.1, 0.2)
+bevel = 0.01
+material = ExtResource("7_wall_upper")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_6"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(3.05, 0.9, 0.2)
+bevel = 0.01
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(3.05, 2.1, 0.2)
+bevel = 0.01
+material = ExtResource("7_wall_upper")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_8"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(1.3, 0.9, 0.2)
+bevel = 0.01
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_9"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(1.3, 0.9, 0.2)
+bevel = 0.01
+material = ExtResource("7_wall_upper")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_10"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 0.9, 0.12)
+bevel = 0.01
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_11"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 2.1, 0.12)
+bevel = 0.01
+material = ExtResource("8_wall_upper_left")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 0.9, 5.18)
+bevel = 0.01
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_13"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 2.1, 5.18)
+bevel = 0.01
+material = ExtResource("8_wall_upper_left")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_14"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 0.9, 0.9)
+bevel = 0.01
+material = ExtResource("8_wall_upper_left")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_15"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.18, 0.45, 6.2)
+bevel = 0.01
+material = ExtResource("4_plinth")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_16"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8, 0.45, 0.18)
+bevel = 0.01
+material = ExtResource("4_plinth")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_17"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.02, 0.45, 6.02)
+bevel = 0.004
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_18"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8, 0.45, 0.02)
+bevel = 0.004
+material = ExtResource("6_wall_lower")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_19"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8.42, 0.03, 0.21)
+bevel = 0.004
+material = ExtResource("9_wall_cut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_20"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.21, 0.03, 6.2)
+bevel = 0.004
+material = ExtResource("9_wall_cut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_21"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8, 0.03, 0.21)
+bevel = 0.004
+material = ExtResource("9_wall_cut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_22"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.03, 3.13, 0.21)
+bevel = 0.004
+material = ExtResource("9_wall_cut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_23"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.21, 3.13, 0.03)
+bevel = 0.004
+material = ExtResource("9_wall_cut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_24"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(8, 0.1, 0.018)
+bevel = 0.004
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_25"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.018, 0.1, 0.05)
+bevel = 0.003
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_26"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.018, 0.1, 4.9)
+bevel = 0.004
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_27"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.018, 0.1, 6)
+bevel = 0.004
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_28"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(3.74, 0.04, 0.025)
+bevel = 0.006
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_29"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(2.74, 0.04, 0.025)
+bevel = 0.006
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_30"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.025, 0.04, 4.9)
+bevel = 0.006
+material = ExtResource("10_trim")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_31"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(1.3, 0.06, 1.6)
+bevel = 0.002
+material = ExtResource("11_floor_hall")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_32"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.2, 1.6, 1.8)
+bevel = 0.005
+material = ExtResource("12_wall_hall")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_33"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(1.4, 1.6, 0.2)
+bevel = 0.005
+material = ExtResource("12_wall_hall")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_34"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(4, 0.05, 2)
+bevel = 0
+material = ExtResource("13_outside_ground")
+
+[sub_resource type="SphereMesh" id="SphereMesh_35"]
+radius = 0.45
+height = 0.9
+radial_segments = 7
+rings = 4
+material = ExtResource("14_foliage_dark")
+
+[sub_resource type="SphereMesh" id="SphereMesh_36"]
+radius = 0.35
+height = 0.7
+radial_segments = 7
+rings = 4
+material = ExtResource("14_foliage_dark")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_37"]
+size = Vector3(11, 0.2, 8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_38"]
+size = Vector3(8.4, 3, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_39"]
+size = Vector3(0.2, 3, 0.12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_40"]
+size = Vector3(0.2, 3, 5.18)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_41"]
+size = Vector3(0.2, 0.9, 0.9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_42"]
+size = Vector3(0.2, 2, 6.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_43"]
+size = Vector3(8, 2, 0.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_44"]
+size = Vector3(0.2, 2.5, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_45"]
+size = Vector3(0.4, 2.5, 0.2)
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_46"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.1, 0.035, 0.24)
+bevel = 0.015
+material = ExtResource("30_rug_border")
+
+[node name="Room01" type="Node3D" node_paths=PackedStringArray("player", "hud", "spawn")]
+script = ExtResource("1_room_controller")
+player = NodePath("Player")
+hud = NodePath("Hud")
+spawn = NodePath("SpawnPoint")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_1")
+
+[node name="MoonLight" type="SpotLight3D" parent="."]
+transform = Transform3D(-0.994649, -0.068862, 0.077018, 0, 0.745476, 0.666532, -0.103313, 0.662966, -0.741487, 0.9, 4.3, -6.2)
+light_color = Color(0.55, 0.68, 1, 1)
+light_energy = 9
+light_size = 0.05
+shadow_enabled = true
+shadow_bias = 0.03
+shadow_normal_bias = 1
+spot_range = 12
+spot_attenuation = 0.6
+spot_angle = 22
+spot_angle_attenuation = 0.8
+
+[node name="CeilingLamp" parent="." instance=ExtResource("2_ceiling_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3, 3, -0.3)
+
+[node name="Structure" type="Node3D" parent="."]
+
+[node name="Plinth" type="MeshInstance3D" parent="Structure"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.16, 0)
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="Floor" type="MeshInstance3D" parent="Structure"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.03, 0)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="BackWall" type="Node3D" parent="Structure"]
+
+[node name="LeftLower" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.175, 0.45, -3.1)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="LeftUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.175, 1.95, -3.1)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="RightLower" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.675, 0.45, -3.1)
+mesh = SubResource("PrimitiveMesh_6")
+
+[node name="RightUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.675, 1.95, -3.1)
+mesh = SubResource("PrimitiveMesh_7")
+
+[node name="BelowWindowLower" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.45, -3.1)
+mesh = SubResource("PrimitiveMesh_8")
+
+[node name="AboveWindowUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 2.55, -3.1)
+mesh = SubResource("PrimitiveMesh_9")
+
+[node name="LeftWall" type="Node3D" parent="Structure"]
+
+[node name="BackLower" type="MeshInstance3D" parent="Structure/LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 0.45, -2.94)
+mesh = SubResource("PrimitiveMesh_10")
+
+[node name="BackUpper" type="MeshInstance3D" parent="Structure/LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.95, -2.94)
+mesh = SubResource("PrimitiveMesh_11")
+
+[node name="FrontLower" type="MeshInstance3D" parent="Structure/LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 0.45, 0.61)
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="FrontUpper" type="MeshInstance3D" parent="Structure/LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.95, 0.61)
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="AboveDoorUpper" type="MeshInstance3D" parent="Structure/LeftWall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 2.55, -2.43)
+mesh = SubResource("PrimitiveMesh_14")
+
+[node name="LowWalls" type="Node3D" parent="Structure"]
+
+[node name="Right" type="MeshInstance3D" parent="Structure/LowWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.11, 0.225, 0.1)
+mesh = SubResource("PrimitiveMesh_15")
+
+[node name="Front" type="MeshInstance3D" parent="Structure/LowWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 3.11)
+mesh = SubResource("PrimitiveMesh_16")
+
+[node name="RightSkin" type="MeshInstance3D" parent="Structure/LowWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.01, 0.225, 0.01)
+mesh = SubResource("PrimitiveMesh_17")
+
+[node name="FrontSkin" type="MeshInstance3D" parent="Structure/LowWalls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.225, 3.01)
+mesh = SubResource("PrimitiveMesh_18")
+
+[node name="Caps" type="Node3D" parent="Structure"]
+
+[node name="Back" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.015, -3.1)
+mesh = SubResource("PrimitiveMesh_19")
+
+[node name="Left" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 3.015, 0.11)
+mesh = SubResource("PrimitiveMesh_20")
+
+[node name="Right" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1, 0.465, 0.11)
+mesh = SubResource("PrimitiveMesh_20")
+
+[node name="Front" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.465, 3.1)
+mesh = SubResource("PrimitiveMesh_21")
+
+[node name="BackEnd" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.215, 1.45, -3.1)
+mesh = SubResource("PrimitiveMesh_22")
+
+[node name="LeftEnd" type="MeshInstance3D" parent="Structure/Caps"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.45, 3.215)
+mesh = SubResource("PrimitiveMesh_23")
+
+[node name="Trim" type="Node3D" parent="Structure"]
+
+[node name="BaseBack" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -2.991)
+mesh = SubResource("PrimitiveMesh_24")
+
+[node name="BaseLeftBack" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.991, 0.05, -2.975)
+mesh = SubResource("PrimitiveMesh_25")
+
+[node name="BaseLeftFront" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.991, 0.05, 0.55)
+mesh = SubResource("PrimitiveMesh_26")
+
+[node name="BaseRight" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.991, 0.05, 0)
+mesh = SubResource("PrimitiveMesh_27")
+
+[node name="BaseFront" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 2.991)
+mesh = SubResource("PrimitiveMesh_24")
+
+[node name="RailBackL" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.13, 0.88, -2.9875)
+mesh = SubResource("PrimitiveMesh_28")
+
+[node name="RailBackR" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.63, 0.88, -2.9875)
+mesh = SubResource("PrimitiveMesh_29")
+
+[node name="RailLeft" type="MeshInstance3D" parent="Structure/Trim"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9875, 0.88, 0.55)
+mesh = SubResource("PrimitiveMesh_30")
+
+[node name="Hallway" type="Node3D" parent="Structure"]
+
+[node name="Floor" type="MeshInstance3D" parent="Structure/Hallway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.85, -0.03, -2.43)
+mesh = SubResource("PrimitiveMesh_31")
+
+[node name="FarWall" type="MeshInstance3D" parent="Structure/Hallway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.6, 0.8, -2.43)
+mesh = SubResource("PrimitiveMesh_32")
+
+[node name="SideA" type="MeshInstance3D" parent="Structure/Hallway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9, 0.8, -3.43)
+mesh = SubResource("PrimitiveMesh_33")
+
+[node name="SideB" type="MeshInstance3D" parent="Structure/Hallway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9, 0.8, -1.43)
+mesh = SubResource("PrimitiveMesh_33")
+
+[node name="Outside" type="Node3D" parent="Structure"]
+
+[node name="Ground" type="MeshInstance3D" parent="Structure/Outside"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, -0.25, -4.2)
+mesh = SubResource("PrimitiveMesh_34")
+
+[node name="BushA" type="MeshInstance3D" parent="Structure/Outside"]
+transform = Transform3D(1.4, 0, 0, 0, 0.8, 0, 0, 0, 1, 0.1, -0.1, -3.9)
+mesh = SubResource("SphereMesh_35")
+
+[node name="BushB" type="MeshInstance3D" parent="Structure/Outside"]
+transform = Transform3D(1.2, 0, 0, 0, 0.9, 0, 0, 0, 1, 1.2, -0.15, -4.1)
+mesh = SubResource("SphereMesh_36")
+
+[node name="RoomCollision" type="StaticBody3D" parent="Structure"]
+collision_mask = 0
+
+[node name="Floor" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7, -0.1, 0)
+shape = SubResource("BoxShape3D_37")
+
+[node name="Back" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -3.1)
+shape = SubResource("BoxShape3D_38")
+
+[node name="LeftBack" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.5, -2.94)
+shape = SubResource("BoxShape3D_39")
+
+[node name="LeftFront" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 1.5, 0.61)
+shape = SubResource("BoxShape3D_40")
+
+[node name="LeftAboveDoor" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.1, 2.55, -2.43)
+shape = SubResource("BoxShape3D_41")
+
+[node name="Right" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.1, 1, 0.1)
+shape = SubResource("BoxShape3D_42")
+
+[node name="Front" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3.1)
+shape = SubResource("BoxShape3D_43")
+
+[node name="NookStop" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 1.25, -2.43)
+shape = SubResource("BoxShape3D_44")
+
+[node name="NookSideA" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.25, -2.98)
+shape = SubResource("BoxShape3D_45")
+
+[node name="NookSideB" type="CollisionShape3D" parent="Structure/RoomCollision"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4, 1.25, -1.88)
+shape = SubResource("BoxShape3D_45")
+
+[node name="Window" parent="." instance=ExtResource("15_window")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5, -3)
+
+[node name="Door" parent="." instance=ExtResource("16_door")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4, 0, -2.43)
+
+[node name="LightSwitch" parent="." node_paths=PackedStringArray("lamp") instance=ExtResource("17_light_switch")]
+transform = Transform3D(0, 0, 1.3, 0, 1.3, 0, -1.3, 0, 0, -4, 1.25, -1.5)
+lamp = NodePath("../CeilingLamp")
+
+[node name="Furniture" type="Node3D" parent="."]
+
+[node name="Bed" parent="Furniture" instance=ExtResource("18_bed")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -2.96, 0, 0.4)
+
+[node name="BedsideTable" parent="Furniture" instance=ExtResource("19_bedside_table")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -3.76, 0, -0.52)
+
+[node name="Desk" parent="Furniture" instance=ExtResource("20_desk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0, -2.68)
+
+[node name="Chair" parent="Furniture" instance=ExtResource("21_chair")]
+transform = Transform3D(-0.965926, 0, 0.258819, 0, 1, 0, -0.258819, 0, -0.965926, 0.2, 0, -2.02)
+
+[node name="Cabinet" parent="." instance=ExtResource("22_cabinet")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 0, -2.735)
+
+[node name="Radio" parent="." instance=ExtResource("23_radio")]
+transform = Transform3D(0.951057, 0, 0.309017, 0, 1, 0, -0.309017, 0, 0.951057, 0.88, 0.76, -2.76)
+
+[node name="Rug" parent="Furniture" instance=ExtResource("24_rug")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 0, 0.45)
+
+[node name="Plant" parent="Furniture" instance=ExtResource("25_plant")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.62, 0, -2.62)
+
+[node name="Trunk" parent="Furniture" instance=ExtResource("26_trunk")]
+transform = Transform3D(0.990268, 0, -0.139173, 0, 1, 0, 0.139173, 0, 0.990268, 3.35, 0, 2.5)
+
+[node name="Decor" type="Node3D" parent="."]
+
+[node name="Picture" parent="Decor" instance=ExtResource("27_picture")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -3.985, 1.62, 0.4)
+
+[node name="Calendar" parent="Decor" instance=ExtResource("28_calendar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 1.65, -2.995)
+
+[node name="WallClock" parent="Decor" instance=ExtResource("29_wall_clock")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 2.3, -2.98)
+
+[node name="SlipperL" type="MeshInstance3D" parent="Decor"]
+transform = Transform3D(0.978148, 0, 0.207912, 0, 1, 0, -0.207912, 0, 0.978148, -2.66, 0.0175, 1.2)
+mesh = SubResource("PrimitiveMesh_46")
+
+[node name="SlipperR" type="MeshInstance3D" parent="Decor"]
+transform = Transform3D(0.997564, 0, -0.069756, 0, 1, 0, 0.069756, 0, 0.997564, -2.5, 0.0175, 1.24)
+mesh = SubResource("PrimitiveMesh_46")
+
+[node name="SpawnPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0, 0.8)
+
+[node name="Player" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("31_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0, 0.8)
+camera = NodePath("../CameraRig/Pitch/Camera3D")
+
+[node name="CameraRig" type="Node3D" parent="." node_paths=PackedStringArray("target")]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0.9, -0.2)
+script = ExtResource("32_iso_camera")
+target = NodePath("../Player")
+center_pull = 0.45
+
+[node name="Pitch" type="Node3D" parent="CameraRig"]
+transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraRig/Pitch"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 30)
+projection = 1
+current = true
+size = 8
+near = 1
+far = 80
+
+[node name="Hud" parent="." instance=ExtResource("33_hud")]

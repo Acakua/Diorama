@@ -1,0 +1,7 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "wall_upper_left"
+albedo_color = Color(0.66, 0.61, 0.53, 1)
+metallic = 0.0
+roughness = 0.92

@@ -1,0 +1,261 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/player/player_controller.gd" id="1_player_controller"]
+[ext_resource type="Script" path="res://scripts/player/player_animation.gd" id="2_player_animation"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="3_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/pants.tres" id="4_pants"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="5_shoes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/shirt.tres" id="6_shirt"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/skin.tres" id="7_skin"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/hair.tres" id="8_hair"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/eyes.tres" id="9_eyes"]
+[ext_resource type="Script" path="res://scripts/interaction/interaction_detector.gd" id="10_interaction_detector"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
+radius = 0.26
+height = 1.76
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.3, 0.16, 0.19)
+bevel = 0.03
+material = ExtResource("4_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.305, 0.035, 0.195)
+bevel = 0.008
+material = ExtResource("5_shoes")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.13, 0.42, 0.14)
+bevel = 0.035
+material = ExtResource("4_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.115, 0.4, 0.125)
+bevel = 0.03
+material = ExtResource("4_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_6"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.11, 0.075, 0.24)
+bevel = 0.025
+material = ExtResource("5_shoes")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.29, 0.2, 0.18)
+bevel = 0.04
+material = ExtResource("6_shirt")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_8"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.36, 0.27, 0.21)
+bevel = 0.05
+material = ExtResource("6_shirt")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_9"]
+top_radius = 0.05
+bottom_radius = 0.055
+height = 0.09
+radial_segments = 8
+rings = 1
+material = ExtResource("7_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_10"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.21, 0.24, 0.22)
+bevel = 0.05
+material = ExtResource("7_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_11"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.225, 0.085, 0.235)
+bevel = 0.035
+material = ExtResource("8_hair")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.225, 0.17, 0.07)
+bevel = 0.03
+material = ExtResource("8_hair")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_13"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.035, 0.05, 0.035)
+bevel = 0.01
+material = ExtResource("7_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_14"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.026, 0.032, 0.01)
+bevel = 0.004
+material = ExtResource("9_eyes")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_15"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.1, 0.3, 0.11)
+bevel = 0.035
+material = ExtResource("6_shirt")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_16"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.085, 0.25, 0.09)
+bevel = 0.03
+material = ExtResource("7_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_17"]
+script = ExtResource("3_bevel_box_mesh")
+size = Vector3(0.075, 0.09, 0.05)
+bevel = 0.02
+material = ExtResource("7_skin")
+
+[node name="Player" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 1
+floor_snap_length = 0.2
+script = ExtResource("1_player_controller")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.88, 0)
+shape = SubResource("CapsuleShape3D_1")
+
+[node name="Visual" type="Node3D" parent="."]
+transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0, 0)
+script = ExtResource("2_player_animation")
+
+[node name="Hips" type="Node3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.94, 0)
+
+[node name="Pelvis" type="MeshInstance3D" parent="Visual/Hips"]
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="Belt" type="MeshInstance3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="HipL" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.085, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Visual/Hips/HipL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="KneeL" type="Node3D" parent="Visual/Hips/HipL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Visual/Hips/HipL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="AnkleL" type="Node3D" parent="Visual/Hips/HipL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/Hips/HipL/KneeL/AnkleL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0025, 0.045)
+mesh = SubResource("PrimitiveMesh_6")
+
+[node name="HipR" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Visual/Hips/HipR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="KneeR" type="Node3D" parent="Visual/Hips/HipR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Visual/Hips/HipR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="AnkleR" type="Node3D" parent="Visual/Hips/HipR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/Hips/HipR/KneeR/AnkleR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0025, 0.045)
+mesh = SubResource("PrimitiveMesh_6")
+
+[node name="Spine" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+
+[node name="Abdomen" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+mesh = SubResource("PrimitiveMesh_7")
+
+[node name="Chest" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("PrimitiveMesh_8")
+
+[node name="Neck" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44, 0)
+
+[node name="NeckMesh" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+mesh = SubResource("CylinderMesh_9")
+
+[node name="Head" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0.005)
+mesh = SubResource("PrimitiveMesh_10")
+
+[node name="HairTop" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, -0.005)
+mesh = SubResource("PrimitiveMesh_11")
+
+[node name="HairBack" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -0.085)
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="Nose" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155, 0.12)
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="EyeL" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.052, 0.19, 0.115)
+mesh = SubResource("PrimitiveMesh_14")
+
+[node name="EyeR" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052, 0.19, 0.115)
+mesh = SubResource("PrimitiveMesh_14")
+
+[node name="ShoulderL" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.215, 0.38, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+mesh = SubResource("PrimitiveMesh_15")
+
+[node name="ElbowL" type="Node3D" parent="Visual/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+mesh = SubResource("PrimitiveMesh_16")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0.005)
+mesh = SubResource("PrimitiveMesh_17")
+
+[node name="ShoulderR" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.215, 0.38, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+mesh = SubResource("PrimitiveMesh_15")
+
+[node name="ElbowR" type="Node3D" parent="Visual/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+mesh = SubResource("PrimitiveMesh_16")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0.005)
+mesh = SubResource("PrimitiveMesh_17")
+
+[node name="InteractionDetector" type="Node3D" parent="."]
+script = ExtResource("10_interaction_detector")

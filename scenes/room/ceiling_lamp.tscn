@@ -1,0 +1,103 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/objects/ceiling_lamp.gd" id="1_ceiling_lamp"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/metal_dark.tres" id="2_metal_dark"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/rubber_black.tres" id="3_rubber_black"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/brass.tres" id="4_brass"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/lamp_shade.tres" id="5_lamp_shade"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/bulb.tres" id="6_bulb"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.03
+radial_segments = 12
+rings = 1
+material = ExtResource("2_metal_dark")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+top_radius = 0.006
+bottom_radius = 0.006
+height = 0.5
+radial_segments = 6
+rings = 1
+material = ExtResource("3_rubber_black")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+top_radius = 0.022
+bottom_radius = 0.022
+height = 0.05
+radial_segments = 8
+rings = 1
+material = ExtResource("4_brass")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+top_radius = 0.075
+bottom_radius = 0.26
+height = 0.24
+radial_segments = 10
+rings = 1
+cap_bottom = false
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+top_radius = 0.263
+bottom_radius = 0.263
+height = 0.014
+radial_segments = 10
+rings = 1
+cap_top = false
+cap_bottom = false
+material = ExtResource("4_brass")
+
+[sub_resource type="SphereMesh" id="SphereMesh_6"]
+radius = 0.05
+height = 0.1
+radial_segments = 8
+rings = 4
+
+[node name="CeilingLamp" type="Node3D"]
+script = ExtResource("1_ceiling_lamp")
+
+[node name="Canopy" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.015, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_1")
+
+[node name="Cord" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Socket" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.54, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_3")
+
+[node name="Shade" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.62, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_4")
+material_override = ExtResource("5_lamp_shade")
+
+[node name="Rim" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.74, 0)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_5")
+
+[node name="Bulb" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.68, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_6")
+material_override = ExtResource("6_bulb")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.74, 0)
+light_color = Color(1, 0.8, 0.58, 1)
+light_energy = 2.4
+light_size = 0.06
+light_specular = 0.6
+shadow_enabled = true
+shadow_bias = 0.04
+shadow_normal_bias = 1.2
+omni_range = 9.5
+omni_attenuation = 0.9

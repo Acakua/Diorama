@@ -1,0 +1,166 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="1_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_walnut.tres" id="2_wood_walnut"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/fabric_sheet.tres" id="3_fabric_sheet"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/fabric_pillow.tres" id="4_fabric_pillow"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/fabric_blanket.tres" id="5_fabric_blanket"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/fabric_blanket_hem.tres" id="6_fabric_blanket_hem"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1"]
+size = Vector3(1.14, 1, 2.08)
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.08, 1.04, 0.08)
+bevel = 0.015
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.075, 0.66, 0.075)
+bevel = 0.014
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.05, 0.14, 1.91)
+bevel = 0.01
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1, 0.62, 0.045)
+bevel = 0.012
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_6"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1.16, 0.05, 0.095)
+bevel = 0.016
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1, 0.3, 0.04)
+bevel = 0.01
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_8"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1.14, 0.045, 0.085)
+bevel = 0.014
+material = ExtResource("2_wood_walnut")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_9"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1, 0.2, 1.92)
+bevel = 0.05
+material = ExtResource("3_fabric_sheet")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_10"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.64, 0.13, 0.38)
+bevel = 0.06
+material = ExtResource("4_fabric_pillow")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_11"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1.06, 0.055, 1.3)
+bevel = 0.025
+material = ExtResource("5_fabric_blanket")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1.07, 0.07, 0.2)
+bevel = 0.03
+material = ExtResource("6_fabric_blanket_hem")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_13"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(0.035, 0.24, 1.3)
+bevel = 0.012
+material = ExtResource("5_fabric_blanket")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_14"]
+script = ExtResource("1_bevel_box_mesh")
+size = Vector3(1.06, 0.18, 0.03)
+bevel = 0.01
+material = ExtResource("5_fabric_blanket")
+
+[node name="Bed" type="Node3D"]
+
+[node name="Body" type="StaticBody3D" parent="."]
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("BoxShape3D_1")
+
+[node name="HeadPostL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53, 0.52, -0.995)
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="FootPostL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.53, 0.33, 0.995)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="RailL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5247, 0.29, 0)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="HeadPostR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.53, 0.52, -0.995)
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="FootPostR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.53, 0.33, 0.995)
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="RailR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5247, 0.29, 0)
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="Headboard" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.67, -0.995)
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="HeadRail" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.05, -0.995)
+mesh = SubResource("PrimitiveMesh_6")
+
+[node name="Footboard" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.47, 0.995)
+mesh = SubResource("PrimitiveMesh_7")
+
+[node name="FootRail" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0.995)
+mesh = SubResource("PrimitiveMesh_8")
+
+[node name="Mattress" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44, 0)
+mesh = SubResource("PrimitiveMesh_9")
+
+[node name="Pillow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0.6, -0.72)
+mesh = SubResource("PrimitiveMesh_10")
+
+[node name="Blanket" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.565, 0.3)
+mesh = SubResource("PrimitiveMesh_11")
+
+[node name="BlanketFold" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.58, -0.37)
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="BlanketSideL" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.56, 0.46, 0.3)
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="BlanketSideR" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.56, 0.46, 0.3)
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="BlanketFoot" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.49, 0.945)
+mesh = SubResource("PrimitiveMesh_14")

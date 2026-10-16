@@ -1,0 +1,10 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[resource]
+resource_name = "radio_dial"
+albedo_color = Color(0.30, 0.24, 0.16, 1)
+metallic = 0.0
+roughness = 0.40
+emission_enabled = true
+emission = Color(1, 0.62, 0.25, 1)
+emission_energy_multiplier = 0.0
