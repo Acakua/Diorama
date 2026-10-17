@@ -1,10 +1,11 @@
 [gd_scene format=3]
 
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_walnut.tres" id="1_wood_walnut"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/paper.tres" id="2_paper"]
-[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="3_bevel_box_mesh"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/metal_dark.tres" id="4_metal_dark"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/brass.tres" id="5_brass"]
+[ext_resource type="Script" path="res://scripts/objects/wall_clock.gd" id="1_wall_clock"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/wood_walnut.tres" id="2_wood_walnut"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/paper.tres" id="3_paper"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="4_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/metal_dark.tres" id="5_metal_dark"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/brass.tres" id="6_brass"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_1"]
 top_radius = 0.16
@@ -12,7 +13,7 @@ bottom_radius = 0.16
 height = 0.04
 radial_segments = 16
 rings = 1
-material = ExtResource("1_wood_walnut")
+material = ExtResource("2_wood_walnut")
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_2"]
 top_radius = 0.14
@@ -20,28 +21,29 @@ bottom_radius = 0.14
 height = 0.006
 radial_segments = 16
 rings = 1
-material = ExtResource("2_paper")
+material = ExtResource("3_paper")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
-script = ExtResource("3_bevel_box_mesh")
+script = ExtResource("4_bevel_box_mesh")
 size = Vector3(0.012, 0.075, 0.004)
 bevel = 0.001
-material = ExtResource("4_metal_dark")
+material = ExtResource("5_metal_dark")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
-script = ExtResource("3_bevel_box_mesh")
+script = ExtResource("4_bevel_box_mesh")
 size = Vector3(0.008, 0.11, 0.004)
 bevel = 0.001
-material = ExtResource("4_metal_dark")
+material = ExtResource("5_metal_dark")
 
 [sub_resource type="SphereMesh" id="SphereMesh_5"]
 radius = 0.008
 height = 0.016
 radial_segments = 6
 rings = 3
-material = ExtResource("5_brass")
+material = ExtResource("6_brass")
 
 [node name="WallClock" type="Node3D"]
+script = ExtResource("1_wall_clock")
 
 [node name="Case" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 0.02)

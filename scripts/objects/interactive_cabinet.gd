@@ -5,14 +5,19 @@ extends Interactable
 ##
 ## The cabinet body's collider also covers the closed door; the door itself has
 ## no collider, so open or closed it never blocks the player.
+## If it has `contents`, once open E searches the shelves (held) and F closes it.
 ## Local space: origin at the floor centre of the footprint, front faces +Z.
 
 @export var open_angle_deg := -100.0
 @export var open_time := 0.5
 @export var close_time := 0.42
 @export var door_width := 0.764
+## item id -> count on the shelves; empty means nothing to search for.
+@export var contents: Dictionary[StringName, int] = {}
+@export var search_time := 1.6
 
 var is_open := false
+var searched := false
 var _tween: Tween
 var _handle_rest := Vector3.ZERO
 
@@ -23,11 +28,37 @@ var _handle_rest := Vector3.ZERO
 
 func _ready() -> void:
 	super()
+	add_to_group(&"persistent")
 	_handle_rest = _handle.position
 
 
 func get_prompt() -> String:
+	if _can_search():
+		return "Search Cabinet"
 	return "Close Cabinet" if is_open else "Open Cabinet"
+
+
+func get_hold_time() -> float:
+	return search_time if _can_search() else 0.0
+
+
+func get_secondary_prompt() -> String:
+	return "Close Cabinet" if _can_search() else ""
+
+
+func secondary_interact(_player: Node3D) -> void:
+	_swing(false)
+
+
+func get_state() -> Dictionary:
+	return {"is_open": is_open, "searched": searched, "contents": contents.duplicate()}
+
+
+func set_state(state: Dictionary) -> void:
+	searched = state.get("searched", false)
+	contents.assign(state.get("contents", contents))
+	is_open = state.get("is_open", false)
+	_pivot.rotation.y = deg_to_rad(open_angle_deg) if is_open else 0.0
 
 
 func get_stand_position(player_position: Vector3) -> Variant:
@@ -39,7 +70,32 @@ func get_stand_position(player_position: Vector3) -> Variant:
 
 
 func _on_interact(_player: Node3D) -> String:
-	is_open = not is_open
+	if _can_search():
+		return _search()
+	return _swing(not is_open)
+
+
+func _can_search() -> bool:
+	return is_open and not searched and not contents.is_empty()
+
+
+func _search() -> String:
+	searched = true
+	var found := {}
+	for id in contents.keys():
+		var got := GameState.give(id, contents[id])
+		if got > 0:
+			found[id] = got
+		contents[id] -= got
+		if contents[id] <= 0:
+			contents.erase(id)
+	if found.is_empty():
+		return "Nothing useful."
+	return "Found: " + Items.describe(found)
+
+
+func _swing(open: bool) -> String:
+	is_open = open
 	if _tween:
 		_tween.kill()
 	_tween = create_tween()

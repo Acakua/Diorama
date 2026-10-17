@@ -3,9 +3,15 @@ extends Interactable
 ## Desk radio. Pressing the power button dips the button, turns the volume
 ## knob, lights the indicator and the dial, slides the tuning needle, makes the
 ## speaker pulse with the beat and fades the music in (and all of it back out).
+## At night it also reads out emergency bulletins, but only while it is on.
+
+## One line of a bulletin, shown as a subtitle for `seconds`.
+signal subtitle(text: String, seconds: float)
 
 @export var is_on := false
 @export var music_volume_db := -9.0
+## Seconds each bulletin line stays on screen.
+@export var line_time := 3.8
 
 const LED_ENERGY := 5.0
 const DIAL_ENERGY := 2.2
@@ -22,6 +28,8 @@ var _level := 0.0
 var _beat_time := 0.0
 var _button_rest := Vector3.ZERO
 var _needle_rest := Vector3.ZERO
+var _bulletin: Array[String] = []
+var _line_timer := 0.0
 
 @onready var _button: Node3D = $ButtonPivot
 @onready var _knob: Node3D = $KnobPivot
@@ -31,10 +39,12 @@ var _needle_rest := Vector3.ZERO
 @onready var _dial: MeshInstance3D = $Dial
 @onready var _glow: OmniLight3D = $Glow
 @onready var _music: AudioStreamPlayer3D = $Music
+@onready var _voice: AudioStreamPlayer3D = $Voice
 
 
 func _ready() -> void:
 	super()
+	add_to_group(&"persistent")
 	_led_mat = _led.material_override.duplicate()
 	_led.material_override = _led_mat
 	_dial_mat = _dial.material_override.duplicate()
@@ -53,6 +63,30 @@ func get_led_energy() -> float:
 	return _led_mat.emission_energy_multiplier
 
 
+func get_state() -> Dictionary:
+	return {"is_on": is_on}
+
+
+func set_state(state: Dictionary) -> void:
+	set_on(state.get("is_on", is_on))
+
+
+## Switches on or off without the button press (e.g. at the start of a night).
+func set_on(on: bool) -> void:
+	is_on = on
+	_apply(on, 0.0)
+
+
+## Reads `lines` out over the music. Missed if the radio is off.
+func play_bulletin(lines: Array[String]) -> void:
+	if not is_on:
+		return
+	_bulletin = lines.duplicate()
+	_line_timer = 0.0
+	_voice.play()
+	create_tween().tween_property(_music, "volume_db", music_volume_db - 16.0, 0.4)
+
+
 func _on_interact(_player: Node3D) -> String:
 	is_on = not is_on
 	play_sound(&"SfxButton")
@@ -66,6 +100,7 @@ func _on_interact(_player: Node3D) -> String:
 
 
 func _process(delta: float) -> void:
+	_read_bulletin(delta)
 	_level = move_toward(_level, 1.0 if is_on else 0.0, delta * 3.0)
 	if _level <= 0.0:
 		_speaker.scale = Vector3.ONE
@@ -74,6 +109,24 @@ func _process(delta: float) -> void:
 	_beat_time += delta
 	var beat := pow(maxf(0.0, sin(_beat_time * TAU * BEAT_HZ)), 8.0)
 	_speaker.scale = Vector3.ONE * (1.0 + 0.07 * beat * _level)
+
+
+func _read_bulletin(delta: float) -> void:
+	if not _voice.playing:
+		return
+	if not is_on:
+		_bulletin.clear()
+		_voice.stop()
+		return
+	_line_timer -= delta
+	if _line_timer > 0.0:
+		return
+	if _bulletin.is_empty():
+		_voice.stop()
+		create_tween().tween_property(_music, "volume_db", music_volume_db, 0.8)
+		return
+	subtitle.emit(_bulletin.pop_front(), line_time)
+	_line_timer = line_time
 
 
 func _apply(on: bool, time: float) -> void:

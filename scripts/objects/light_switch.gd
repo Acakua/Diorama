@@ -14,6 +14,18 @@ const OFF_ANGLE := 0.3
 
 func _ready() -> void:
 	super()
+	add_to_group(&"persistent")
+	_rocker.rotation.x = ON_ANGLE if is_on else OFF_ANGLE
+	if lamp:
+		lamp.set_on(is_on, 0.0)
+
+
+func get_state() -> Dictionary:
+	return {"is_on": is_on}
+
+
+func set_state(state: Dictionary) -> void:
+	is_on = state.get("is_on", is_on)
 	_rocker.rotation.x = ON_ANGLE if is_on else OFF_ANGLE
 	if lamp:
 		lamp.set_on(is_on, 0.0)

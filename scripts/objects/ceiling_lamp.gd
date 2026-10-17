@@ -18,6 +18,10 @@ var _shade_mat: StandardMaterial3D
 @onready var _shade: MeshInstance3D = $Shade
 
 
+func _ready() -> void:
+	add_to_group(&"room_lights")
+
+
 func set_on(on: bool, time := -1.0) -> void:
 	_ensure_materials()
 	is_on = on

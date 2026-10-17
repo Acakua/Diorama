@@ -7,6 +7,7 @@ extends Node3D
 ##
 ## Layout: this node holds the yaw, its "Pitch" child the downward tilt, and
 ## the Camera3D sits on the pitch node's +Z axis looking back at the rig.
+## Anything can call `shake()` through the "camera_shake" group.
 
 @export var target: Node3D
 ## Higher follows tighter (1/s).
@@ -26,12 +27,16 @@ extends Node3D
 
 var _lead := Vector3.ZERO
 var _zoom_target := 8.0
+var _trauma := 0.0
+var _camera_rest := Vector3.ZERO
 
 @onready var camera: Camera3D = $Pitch/Camera3D
 
 
 func _ready() -> void:
+	add_to_group(&"camera_shake")
 	_zoom_target = camera.size
+	_camera_rest = camera.position
 	if target:
 		global_position = _focus_point()
 
@@ -55,6 +60,21 @@ func _physics_process(delta: float) -> void:
 	_lead = _lead.lerp(velocity * look_ahead, 1.0 - exp(-2.5 * delta))
 	global_position = global_position.lerp(_focus_point(), 1.0 - exp(-follow_sharpness * delta))
 	camera.size = lerpf(camera.size, _zoom_target, 1.0 - exp(-8.0 * delta))
+	_trauma = move_toward(_trauma, 0.0, delta * 1.6)
+	var jitter := Vector3(randf_range(-1.0, 1.0), randf_range(-1.0, 1.0), 0.0)
+	camera.position = _camera_rest + jitter * _trauma * _trauma * 0.25
+
+
+## Jumps straight to the follow point (after the player is put somewhere new).
+func snap() -> void:
+	if target:
+		_lead = Vector3.ZERO
+		global_position = _focus_point()
+
+
+## Adds screen shake (0..1); it fades out by itself.
+func shake(amount: float) -> void:
+	_trauma = clampf(_trauma + amount, 0.0, 1.0)
 
 
 func _focus_point() -> Vector3:

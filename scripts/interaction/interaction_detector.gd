@@ -18,12 +18,17 @@ signal target_changed(target: Interactable)
 var current: Interactable = null
 
 
-func update_target(origin: Vector3, forward: Vector3, exclude: Array[RID]) -> void:
+## `carrying` is the item in the player's hands, if any: then only objects
+## that accept it are offered.
+func update_target(origin: Vector3, forward: Vector3, exclude: Array[RID],
+		carrying: Interactable = null) -> void:
 	var best: Interactable = null
 	var best_score := INF
 	for node in get_tree().get_nodes_in_group(&"interactable"):
 		var it := node as Interactable
 		if it == null or not it.can_interact():
+			continue
+		if carrying and not it.accepts(carrying):
 			continue
 		var to := it.get_interaction_position() - origin
 		to.y = 0.0

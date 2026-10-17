@@ -80,6 +80,32 @@ def fade_out(sig, sec=0.01):
     return sig
 
 
+def biquad_bandpass(sig, f0, q):
+    """Resonant band-pass (RBJ cookbook, 0 dB peak) for formants and body resonances."""
+    w0 = 2 * math.pi * f0 / RATE
+    alpha = math.sin(w0) / (2 * q)
+    a0 = 1 + alpha
+    b0, b2 = alpha / a0, -alpha / a0
+    a1, a2 = -2 * math.cos(w0) / a0, (1 - alpha) / a0
+    x1 = x2 = y1 = y2 = 0.0
+    out = []
+    for x in sig:
+        y = b0 * x + b2 * x2 - a1 * y1 - a2 * y2
+        x2, x1 = x1, x
+        y2, y1 = y1, y
+        out.append(y)
+    return out
+
+
+def formants(sig, bands):
+    """Sum of resonant band-passes: [(freq, q, gain), ...]."""
+    out = [0.0] * len(sig)
+    for f, q, g in bands:
+        for i, v in enumerate(biquad_bandpass(sig, f, q)):
+            out[i] += v * g
+    return out
+
+
 def creak(sec, rate_from, rate_to, body_hz, gain=1.0):
     """Stick-slip friction: a train of tiny resonant ticks at a wobbling rate."""
     out = [0.0] * n_samples(sec + 0.02)
@@ -164,6 +190,206 @@ def radio_button():
     tune = [(a + b) * math.sin(math.pi * i / len(static)) for i, (a, b) in enumerate(zip(static, whistle))]
     mix_into(s, tune, 0.05, 0.12)
     return fade_out(normalize(s, 0.6), 0.03)
+
+
+# ---------------------------------------------------------------- night 1
+
+def thump(freq, decay, sec, gain=1.0):
+    return [v * gain for v in damped(freq, decay, sec, 0.002)]
+
+
+def knock():
+    s = [0.0] * n_samples(0.75)
+    for k, at in enumerate((0.0, 0.17, 0.33)):
+        g = (1.0, 0.85, 0.95)[k]
+        mix_into(s, thump(190, 0.05, 0.3), at, g)
+        mix_into(s, thump(410, 0.03, 0.2), at, 0.6 * g)
+        mix_into(s, lowpass(noise(0.05, 0.008), 2500), at, 0.5 * g)
+    return fade_out(normalize(s, 0.7), 0.05)
+
+
+def rattle(count, spacing, gain):
+    s = [0.0] * n_samples(count * spacing + 0.1)
+    for k in range(count):
+        g = gain * (0.65 ** k)
+        mix_into(s, damped(2200, 0.008, 0.04), k * spacing, g)
+        mix_into(s, damped(3300, 0.005, 0.03), k * spacing + 0.004, g * 0.6)
+    return s
+
+
+def bang():
+    s = [0.0] * n_samples(0.9)
+    mix_into(s, thump(55, 0.18, 0.8))
+    mix_into(s, thump(95, 0.12, 0.6), 0, 0.7)
+    mix_into(s, lowpass(noise(0.3, 0.05), 900), 0, 1.4)
+    mix_into(s, rattle(4, 0.035, 0.25), 0.01)
+    mix_into(s, creak(0.18, 160, 120, 600), 0.08, 0.6)
+    return fade_out(normalize(s, 0.95), 0.08)
+
+
+def door_break():
+    s = [0.0] * n_samples(1.5)
+    mix_into(s, thump(45, 0.3, 1.2))
+    mix_into(s, lowpass(noise(0.8, 0.25), 1500), 0, 1.2)
+    mix_into(s, bandpass(noise(1.2, 0.4), 300, 3000), 0.05, 0.5)
+    t = 0.0
+    while t < 0.8:
+        tick = damped(800 + rng.random() * 1700, 0.003 + rng.random() * 0.005, 0.03)
+        mix_into(s, tick, t, 0.5 * (1 - t / 0.9))
+        t += 0.008 + rng.random() * 0.03 * (1 + 3 * t)
+    mix_into(s, rattle(5, 0.05, 0.4), 0.0)
+    return fade_out(normalize(s, 0.95), 0.2)
+
+
+def groan(sec, base, seed):
+    local = random.Random(seed)
+    src, phase = [], 0.0
+    for i in range(n_samples(sec)):
+        t = i / RATE
+        f = base * (1.0 - 0.2 * t / sec) * (1 + 0.035 * math.sin(2 * math.pi * 5.5 * t)) + local.uniform(-3, 3)
+        phase += f / RATE
+        env = math.sin(math.pi * t / sec) ** 0.8 * (0.7 + 0.3 * math.sin(2 * math.pi * 1.7 * t))
+        src.append((2 * (phase % 1.0) - 1) * env)
+    voiced = formants(src, ((560, 5, 1.0), (1000, 7, 0.6), (2400, 9, 0.2)))
+    breath = [b * abs(e) for b, e in zip(bandpass(noise(sec), 400, 2500), src)]
+    out = [math.tanh(2.0 * (v + 0.25 * b)) for v, b in zip(voiced, breath)]
+    return fade_out(normalize(lowpass(out, 3000), 0.75), 0.15)
+
+
+def shuffle():
+    s = [0.0] * n_samples(0.95)
+    for at, g in ((0.0, 1.0), (0.45, 0.7)):
+        scrape = bandpass(noise(0.24), 180, 1200)
+        n = len(scrape)
+        env = [min(1.0, i / (0.05 * RATE)) * (1 - i / n) ** 2 for i in range(n)]
+        mix_into(s, [v * e for v, e in zip(scrape, env)], at, g)
+        mix_into(s, thump(90, 0.03, 0.15), at, 0.4 * g)
+    return fade_out(normalize(s, 0.6), 0.05)
+
+
+def chair_pickup():
+    s = [0.0] * n_samples(0.25)
+    for at, g in ((0.0, 1.0), (0.05, 0.6)):
+        mix_into(s, damped(520, 0.03, 0.15), at, g)
+        mix_into(s, damped(1150, 0.015, 0.1), at, 0.6 * g)
+    return fade_out(normalize(s, 0.6), 0.03)
+
+
+def chair_wedge():
+    s = [0.0] * n_samples(0.6)
+    scrape = bandpass(noise(0.3), 250, 1400)
+    n = len(scrape)
+    mix_into(s, [v * math.sin(math.pi * i / n) for i, v in enumerate(scrape)], 0, 0.8)
+    mix_into(s, thump(140, 0.06, 0.25), 0.3)
+    mix_into(s, damped(700, 0.02, 0.1), 0.31, 0.5)
+    return fade_out(normalize(s, 0.7), 0.04)
+
+
+def heartbeat():
+    s = [0.0] * n_samples(0.9)
+    for at, g in ((0.0, 1.0), (0.3, 0.6)):
+        mix_into(s, lowpass(thump(55, 0.06, 0.3), 200), at, g)
+        mix_into(s, lowpass(thump(90, 0.04, 0.2), 300), at, 0.5 * g)
+    return normalize(s, 0.85)
+
+
+def radio_voice():
+    """Speech-like murmur through a small speaker: random vowels on a pitched buzz."""
+    vowels = ((700, 1200), (400, 2000), (500, 900), (300, 2300), (650, 1700), (450, 1100))
+    s = [0.0] * n_samples(4.0)
+    t = 0.15
+    phase = 0.0
+    while t < 3.7:
+        if rng.random() < 0.12:
+            t += 0.25  # pause between phrases
+            continue
+        dur = 0.09 + rng.random() * 0.14
+        f1, f2 = rng.choice(vowels)
+        pitch = 125 + 25 * math.sin(t * 1.3) + rng.uniform(-8, 8)
+        src = []
+        for i in range(n_samples(dur)):
+            phase += pitch / RATE
+            env = math.sin(math.pi * i / n_samples(dur)) ** 0.6
+            src.append(((2 * (phase % 1.0) - 1) * 0.8 + (rng.random() * 2 - 1) * 0.2) * env)
+        syl = formants(src, ((f1, 6, 1.0), (f2, 8, 0.6)))
+        mix_into(s, syl, t)
+        t += dur + rng.random() * 0.04
+    s = bandpass(s, 350, 2800)
+    s = [math.tanh(3 * v) for v in normalize(s, 1.0)]
+    hiss = highpass(noise(4.0), 2500)
+    return normalize([v + h * 0.04 for v, h in zip(s, hiss)], 0.6)
+
+
+def birds():
+    s = [0.0] * n_samples(2.6)
+    for group_at, base in ((0.1, 3400), (0.9, 4100), (1.7, 3000)):
+        for k in range(3):
+            at = group_at + k * 0.11
+            dur = 0.07 + rng.random() * 0.03
+            out, phase = [], 0.0
+            for i in range(n_samples(dur)):
+                x = i / n_samples(dur)
+                phase += base * (1 + 0.35 * math.sin(math.pi * x)) / RATE
+                out.append(math.sin(2 * math.pi * phase) * math.sin(math.pi * x))
+            mix_into(s, out, at, 0.5 + rng.random() * 0.3)
+    return fade_out(normalize(s, 0.5), 0.1)
+
+
+# ---------------------------------------------------------------- slice 1
+
+def hammer():
+    s = [0.0] * n_samples(0.3)
+    mix_into(s, damped(900, 0.02, 0.2), 0, 0.9)
+    mix_into(s, damped(2400, 0.008, 0.1), 0, 0.6)
+    mix_into(s, thump(160, 0.04, 0.2), 0, 0.8)
+    mix_into(s, highpass(noise(0.03, 0.003), 1500), 0, 0.7)
+    return fade_out(normalize(s, 0.8), 0.03)
+
+
+def pry():
+    s = [0.0] * n_samples(0.5)
+    mix_into(s, creak(0.3, 140, 90, 700), 0.0, 1.5)
+    squeak, phase = [], 0.0
+    for i in range(n_samples(0.18)):
+        x = i / n_samples(0.18)
+        phase += (1700 - 500 * x) / RATE
+        squeak.append(math.sin(2 * math.pi * phase) * math.sin(math.pi * x) * 0.3)
+    mix_into(s, squeak, 0.25)
+    return fade_out(normalize(s, 0.6), 0.04)
+
+
+def tear():
+    s = [0.0] * n_samples(0.7)
+    mix_into(s, lowpass(noise(0.2, 0.04), 2500), 0, 1.2)
+    t = 0.0
+    while t < 0.25:
+        mix_into(s, damped(600 + rng.random() * 1800, 0.004, 0.02), t, 0.6)
+        t += 0.01 + rng.random() * 0.03
+    mix_into(s, thump(110, 0.08, 0.4), 0.3, 0.8)
+    mix_into(s, damped(520, 0.03, 0.15), 0.31, 0.5)
+    return fade_out(normalize(s, 0.85), 0.06)
+
+
+def rummage():
+    s = [0.0] * n_samples(0.9)
+    t = 0.0
+    while t < 0.8:
+        dur = 0.04 + rng.random() * 0.08
+        burst = bandpass(noise(dur), 800 + rng.random() * 1500, 5000)
+        n = len(burst)
+        mix_into(s, [v * math.sin(math.pi * i / n) for i, v in enumerate(burst)], t, 0.4 + rng.random() * 0.6)
+        if rng.random() < 0.3:
+            mix_into(s, damped(1200 + rng.random() * 1500, 0.006, 0.03), t, 0.4)
+        t += dur * 0.7 + rng.random() * 0.05
+    return fade_out(normalize(s, 0.45), 0.05)
+
+
+def item_found():
+    s = [0.0] * n_samples(0.3)
+    mix_into(s, damped(880, 0.06, 0.25), 0, 0.5)
+    mix_into(s, damped(1320, 0.05, 0.2), 0.07, 0.4)
+    mix_into(s, damped(2600, 0.01, 0.05), 0, 0.3)
+    return fade_out(normalize(s, 0.4), 0.04)
 
 
 # ---------------------------------------------------------------- radio loop
@@ -268,3 +494,19 @@ if __name__ == "__main__":
     write("cabinet_close", cabinet_close())
     write("radio_button", radio_button())
     write("radio_music", radio_music(), loop=True)
+    write("knock", knock())
+    write("bang", bang())
+    write("door_break", door_break())
+    write("groan_a", groan(1.8, 95, 1))
+    write("groan_b", groan(1.3, 110, 2))
+    write("shuffle", shuffle())
+    write("chair_pickup", chair_pickup())
+    write("chair_wedge", chair_wedge())
+    write("heartbeat", heartbeat(), loop=True)
+    write("radio_voice", radio_voice(), loop=True)
+    write("birds", birds())
+    write("hammer", hammer())
+    write("pry", pry())
+    write("tear", tear())
+    write("rummage", rummage())
+    write("item_found", item_found())

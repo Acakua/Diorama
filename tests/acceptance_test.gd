@@ -32,7 +32,11 @@ func _ready() -> void:
 	_shot_dir = ProjectSettings.globalize_path("res://tests/screens")
 	if _shots:
 		DirAccess.make_dir_recursive_absolute(_shot_dir)
+	# This test covers the room itself: no night, a frozen afternoon clock.
+	GameState.new_run(1234)
+	GameState.clock_running = false
 	room = ROOM.instantiate()
+	room.get_node("NightDirector").enabled = false
 	add_child(room)
 	player = room.get_node("Player")
 	hud = room.get_node("Hud")
@@ -42,7 +46,11 @@ func _ready() -> void:
 	lamp = room.get_node("CeilingLamp")
 	radio = room.get_node("Radio")
 	rig = room.get_node("CameraRig")
+	# The bare cabinet: open, look inside, close (its contents are tested elsewhere).
+	cabinet.contents.clear()
 	player.scripted = true
+	# Keyboard presses on the test window must not steer the run.
+	player.set_process_unhandled_input(false)
 	_run.call_deferred()
 
 
@@ -150,7 +158,7 @@ func _test_door() -> void:
 
 
 func _test_light() -> void:
-	var moon: SpotLight3D = room.get_node("MoonLight")
+	var moon: SpotLight3D = room.get_node("WindowLight")
 	await _walk_to(Vector3(-3.3, 0, -1.4))
 	await _nudge_toward(light_switch.get_interaction_position())
 	var fading := [0]

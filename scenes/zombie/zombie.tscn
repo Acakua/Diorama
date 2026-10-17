@@ -1,0 +1,337 @@
+[gd_scene format=3]
+
+[ext_resource type="AudioStream" path="res://assets/audio/groan_a.wav" id="1_groan_a"]
+[ext_resource type="AudioStream" path="res://assets/audio/groan_b.wav" id="2_groan_b"]
+[ext_resource type="Script" path="res://scripts/zombie/zombie.gd" id="3_zombie"]
+[ext_resource type="Script" path="res://scripts/player/player_animation.gd" id="4_player_animation"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="5_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_pants.tres" id="6_zombie_pants"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="7_shoes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_shirt.tres" id="8_zombie_shirt"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_skin.tres" id="9_zombie_skin"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_hair.tres" id="10_zombie_hair"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_eyes.tres" id="11_zombie_eyes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/stain.tres" id="12_stain"]
+[ext_resource type="AudioStream" path="res://assets/audio/shuffle.wav" id="13_shuffle"]
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_1"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.3, 0.16, 0.19)
+bevel = 0.03
+material = ExtResource("6_zombie_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.305, 0.035, 0.195)
+bevel = 0.008
+material = ExtResource("6_zombie_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.13, 0.42, 0.14)
+bevel = 0.035
+material = ExtResource("6_zombie_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.115, 0.4, 0.125)
+bevel = 0.03
+material = ExtResource("6_zombie_pants")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.11, 0.075, 0.24)
+bevel = 0.025
+material = ExtResource("7_shoes")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_6"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.29, 0.2, 0.18)
+bevel = 0.04
+material = ExtResource("8_zombie_shirt")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.36, 0.27, 0.21)
+bevel = 0.05
+material = ExtResource("8_zombie_shirt")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_8"]
+top_radius = 0.05
+bottom_radius = 0.055
+height = 0.09
+radial_segments = 8
+rings = 1
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_9"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.21, 0.24, 0.22)
+bevel = 0.05
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_10"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.225, 0.085, 0.235)
+bevel = 0.035
+material = ExtResource("10_zombie_hair")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_11"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.225, 0.17, 0.07)
+bevel = 0.03
+material = ExtResource("10_zombie_hair")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.035, 0.05, 0.035)
+bevel = 0.01
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_13"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.026, 0.032, 0.01)
+bevel = 0.004
+material = ExtResource("11_zombie_eyes")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_14"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.1, 0.3, 0.11)
+bevel = 0.035
+material = ExtResource("8_zombie_shirt")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_15"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.085, 0.25, 0.09)
+bevel = 0.03
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_16"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.075, 0.09, 0.05)
+bevel = 0.02
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_17"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.16, 0.12, 0.012)
+bevel = 0.003
+material = ExtResource("12_stain")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_18"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.1, 0.16, 0.012)
+bevel = 0.003
+material = ExtResource("12_stain")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_19"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.12, 0.05, 0.012)
+bevel = 0.003
+material = ExtResource("9_zombie_skin")
+
+[sub_resource type="PrimitiveMesh" id="PrimitiveMesh_20"]
+script = ExtResource("5_bevel_box_mesh")
+size = Vector3(0.07, 0.018, 0.012)
+bevel = 0.003
+material = ExtResource("12_stain")
+
+[node name="Zombie" type="Node3D"]
+script = ExtResource("3_zombie")
+groans = Array[AudioStream]([ExtResource("1_groan_a"), ExtResource("2_groan_b")])
+
+[node name="Visual" type="Node3D" parent="."]
+script = ExtResource("4_player_animation")
+stride_length = 0.85
+leg_swing_deg = 15
+knee_bend_deg = 22
+arm_swing_deg = 5
+breath_period = 2.2
+hunch = 0.25
+head_tilt = 0.22
+limp = 1
+
+[node name="Hips" type="Node3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.94, 0)
+
+[node name="Pelvis" type="MeshInstance3D" parent="Visual/Hips"]
+layers = 5
+mesh = SubResource("PrimitiveMesh_1")
+
+[node name="Belt" type="MeshInstance3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_2")
+
+[node name="HipL" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.085, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Visual/Hips/HipL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="KneeL" type="Node3D" parent="Visual/Hips/HipL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Visual/Hips/HipL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="AnkleL" type="Node3D" parent="Visual/Hips/HipL/KneeL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/Hips/HipL/KneeL/AnkleL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0025, 0.045)
+layers = 5
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="HipR" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.085, -0.04, 0)
+
+[node name="Thigh" type="MeshInstance3D" parent="Visual/Hips/HipR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_3")
+
+[node name="KneeR" type="Node3D" parent="Visual/Hips/HipR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Shin" type="MeshInstance3D" parent="Visual/Hips/HipR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_4")
+
+[node name="AnkleR" type="Node3D" parent="Visual/Hips/HipR/KneeR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.43, 0)
+
+[node name="Foot" type="MeshInstance3D" parent="Visual/Hips/HipR/KneeR/AnkleR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.0025, 0.045)
+layers = 5
+mesh = SubResource("PrimitiveMesh_5")
+
+[node name="Spine" type="Node3D" parent="Visual/Hips"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+
+[node name="Abdomen" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_6")
+
+[node name="Chest" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_7")
+
+[node name="Neck" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.44, 0)
+
+[node name="NeckMesh" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.03, 0)
+layers = 5
+mesh = SubResource("CylinderMesh_8")
+
+[node name="Head" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 0.005)
+layers = 5
+mesh = SubResource("PrimitiveMesh_9")
+
+[node name="HairTop" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.27, -0.005)
+layers = 5
+mesh = SubResource("PrimitiveMesh_10")
+
+[node name="HairBack" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -0.085)
+layers = 5
+mesh = SubResource("PrimitiveMesh_11")
+
+[node name="Nose" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.155, 0.12)
+layers = 5
+mesh = SubResource("PrimitiveMesh_12")
+
+[node name="EyeL" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.052, 0.19, 0.115)
+layers = 5
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="EyeR" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.052, 0.19, 0.115)
+layers = 5
+mesh = SubResource("PrimitiveMesh_13")
+
+[node name="ShoulderL" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.215, 0.38, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_14")
+
+[node name="ElbowL" type="Node3D" parent="Visual/Hips/Spine/ShoulderL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_15")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderL/ElbowL"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0.005)
+layers = 5
+mesh = SubResource("PrimitiveMesh_16")
+
+[node name="ShoulderR" type="Node3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.215, 0.38, 0)
+
+[node name="UpperArm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_14")
+
+[node name="ElbowR" type="Node3D" parent="Visual/Hips/Spine/ShoulderR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0)
+
+[node name="Forearm" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.12, 0)
+layers = 5
+mesh = SubResource("PrimitiveMesh_15")
+
+[node name="Hand" type="MeshInstance3D" parent="Visual/Hips/Spine/ShoulderR/ElbowR"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.29, 0.005)
+layers = 5
+mesh = SubResource("PrimitiveMesh_16")
+
+[node name="StainA" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(0.951057, -0.309017, 0, 0.309017, 0.951057, 0, 0, 0, 1, 0.06, 0.25, 0.104)
+layers = 5
+mesh = SubResource("PrimitiveMesh_17")
+
+[node name="StainB" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0, 0, 1, -0.1, 0.08, 0.09)
+layers = 5
+mesh = SubResource("PrimitiveMesh_18")
+
+[node name="Tear" type="MeshInstance3D" parent="Visual/Hips/Spine"]
+transform = Transform3D(0.990268, -0.139173, 0, 0.139173, 0.990268, 0, 0, 0, 1, -0.05, 0.36, 0.104)
+layers = 5
+mesh = SubResource("PrimitiveMesh_19")
+
+[node name="Gash" type="MeshInstance3D" parent="Visual/Hips/Spine/Neck"]
+transform = Transform3D(0.906308, 0.422618, 0, -0.422618, 0.906308, 0, 0, 0, 1, 0.04, 0.13, 0.113)
+layers = 5
+mesh = SubResource("PrimitiveMesh_20")
+
+[node name="Voice" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+stream = ExtResource("1_groan_a")
+volume_db = 0
+unit_size = 3
+
+[node name="Steps" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+stream = ExtResource("13_shuffle")
+volume_db = -6
+unit_size = 2

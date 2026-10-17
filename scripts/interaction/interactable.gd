@@ -51,6 +51,76 @@ func _on_interact(_player: Node3D) -> String:
 	return ""
 
 
+## Seconds E has to be held (0 = a press is enough), e.g. searching a drawer.
+func get_hold_time() -> float:
+	return 0.0
+
+
+## R: using something from the bag on this object, e.g. nailing a plank.
+## An empty string means nothing applies.
+func get_item_prompt() -> String:
+	return ""
+
+
+func get_item_hold_time() -> float:
+	return 0.0
+
+
+func use_item(player: Node3D) -> void:
+	var message := _on_use_item(player)
+	if message != "":
+		interacted.emit(message)
+
+
+func _on_use_item(_player: Node3D) -> String:
+	return ""
+
+
+## Checked when an action (&"use" or &"item") is about to start; a non-empty
+## reason cancels it and is shown to the player ("Too dark to see the nails").
+func get_block_reason(_mode: StringName) -> String:
+	return ""
+
+
+## Called every physics frame while the player holds the key for `mode`.
+func on_hold_tick(_player: Node3D, _mode: StringName, _delta: float) -> void:
+	pass
+
+
+## Optional second action on the same object (F), e.g. the door's peephole.
+## An empty string means there is none.
+func get_secondary_prompt() -> String:
+	return ""
+
+
+## Where to stand for the second action, or null to use it in place.
+func get_secondary_stand_position(_player_position: Vector3) -> Variant:
+	return null
+
+
+func secondary_interact(_player: Node3D) -> void:
+	pass
+
+
+## Whether this object takes `item` (a Carryable) out of the player's hands.
+func accepts(_item: Interactable) -> bool:
+	return false
+
+
+func get_accept_prompt(item: Interactable) -> String:
+	return "Put %s Here" % item.interaction_name
+
+
+func receive(item: Interactable, player: Node3D) -> void:
+	var message := _on_receive(item, player)
+	if message != "":
+		interacted.emit(message)
+
+
+func _on_receive(_item: Interactable, _player: Node3D) -> String:
+	return ""
+
+
 ## Plays an optional AudioStreamPlayer3D child, with a little pitch variety.
 func play_sound(node_name: StringName) -> void:
 	var sound := get_node_or_null(NodePath(node_name)) as AudioStreamPlayer3D
