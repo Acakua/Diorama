@@ -36,16 +36,20 @@ khỏi phòng tìm đồ trong toà nhà. Ban đêm cố thủ trong phòng mìn
 
 ## Điều khiển
 
-| Phím | Việc |
+Chơi được hoàn toàn bằng chuột (một tay):
+
+| Chuột | Việc |
 |---|---|
-| W A S D | Đi |
-| E | Dùng đồ vật (giữ E để lục tìm, cạy ván) |
-| F | Hành động thứ hai (nhìn qua mắt mèo, đóng tủ...) |
-| R | Dùng đồ trong túi lên vật (đóng ván) |
-| Q | Bật / tắt đèn pin |
+| Rê lên đồ vật | Hiện vòng đánh dấu và việc cú bấm sẽ làm |
+| Bấm trái lên sàn | Đi tới đó (tự tìm đường) |
+| Bấm trái lên đồ vật | Đi tới rồi làm việc chính (việc cần giữ thì tự làm tới xong) |
+| Bấm phải lên đồ vật | Menu các việc khác (mắt mèo, đóng ván...) |
+| Bấm khi đang làm / đang nhìn | Dừng lại |
+| Nút "Flashlight" | Bật / tắt đèn pin |
 | Lăn chuột | Zoom |
-| F3 | Thông tin gỡ lỗi |
-| Esc | Thoát |
+
+Bàn phím vẫn dùng được: W A S D đi, E dùng (giữ E để lục tìm), F hành động thứ hai, R dùng đồ
+trong túi, Q đèn pin, F3 thông tin gỡ lỗi, Esc thoát.
 
 ## Lộ trình
 

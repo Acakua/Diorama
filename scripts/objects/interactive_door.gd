@@ -205,7 +205,7 @@ func _on_interact(player: Node3D) -> String:
 	_tween = create_tween()
 	if is_open:
 		_collision_pending = false
-		_panel_shape.set_deferred(&"disabled", true)
+		_set_panel_solid(false)
 		play_sound(&"SfxOpen")
 		# Press the lever, swing the door, let the lever spring back.
 		_tween.tween_property(_handle, "rotation:z", HANDLE_DOWN, 0.1) \
@@ -289,7 +289,7 @@ func break_open() -> void:
 	is_broken = true
 	is_open = true
 	_collision_pending = false
-	_panel_shape.set_deferred(&"disabled", true)
+	_set_panel_solid(false)
 	if _tween:
 		_tween.kill()
 	_tween = create_tween()
@@ -322,7 +322,7 @@ func set_state(state: Dictionary) -> void:
 func _physics_process(delta: float) -> void:
 	if _collision_pending and not _doorway.has_overlapping_bodies():
 		_collision_pending = false
-		_panel_shape.disabled = false
+		_set_panel_solid(true)
 	if _hammer_timer > 0.0:
 		_hammer_timer -= delta
 
@@ -330,7 +330,7 @@ func _physics_process(delta: float) -> void:
 func _apply_pose() -> void:
 	_rest = deg_to_rad(SAG_DEG) * (1.0 - health / max_health)
 	_pivot.rotation.y = deg_to_rad(open_angle_deg if is_open else 0.0) + (0.0 if is_open else _rest)
-	_panel_shape.disabled = is_open
+	_set_panel_solid(not is_open)
 	for i in _cracks.size():
 		_cracks[i].visible = health / max_health < CRACK_AT[i]
 
@@ -370,6 +370,13 @@ func _has_work_light() -> bool:
 		if (lamp as CeilingLamp).is_on:
 			return true
 	return false
+
+
+## Switches the closed panel's collider; the walkable area changes with it.
+func _set_panel_solid(on: bool) -> void:
+	_panel_shape.set_deferred(&"disabled", not on)
+	(_panel_shape.get_parent() as CollisionObject3D).set_deferred(&"collision_layer", 1 if on else 0)
+	GameState.navigation_changed.emit()
 
 
 func _save_shared() -> void:

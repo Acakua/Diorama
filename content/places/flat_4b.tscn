@@ -395,7 +395,18 @@ size = Vector3(0.15, 0.004, 0.2)
 bevel = 0.001
 material = ExtResource("38_paper")
 
-[node name="Flat4B" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "sink", "kitchen_drawer", "fridge", "closet", "wardrobe", "nightstand", "desk_drawer")]
+[sub_resource type="NavigationMesh" id="NavigationMesh_63"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"nav_source"
+cell_size = 0.05
+cell_height = 0.05
+agent_height = 1.7
+agent_radius = 0.3
+agent_max_climb = 0.1
+
+[node name="Flat4B" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "navigation", "sink", "kitchen_drawer", "fridge", "closet", "wardrobe", "nightstand", "desk_drawer")]
 script = ExtResource("1_flat_4b")
 player = NodePath("Player")
 hud = NodePath("Hud")
@@ -403,6 +414,7 @@ overlay = NodePath("NightOverlay")
 camera_rig = NodePath("CameraRig")
 spawn = NodePath("SpawnPoint")
 stranded_sound = NodePath("Stranded")
+navigation = NodePath("Navigation")
 sink = NodePath("Kitchen/UnderSink")
 kitchen_drawer = NodePath("Kitchen/Drawer")
 fridge = NodePath("Kitchen/Fridge")
@@ -987,6 +999,9 @@ far = 80
 [node name="Hud" parent="." instance=ExtResource("41_hud")]
 
 [node name="NightOverlay" parent="." instance=ExtResource("42_night_overlay")]
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_63")
 
 [node name="Stranded" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("43_groan_a")

@@ -39,7 +39,7 @@ func update_target(origin: Vector3, forward: Vector3, exclude: Array[RID],
 		var score := dist + facing_weight * (1.0 - facing)
 		if it == current:
 			score -= keep_bonus
-		if score < best_score and _has_line_of_sight(origin, it, exclude):
+		if score < best_score and has_line_of_sight(origin, it, exclude):
 			best = it
 			best_score = score
 	if best != current:
@@ -47,7 +47,8 @@ func update_target(origin: Vector3, forward: Vector3, exclude: Array[RID],
 		target_changed.emit(current)
 
 
-func _has_line_of_sight(origin: Vector3, it: Interactable, exclude: Array[RID]) -> bool:
+## True if `it` can be seen (and reached for) from a player standing at `origin`.
+func has_line_of_sight(origin: Vector3, it: Interactable, exclude: Array[RID]) -> bool:
 	var query := PhysicsRayQueryParameters3D.create(
 			origin + Vector3.UP * eye_height, it.get_interaction_position())
 	query.exclude = exclude

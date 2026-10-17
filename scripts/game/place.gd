@@ -5,8 +5,9 @@ extends Node3D
 ## Puts the player at the entry they came through, restores what the place
 ## looked like when they last left and saves it again on the way out, wires
 ## the HUD, and handles the evening: at home the night begins; anywhere else
-## the player has a few seconds to get back. Content places extend this and
-## roll their loot in _first_visit().
+## the player has a few seconds to get back. It also keeps the walkable area
+## (navigation mesh) up to date for click-to-move. Content places extend this
+## and roll their loot in _first_visit().
 
 @export var player: PlayerController
 @export var hud: Hud
@@ -16,10 +17,14 @@ extends Node3D
 @export var spawn: Marker3D
 ## Home only: runs the night.
 @export var night: NightDirector
+## Walkable area for click-to-move, baked from this place's static colliders.
+@export var navigation: NavigationRegion3D
 ## Played once when darkness catches the player away from home.
 @export var stranded_sound: AudioStreamPlayer
 ## Anything outside this box counts as escaped and is put back at the spawn.
 @export var room_bounds := AABB(Vector3(-50, -5, -50), Vector3(100, 20, 100))
+
+var _nav_dirty := 0
 
 
 func _ready() -> void:
@@ -34,6 +39,10 @@ func _ready() -> void:
 	else:
 		_first_visit()
 	_spawn_player()
+	if navigation:
+		add_to_group(&"nav_source")
+		navigation.bake_navigation_mesh(false)
+		GameState.navigation_changed.connect(_on_navigation_changed)
 	GameState.phase_changed.connect(_on_phase)
 	if is_home():
 		_arrive_home()
@@ -102,6 +111,11 @@ func _on_phase(phase: StringName) -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	# Rebake a couple of frames after a change, once deferred collider edits landed.
+	if _nav_dirty > 0 and navigation and not navigation.is_baking():
+		_nav_dirty -= 1
+		if _nav_dirty == 0:
+			navigation.bake_navigation_mesh(true)
 	if not room_bounds.has_point(player.global_position) and spawn:
 		player.global_position = spawn.global_position
 		player.velocity = Vector3.ZERO
@@ -110,6 +124,10 @@ func _physics_process(_delta: float) -> void:
 		GameState.set_phase(&"over")
 		player.controls_enabled = false
 		overlay.show_end(false, "It found you in the hallway at %s." % GameState.clock_text())
+
+
+func _on_navigation_changed() -> void:
+	_nav_dirty = 2
 
 
 func _unhandled_input(event: InputEvent) -> void:

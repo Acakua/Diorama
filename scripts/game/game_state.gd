@@ -8,6 +8,8 @@ signal phase_changed(phase: StringName)
 signal items_changed
 ## Something the player should be told (flashlight died, bag full...).
 signal notice(text: String)
+## The walkable area changed (a door opened, furniture moved).
+signal navigation_changed
 
 const HOME := "res://scenes/room/room_01.tscn"
 const DAY_START := 16.0

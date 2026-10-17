@@ -348,7 +348,18 @@ size = Vector3(0.1, 0.06, 0.26)
 bevel = 0.02
 material = ExtResource("26_shoes")
 
-[node name="Corridor4" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "pile")]
+[sub_resource type="NavigationMesh" id="NavigationMesh_56"]
+geometry_parsed_geometry_type = 1
+geometry_collision_mask = 1
+geometry_source_geometry_mode = 1
+geometry_source_group_name = &"nav_source"
+cell_size = 0.05
+cell_height = 0.05
+agent_height = 1.7
+agent_radius = 0.3
+agent_max_climb = 0.1
+
+[node name="Corridor4" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "navigation", "pile")]
 script = ExtResource("1_corridor")
 player = NodePath("Player")
 hud = NodePath("Hud")
@@ -356,6 +367,7 @@ overlay = NodePath("NightOverlay")
 camera_rig = NodePath("CameraRig")
 spawn = NodePath("SpawnPoint")
 stranded_sound = NodePath("Stranded")
+navigation = NodePath("Navigation")
 pile = NodePath("Props/RenovationPile")
 room_bounds = AABB(-6.5, -1, -3, 13, 5, 4.6)
 
@@ -935,6 +947,9 @@ far = 80
 [node name="Hud" parent="." instance=ExtResource("30_hud")]
 
 [node name="NightOverlay" parent="." instance=ExtResource("31_night_overlay")]
+
+[node name="Navigation" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_56")
 
 [node name="Stranded" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("32_groan_a")

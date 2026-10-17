@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/hud.gd" id="1_hud"]
 [ext_resource type="Script" path="res://scripts/ui/focus_marker.gd" id="2_focus_marker"]
+[ext_resource type="Script" path="res://scripts/ui/pointer.gd" id="3_pointer"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1"]
 content_margin_left = 14
@@ -159,6 +160,23 @@ grow_vertical = 0
 vertical_alignment = 2
 mouse_filter = 2
 label_settings = SubResource("LabelSettings_7")
+
+[node name="Flashlight" type="Button" parent="."]
+anchors_preset = 2
+anchor_top = 1
+anchor_bottom = 1
+offset_left = 16
+offset_top = -126
+offset_right = 166
+offset_bottom = -96
+grow_vertical = 0
+focus_mode = 0
+text = "Flashlight: off"
+visible = false
+
+[node name="Pointer" type="Node" parent="." node_paths=PackedStringArray("hud")]
+script = ExtResource("3_pointer")
+hud = NodePath("..")
 
 [node name="Debug" type="Label" parent="."]
 offset_left = 14

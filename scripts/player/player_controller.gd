@@ -8,8 +8,10 @@ extends CharacterBody3D
 ##   F  the target's second action, which may hold the player in place, like
 ##      looking through the peephole;
 ##   R  use something from the bag on the target (some held, like nailing).
-## Q toggles the flashlight. Body animation lives in PlayerAnimation; this
-## script only feeds it speed, reach and carry values.
+## Q toggles the flashlight. With the mouse, walk_to() follows a path over the
+## place's navigation mesh and command() walks up to an object and then runs
+## the same sequence, holding held actions by itself. Body animation lives in
+## PlayerAnimation; this script only feeds it speed, reach and carry values.
 
 signal interaction_started(target: Interactable)
 signal interaction_finished(target: Interactable)
@@ -46,6 +48,8 @@ var carried: Carryable = null
 var scripted := false
 var scripted_direction := Vector3.ZERO
 var scripted_hold := false
+## Set when an action was started by a click: a held action keeps going alone.
+var auto_hold := false
 
 var _target: Interactable
 ## &"use" (E), &"give" (E while carrying), &"alt" (F) or &"item" (R).
@@ -59,6 +63,11 @@ var _focus_point := Vector3.ZERO
 var _focus_end := Callable()
 var _focus_prompts := PackedStringArray(["", "Stop Looking", ""])
 var _gravity := float(ProjectSettings.get_setting("physics/3d/default_gravity"))
+var _path := PackedVector3Array()
+var _path_i := 0
+var _pending: Interactable = null
+var _pending_mode: StringName = &"use"
+var _stuck := 0.0
 
 @onready var animator: PlayerAnimation = $Visual
 @onready var detector: InteractionDetector = $InteractionDetector
@@ -91,9 +100,72 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle_flashlight()
 
 
+## Walks to the walkable spot closest to `point` (a click on the floor).
+func walk_to(point: Vector3) -> void:
+	if state == State.FOCUS:
+		end_focus()
+		return
+	if state == State.HOLD:
+		_cancel()
+	if state != State.MOVE or not controls_enabled:
+		return
+	_pending = null
+	_set_path(point)
+
+
+## Walks up to `target` (if needed) and runs `mode` on it: &"use", &"give",
+## &"alt" or &"item". Held actions keep going by themselves.
+func command(target: Interactable, mode: StringName) -> void:
+	if state == State.FOCUS:
+		end_focus()
+	if state == State.HOLD:
+		_cancel()
+	if state != State.MOVE or not controls_enabled:
+		return
+	_pending = target
+	_pending_mode = mode
+	if _can_reach(target):
+		_start_pending()
+	else:
+		_set_path(target.get_interaction_position())
+
+
+## Stops walking or a held action (a click elsewhere).
+func cancel_action() -> void:
+	if state == State.HOLD:
+		_cancel()
+	_clear_path()
+
+
+func is_walking() -> bool:
+	return not _path.is_empty()
+
+
+## [label, mode] pairs `target` offers right now, primary first.
+func get_actions(target: Interactable) -> Array:
+	var actions := []
+	if target == null or not target.can_interact():
+		return actions
+	if carried:
+		if target.accepts(carried):
+			actions.append([target.get_accept_prompt(carried), &"give"])
+		return actions
+	var use := target.get_prompt()
+	if use != "":
+		actions.append([use, &"use"])
+	var alt := target.get_secondary_prompt()
+	if alt != "":
+		actions.append([alt, &"alt"])
+	var item := target.get_item_prompt()
+	if item != "":
+		actions.append([item, &"item"])
+	return actions
+
+
 ## E: use the current target, hand it the carried item, or put the item down.
 ## Returns false when nothing happened.
 func try_interact() -> bool:
+	auto_hold = false
 	if state != State.MOVE:
 		return false
 	var target := detector.current
@@ -119,6 +191,7 @@ func try_secondary() -> bool:
 
 ## R: use something from the bag on the current target.
 func try_use_item() -> bool:
+	auto_hold = false
 	var target := detector.current
 	if state != State.MOVE or carried or target == null or target.get_item_prompt() == "":
 		return false
@@ -242,6 +315,14 @@ func _physics_process(delta: float) -> void:
 	match state:
 		State.MOVE:
 			wish = _read_move_input()
+			if wish != Vector3.ZERO:
+				_clear_path()
+				_pending = null
+			elif _pending and _can_reach(_pending):
+				_clear_path()
+				_start_pending()
+			elif not _path.is_empty():
+				wish = _follow_path(delta)
 		State.APPROACH:
 			wish = _approach_step()
 			speed_limit *= approach_speed
@@ -364,7 +445,7 @@ func _hold_step(delta: float) -> void:
 	# Rummaging / hammering.
 	animator.action_weight = 0.5 + 0.5 * sin(_state_time * 14.0)
 	var key := &"use_item" if _mode == &"item" else &"interact"
-	if not (scripted_hold or (controls_enabled and Input.is_action_pressed(key))):
+	if not (scripted_hold or auto_hold or (controls_enabled and Input.is_action_pressed(key))):
 		_cancel()
 		return
 	_hold += delta
@@ -393,6 +474,7 @@ func _fire() -> void:
 
 
 func _finish() -> void:
+	auto_hold = false
 	animator.reach_weight = 0.0
 	animator.action_weight = 0.0
 	var finished := _target
@@ -402,6 +484,7 @@ func _finish() -> void:
 
 
 func _cancel() -> void:
+	auto_hold = false
 	if state == State.FOCUS:
 		end_focus()
 		return
@@ -419,6 +502,62 @@ func _focus_step(delta: float) -> void:
 	animator.action_weight = 0.0
 	if _read_move_input() != Vector3.ZERO:
 		end_focus()
+
+
+func _start_pending() -> void:
+	var target := _pending
+	_pending = null
+	if target == null or not target.can_interact():
+		return
+	auto_hold = true
+	if not _start(target, _pending_mode):
+		auto_hold = false
+
+
+func _can_reach(target: Interactable) -> bool:
+	var to := target.get_interaction_position() - global_position
+	to.y = 0.0
+	return to.length() <= target.interaction_range * 0.85 			and detector.has_line_of_sight(global_position, target, [get_rid()])
+
+
+func _set_path(point: Vector3) -> void:
+	var map := get_world_3d().navigation_map
+	var goal := NavigationServer3D.map_get_closest_point(map, Vector3(point.x, global_position.y, point.z))
+	_path = NavigationServer3D.map_get_path(map, global_position, goal, true)
+	_path_i = 0
+	_stuck = 0.0
+
+
+func _clear_path() -> void:
+	_path = PackedVector3Array()
+	_path_i = 0
+
+
+## Steering toward the next waypoint; slows down for the last one.
+func _follow_path(delta: float) -> Vector3:
+	while _path_i < _path.size():
+		var to := _path[_path_i] - global_position
+		to.y = 0.0
+		if to.length() > (0.08 if _path_i == _path.size() - 1 else 0.2):
+			break
+		_path_i += 1
+	if _path_i >= _path.size():
+		_clear_path()
+		if _pending:
+			notice.emit("I can't reach that from here.")
+			_pending = null
+		return Vector3.ZERO
+	var next := _path[_path_i] - global_position
+	next.y = 0.0
+	var last := _path[_path.size() - 1] - global_position
+	last.y = 0.0
+	# Give up if a wall or the furniture holds us in place.
+	_stuck = _stuck + delta if get_real_velocity().length() < 0.15 else 0.0
+	if _stuck > 0.8:
+		_clear_path()
+		_pending = null
+		return Vector3.ZERO
+	return next.normalized() * minf(1.0, last.length() / 0.35 + 0.25)
 
 
 func _release_carried() -> void:

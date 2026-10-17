@@ -24,6 +24,11 @@ godot --path .
 3. Double-click `play.bat`. The first start imports the assets (a few seconds); nothing else
    needs installing. Python is only needed to regenerate the sounds (`tools/make_sounds.py`).
 
+Mouse only: hover an object to see what a click does; **left click** the floor to walk there
+(pathfinding) or an object to walk up and use it; **right click** an object for its other
+actions; click again to stop; the on-screen *Flashlight* button toggles the light. The keyboard
+still works:
+
 | Key | Action |
 |---|---|
 | W A S D / arrows | Move (relative to the camera) |
@@ -48,7 +53,7 @@ scripts/objects/      door (hinge, barricades, peephole), cabinet, radio, light 
 scripts/player/       player_controller.gd (movement + action sequence), player_animation.gd
 scripts/world/        daylight.gd (window light from the clock)
 scripts/camera/       iso_camera.gd
-scripts/ui/           hud, focus marker, peephole view, night overlay
+scripts/ui/           hud, pointer (mouse play), focus marker, peephole view, night overlay
 scenes/               the home room, shared objects, furniture, player, zombie, UI
 assets/               materials, shaders, sounds (synthesised by tools/make_sounds.py)
 content/              hidden: places, night scripts, content tests, bible.md
@@ -64,6 +69,7 @@ when the player leaves a place.
 ```
 godot --headless --path . res://tests/smoke_test.tscn        # loads every place
 godot --headless --path . res://tests/acceptance_test.tscn   # the room's interactions (exit code = failures)
+godot --headless --path . res://tests/pointer_test.tscn      # mouse: hover, click to walk/use, right-click menu
 godot --headless --path . res://content/tests/slice1_test.tscn   # a whole day and night (spoilers in its output)
 godot --path . res://tests/fps_probe.tscn                    # average / worst frame time
 ```

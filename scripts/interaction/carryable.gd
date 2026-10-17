@@ -81,3 +81,5 @@ func set_state(state: Dictionary) -> void:
 func _set_solid(on: bool) -> void:
 	for shape in _body.find_children("*", "CollisionShape3D"):
 		shape.set_deferred(&"disabled", not on)
+	_body.set_deferred(&"collision_layer", 1 if on else 0)
+	GameState.navigation_changed.emit()

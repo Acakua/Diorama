@@ -4,7 +4,8 @@ extends CanvasLayer
 ## "[R]" actions when the object has them) with a small ring over the object
 ## it refers to (it fills while an action is held), a short status line after
 ## each interaction, the bag and tools in the corner, and an F3 debug readout
-## that starts hidden.
+## that starts hidden. With the mouse (the Pointer child) the prompt names what
+## a click and a right click on the hovered object do instead.
 
 @export var player: PlayerController
 
@@ -18,12 +19,19 @@ const PROMPT_RISE := 8.0
 var _prompt_alpha := 0.0
 var _status_time := 0.0
 var _shown := PackedStringArray(["", "", ""])
+var _shown_keys := PackedStringArray(["E", "F", "R"])
+## True after mouse input, false after keyboard input: picks which prompts to show.
+var _mouse_mode := false
 
 @onready var _marker: FocusMarker = $Marker
 @onready var _prompt: Control = $Prompt
 @onready var _keys: Array[Control] = [$Prompt/Box/Row/Key, $Prompt/Box/Row/Key2, $Prompt/Box/Row/Key3]
 @onready var _actions: Array[Label] = [
 	$Prompt/Box/Row/Action, $Prompt/Box/Row/Action2, $Prompt/Box/Row/Action3]
+@onready var _key_labels: Array[Label] = [
+	$Prompt/Box/Row/Key/Label, $Prompt/Box/Row/Key2/Label, $Prompt/Box/Row/Key3/Label]
+@onready var _pointer: Pointer = $Pointer
+@onready var _flashlight: Button = $Flashlight
 @onready var _status: Label = $Status
 @onready var _bag: Label = $Bag
 @onready var _debug: Label = $Debug
@@ -34,6 +42,14 @@ func _ready() -> void:
 	_marker.modulate.a = 0.0
 	_status.modulate.a = 0.0
 	_debug.visible = false
+	_flashlight.pressed.connect(_on_flashlight_pressed)
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton or event is InputEventMouseMotion:
+		_mouse_mode = true
+	elif event is InputEventKey and event.pressed:
+		_mouse_mode = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -62,15 +78,34 @@ func show_status(text: String) -> void:
 
 
 func _process(delta: float) -> void:
-	var prompts := player.get_prompts() if player else PackedStringArray(["", "", ""])
+	var prompts := PackedStringArray(["", "", ""])
+	var keys := PackedStringArray(["E", "F", "R"])
+	var target: Interactable = null
+	if player and _mouse_mode:
+		keys = PackedStringArray(["Click", "Right-click", ""])
+		if player.state == PlayerController.State.FOCUS:
+			prompts = PackedStringArray(["Stop", "", ""])
+		elif _pointer.hover and not player.is_busy():
+			target = _pointer.hover
+			var actions := player.get_actions(target)
+			var rest: PackedStringArray = []
+			for i in range(1, actions.size()):
+				rest.append(actions[i][0])
+			prompts = PackedStringArray([actions[0][0], " / ".join(rest), ""])
+		elif player.state == PlayerController.State.HOLD:
+			target = player.get_prompt_target()
+	elif player:
+		prompts = player.get_prompts()
+		target = player.get_prompt_target()
 	var show := prompts[0] != "" or prompts[1] != "" or prompts[2] != ""
-	if show and prompts != _shown:
+	if show and (prompts != _shown or keys != _shown_keys):
 		_shown = prompts
+		_shown_keys = keys
 		for i in 3:
 			_actions[i].text = prompts[i]
 			_actions[i].visible = prompts[i] != ""
 			_keys[i].visible = prompts[i] != ""
-	var target := player.get_prompt_target() if player else null
+			_key_labels[i].text = keys[i]
 	if target and player.camera:
 		_marker.position = player.camera.unproject_position(target.get_interaction_position())
 	_marker.progress = player.get_hold_progress() if player else 0.0
@@ -86,13 +121,22 @@ func _process(delta: float) -> void:
 	_status_time = maxf(0.0, _status_time - delta)
 	_status.modulate.a = clampf(_status_time / STATUS_FADE, 0.0, 1.0)
 	_bag.text = _bag_text()
+	_flashlight.visible = GameState.has_tool(&"flashlight") and player != null and player.controls_enabled
+	_flashlight.text = "Flashlight: on" if GameState.flashlight_on else "Flashlight: off"
 
 	if _debug.visible:
 		_debug.text = _debug_text()
 
 
-func _chip(i: int, key: String) -> String:
-	return "[%s] %s" % [key, _shown[i]] if _prompt_alpha > 0.5 and _shown[i] != "" else ""
+func _on_flashlight_pressed() -> void:
+	if player:
+		player.toggle_flashlight()
+
+
+func _chip(i: int, _key: String) -> String:
+	if _prompt_alpha <= 0.5 or _shown[i] == "":
+		return ""
+	return "[%s] %s" % [_shown_keys[i], _shown[i]]
 
 
 func _bag_text() -> String:
