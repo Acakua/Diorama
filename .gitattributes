@@ -2,3 +2,4 @@
 * text=auto eol=lf
 *.wav binary
 *.png binary
+*.bat text eol=crlf
