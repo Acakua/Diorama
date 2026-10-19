@@ -44,6 +44,8 @@ var places := {}
 ## Name of the marker the next place spawns the player at ("" = its default).
 var entry := ""
 var current_place: Node = null
+## Item definitions added by content (see Items.register()).
+var extra_items := {}
 var stranded_time := 0.0
 
 var _fade: ColorRect

@@ -7,6 +7,9 @@ extends Node3D
 ## The model faces +Z and +X is the character's left. A positive X rotation
 ## swings a hanging limb backward and tips an upright part forward.
 
+## A foot touched down (twice per stride, while walking).
+signal stepped
+
 @export var stride_length := 1.25
 @export var leg_swing_deg := 22.0
 @export var knee_bend_deg := 34.0
@@ -63,7 +66,11 @@ var _carry := 0.0
 func _process(delta: float) -> void:
 	_time += delta
 	_walk = lerpf(_walk, clampf(speed / max_speed, 0.0, 1.0), 1.0 - exp(-9.0 * delta))
+	var before := _phase
 	_phase = fmod(_phase + delta * speed / stride_length * TAU, TAU)
+	# A heel lands when the legs are spread widest (sin(phase) = +-1).
+	if _walk > 0.1 and speed > 0.1 and fposmod(_phase - PI / 2.0, PI) < fposmod(before - PI / 2.0, PI):
+		stepped.emit()
 	var w := _walk
 	var idle := 1.0 - w
 	var s := sin(_phase)

@@ -144,7 +144,7 @@ func is_walking() -> bool:
 ## [label, mode] pairs `target` offers right now, primary first.
 func get_actions(target: Interactable) -> Array:
 	var actions := []
-	if target == null or not target.can_interact():
+	if target == null or not target.is_available():
 		return actions
 	if carried:
 		if target.accepts(carried):
@@ -507,7 +507,7 @@ func _focus_step(delta: float) -> void:
 func _start_pending() -> void:
 	var target := _pending
 	_pending = null
-	if target == null or not target.can_interact():
+	if target == null or not target.is_available():
 		return
 	auto_hold = true
 	if not _start(target, _pending_mode):

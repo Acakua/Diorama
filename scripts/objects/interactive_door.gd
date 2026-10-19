@@ -38,6 +38,8 @@ signal plank_torn
 @export var start_open := false
 @export var locked := false
 @export var locked_text := "It's locked."
+## A locked door opens for good once the player carries this item (a key).
+@export var key_item: StringName = &""
 ## Doors that show the same door in two places share state under this key.
 @export var shared_key := ""
 
@@ -87,6 +89,7 @@ var _hammer_timer := 0.0
 
 func _ready() -> void:
 	super()
+	add_to_group(&"sound_portals")
 	health = max_health
 	if start_open:
 		is_open = true
@@ -103,7 +106,7 @@ func can_interact() -> bool:
 
 func get_prompt() -> String:
 	if locked:
-		return "Try Door"
+		return "Unlock Door" if _has_key() else "Try Door"
 	if wedge:
 		return "Remove Chair"
 	if planks > 0:
@@ -185,7 +188,12 @@ func get_stand_position(player_position: Vector3) -> Variant:
 
 func _on_interact(player: Node3D) -> String:
 	if locked:
-		play_sound(&"SfxKnock")
+		if _has_key():
+			locked = false
+			_save_shared()
+			play_sound(&"SfxClose")
+			return "Unlocked with the %s." % Items.display_name(key_item).to_lower()
+		play_sound(&"SfxRattle")
 		_jolt(deg_to_rad(0.4), false)
 		return locked_text
 	if wedge:
@@ -243,6 +251,16 @@ func _on_receive(item: Interactable, _player: Node3D) -> String:
 	wedge.place_at(_wedge_point.global_transform, _wedge_point)
 	play_sound(&"SfxWedge")
 	return "Chair wedged under the handle"
+
+
+## Sound portal (see OccludedSound): an open or broken door lets sound through.
+func is_open_for_sound() -> bool:
+	return is_open or is_broken
+
+
+## Sound portal: a point in the doorway on each side of the wall.
+func get_sound_points() -> PackedVector3Array:
+	return PackedVector3Array([to_global(Vector3(0.0, 1.1, 0.4)), to_global(Vector3(0.0, 1.1, -0.45))])
 
 
 ## True if the door is held shut by a chair or planks.
@@ -308,13 +326,14 @@ func break_open() -> void:
 
 
 func get_state() -> Dictionary:
-	return {"is_open": is_open, "health": health, "planks": planks, "broken": is_broken}
+	return {"is_open": is_open, "health": health, "planks": planks, "broken": is_broken, "locked": locked}
 
 
 func set_state(state: Dictionary) -> void:
 	is_open = state.get("is_open", is_open)
 	health = state.get("health", health)
 	is_broken = state.get("broken", false)
+	locked = state.get("locked", locked)
 	_set_planks(state.get("planks", 0))
 	_apply_pose()
 
@@ -358,6 +377,10 @@ func _tear_plank() -> void:
 	drop.tween_property(falling, "rotation:z", falling.rotation.z + 0.4, 0.4)
 	drop.chain().tween_interval(2.5)
 	drop.chain().tween_callback(falling.queue_free)
+
+
+func _has_key() -> bool:
+	return key_item != &"" and (GameState.has_tool(key_item) or GameState.count(key_item) > 0)
 
 
 func _has_work_light() -> bool:

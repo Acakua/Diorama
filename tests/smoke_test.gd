@@ -6,6 +6,7 @@ const PLACES := [
 	"res://scenes/room/room_01.tscn",
 	"res://content/places/corridor_4.tscn",
 	"res://content/places/flat_4b.tscn",
+	"res://content/places/flat_4c.tscn",
 ]
 
 
@@ -14,6 +15,7 @@ func _ready() -> void:
 
 
 func _run() -> void:
+	Journal.use_memory_only()
 	for path in PLACES:
 		var place: Node = load(path).instantiate()
 		add_child(place)
@@ -22,4 +24,6 @@ func _run() -> void:
 		print("ok  ", path)
 		place.queue_free()
 		await get_tree().process_frame
+	# Let the audio server drop the places' playbacks before quitting.
+	await get_tree().create_timer(0.3).timeout
 	get_tree().quit()

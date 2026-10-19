@@ -26,7 +26,7 @@ func update_target(origin: Vector3, forward: Vector3, exclude: Array[RID],
 	var best_score := INF
 	for node in get_tree().get_nodes_in_group(&"interactable"):
 		var it := node as Interactable
-		if it == null or not it.can_interact():
+		if it == null or not it.is_available():
 			continue
 		if carrying and not it.accepts(carrying):
 			continue

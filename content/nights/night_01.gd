@@ -30,7 +30,8 @@ func _setup(late: bool) -> void:
 	door.tear_chance = 0.2
 	zombie.left.connect(_on_left)
 	door.hit.connect(_on_door_hit)
-	door.plank_torn.connect(func() -> void: _say("tear", "It tore a board off!"))
+	door.plank_torn.connect(_on_plank_torn)
+	zombie.gave_up.connect(_on_gave_up)
 	peephole.opened.connect(_on_peek)
 	if late:
 		zombie.attention = 0.6
@@ -122,6 +123,20 @@ func _on_door_hit(damage: float) -> void:
 func _on_peek() -> void:
 	if zombie.is_at_door():
 		_say("peek", "That's Mr. Hale from 4B... What happened to his face?", 5.0)
+		Journal.learn(&"person_hale", &"people", "Mr. Hale, 4B",
+				"Retired bus driver from across the hall. Polite, lonely, always whistling.\n\n"
+				+ "Something is very wrong with him now. He stands at my door at night.")
+
+
+func _on_plank_torn() -> void:
+	_say("tear", "It tore a board off!")
+	Journal.learn(&"clue_planks_tear", &"clues", "Boards don't hold forever",
+			"Heavy blows can tear a board off the door. Spare planks and a light to nail them by.")
+
+
+func _on_gave_up() -> void:
+	Journal.learn(&"clue_dark_quiet", &"clues", "Dark and quiet",
+			"When the room stayed dark and quiet long enough, it gave up on the door and wandered off.")
 
 
 func _say(key: String, text: String, seconds := 4.5) -> void:

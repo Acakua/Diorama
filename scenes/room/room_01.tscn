@@ -40,10 +40,15 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="38_hud"]
 [ext_resource type="PackedScene" path="res://scenes/zombie/zombie.tscn" id="39_zombie"]
 [ext_resource type="AudioStream" path="res://assets/audio/birds.wav" id="40_birds"]
-[ext_resource type="PackedScene" path="res://scenes/ui/peephole_view.tscn" id="41_peephole_view"]
-[ext_resource type="PackedScene" path="res://scenes/ui/night_overlay.tscn" id="42_night_overlay"]
-[ext_resource type="Script" path="res://content/nights/night_01.gd" id="43_night_01"]
-[ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="44_heartbeat"]
+[ext_resource type="Script" path="res://scripts/audio/ambience.gd" id="41_ambience"]
+[ext_resource type="AudioStream" path="res://assets/audio/outside_day.wav" id="42_outside_day"]
+[ext_resource type="AudioStream" path="res://assets/audio/outside_night.wav" id="43_outside_night"]
+[ext_resource type="AudioStream" path="res://assets/audio/clock_tick.wav" id="44_clock_tick"]
+[ext_resource type="PackedScene" path="res://scenes/ui/peephole_view.tscn" id="45_peephole_view"]
+[ext_resource type="PackedScene" path="res://scenes/ui/night_overlay.tscn" id="46_night_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/journal_view.gd" id="47_journal_view"]
+[ext_resource type="Script" path="res://content/nights/night_01.gd" id="48_night_01"]
+[ext_resource type="AudioStream" path="res://assets/audio/heartbeat.wav" id="49_heartbeat"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -394,6 +399,13 @@ navigation = NodePath("Navigation")
 room_bounds = AABB(-5, -1, -3.2, 9.2, 4, 6.4)
 cabinet = NodePath("Cabinet")
 radio = NodePath("Radio")
+journal_id = &"place_home"
+journal_title = "4A - Home"
+journal_text = "My flat on the fourth floor of Ashgrove Court. One room, one door, one window."
+floor_surface = &"wood"
+reverb_size = 0.25
+reverb_damping = 0.7
+reverb_wet = 0.1
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
@@ -904,13 +916,35 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.6, -3.7)
 stream = ExtResource("40_birds")
 volume_db = -6
 unit_size = 4
+max_db = 6
+bus = &"World"
 
-[node name="PeepholeView" parent="." instance=ExtResource("41_peephole_view")]
+[node name="Outside" type="Node3D" parent="."]
+script = ExtResource("41_ambience")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 1.5, -3.4)
+day = ExtResource("42_outside_day")
+night = ExtResource("43_outside_night")
+volume_db = -18
+unit_size = 3
 
-[node name="NightOverlay" parent="." instance=ExtResource("42_night_overlay")]
+[node name="ClockTick" type="AudioStreamPlayer3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 2.3, -2.9)
+stream = ExtResource("44_clock_tick")
+volume_db = -14
+unit_size = 1.5
+max_db = 6
+bus = &"World"
+autoplay = true
+
+[node name="PeepholeView" parent="." instance=ExtResource("45_peephole_view")]
+
+[node name="NightOverlay" parent="." instance=ExtResource("46_night_overlay")]
+
+[node name="JournalView" type="CanvasLayer" parent="."]
+script = ExtResource("47_journal_view")
 
 [node name="NightDirector" type="Node" parent="." node_paths=PackedStringArray("player", "door", "zombie", "lamp", "radio", "overlay", "heartbeat", "corridor_in", "corridor_out", "break_in_path", "peephole", "birds")]
-script = ExtResource("43_night_01")
+script = ExtResource("48_night_01")
 player = NodePath("../Player")
 door = NodePath("../Door")
 zombie = NodePath("../Zombie")
@@ -925,5 +959,5 @@ peephole = NodePath("../PeepholeView")
 birds = NodePath("../Birds")
 
 [node name="Heartbeat" type="AudioStreamPlayer" parent="NightDirector"]
-stream = ExtResource("44_heartbeat")
+stream = ExtResource("49_heartbeat")
 volume_db = -60

@@ -10,6 +10,9 @@
 [ext_resource type="StandardMaterial3D" path="res://assets/materials/hair.tres" id="8_hair"]
 [ext_resource type="StandardMaterial3D" path="res://assets/materials/eyes.tres" id="9_eyes"]
 [ext_resource type="Script" path="res://scripts/interaction/interaction_detector.gd" id="10_interaction_detector"]
+[ext_resource type="Script" path="res://scripts/audio/ear.gd" id="11_ear"]
+[ext_resource type="AudioStream" path="res://assets/audio/step_wood_0.wav" id="12_step_wood_0"]
+[ext_resource type="Script" path="res://scripts/audio/footsteps.gd" id="13_footsteps"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1"]
 radius = 0.26
@@ -274,3 +277,17 @@ spot_angle_attenuation = 1.4
 
 [node name="InteractionDetector" type="Node3D" parent="."]
 script = ExtResource("10_interaction_detector")
+
+[node name="Ear" type="AudioListener3D" parent="."]
+script = ExtResource("11_ear")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
+
+[node name="Footsteps" type="AudioStreamPlayer3D" parent="." node_paths=PackedStringArray("animator")]
+script = ExtResource("13_footsteps")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+stream = ExtResource("12_step_wood_0")
+volume_db = -12
+unit_size = 2
+max_db = 6
+bus = &"World"
+animator = NodePath("../Visual")

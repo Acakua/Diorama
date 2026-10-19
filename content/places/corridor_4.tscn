@@ -27,11 +27,16 @@
 [ext_resource type="StandardMaterial3D" path="res://assets/materials/cardboard.tres" id="25_cardboard"]
 [ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="26_shoes"]
 [ext_resource type="Script" path="res://scripts/objects/flicker_light.gd" id="27_flicker_light"]
-[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="28_player"]
-[ext_resource type="Script" path="res://scripts/camera/iso_camera.gd" id="29_iso_camera"]
-[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="30_hud"]
-[ext_resource type="PackedScene" path="res://scenes/ui/night_overlay.tscn" id="31_night_overlay"]
-[ext_resource type="AudioStream" path="res://assets/audio/groan_a.wav" id="32_groan_a"]
+[ext_resource type="AudioStream" path="res://assets/audio/hum_bulb.wav" id="28_hum_bulb"]
+[ext_resource type="Script" path="res://scripts/audio/ambience.gd" id="29_ambience"]
+[ext_resource type="AudioStream" path="res://assets/audio/outside_day.wav" id="30_outside_day"]
+[ext_resource type="AudioStream" path="res://assets/audio/outside_night.wav" id="31_outside_night"]
+[ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="32_player"]
+[ext_resource type="Script" path="res://scripts/camera/iso_camera.gd" id="33_iso_camera"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="34_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/night_overlay.tscn" id="35_night_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/journal_view.gd" id="36_journal_view"]
+[ext_resource type="AudioStream" path="res://assets/audio/groan_a.wav" id="37_groan_a"]
 
 [sub_resource type="Environment" id="Environment_1"]
 background_mode = 1
@@ -359,7 +364,7 @@ agent_height = 1.7
 agent_radius = 0.3
 agent_max_climb = 0.1
 
-[node name="Corridor4" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "navigation", "pile")]
+[node name="Corridor4" type="Node3D" node_paths=PackedStringArray("player", "hud", "overlay", "camera_rig", "spawn", "stranded_sound", "navigation", "pile", "ficus")]
 script = ExtResource("1_corridor")
 player = NodePath("Player")
 hud = NodePath("Hud")
@@ -369,7 +374,15 @@ spawn = NodePath("SpawnPoint")
 stranded_sound = NodePath("Stranded")
 navigation = NodePath("Navigation")
 pile = NodePath("Props/RenovationPile")
+ficus = NodePath("Props/UnderFicus")
+journal_id = &"place_corridor"
+journal_title = "Fourth floor corridor"
+journal_text = "Five doors: mine at the window end, 4B, 4C, 4D, and the stairs at the far end. The stairwell is blocked."
 room_bounds = AABB(-6.5, -1, -3, 13, 5, 4.6)
+floor_surface = &"carpet"
+reverb_size = 0.6
+reverb_damping = 0.3
+reverb_wet = 0.22
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
@@ -464,11 +477,11 @@ mesh = SubResource("PrimitiveMesh_10")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.325, 1.95, -1.1)
 mesh = SubResource("PrimitiveMesh_11")
 
-[node name="AboveStairsUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+[node name="Above4AUpper" type="MeshInstance3D" parent="Structure/BackWall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 2.55, -1.1)
 mesh = SubResource("PrimitiveMesh_12")
 
-[node name="Above4DUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+[node name="Above4BUpper" type="MeshInstance3D" parent="Structure/BackWall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 2.55, -1.1)
 mesh = SubResource("PrimitiveMesh_12")
 
@@ -476,11 +489,11 @@ mesh = SubResource("PrimitiveMesh_12")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 2.55, -1.1)
 mesh = SubResource("PrimitiveMesh_12")
 
-[node name="Above4BUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+[node name="Above4DUpper" type="MeshInstance3D" parent="Structure/BackWall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.55, -1.1)
 mesh = SubResource("PrimitiveMesh_12")
 
-[node name="Above4AUpper" type="MeshInstance3D" parent="Structure/BackWall"]
+[node name="AboveStairsUpper" type="MeshInstance3D" parent="Structure/BackWall"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 2.55, -1.1)
 mesh = SubResource("PrimitiveMesh_12")
 
@@ -590,29 +603,28 @@ mesh = SubResource("PrimitiveMesh_34")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, -0.991)
 mesh = SubResource("PrimitiveMesh_35")
 
-[node name="DoorStairs" parent="." instance=ExtResource("14_door")]
+[node name="Door4A" parent="." instance=ExtResource("14_door")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4.6, 0, -1.2)
 has_peephole = false
-locked = true
-locked_text = "Blocked. Someone piled furniture against it from the stairs."
+shared_key = "door_4a"
 
-[node name="LabelStairs" type="Label3D" parent="Structure"]
+[node name="Label4A" type="Label3D" parent="Structure"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 2.28, -0.99)
-text = "Stairs"
+text = "4A"
 font_size = 56
 pixel_size = 0.003
 modulate = Color(0.85, 0.8, 0.68, 1)
 outline_size = 0
 
-[node name="Door4D" parent="." instance=ExtResource("14_door")]
+[node name="Door4B" parent="." instance=ExtResource("14_door")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.4, 0, -1.2)
 has_peephole = false
-locked = true
-locked_text = "Locked. There's faint music somewhere behind it."
+shared_key = "door_4b"
+start_open = true
 
-[node name="Label4D" type="Label3D" parent="Structure"]
+[node name="Label4B" type="Label3D" parent="Structure"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 2.28, -0.99)
-text = "4D"
+text = "4B"
 font_size = 56
 pixel_size = 0.003
 modulate = Color(0.85, 0.8, 0.68, 1)
@@ -623,6 +635,8 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -0.2, 0, -1.2)
 has_peephole = false
 locked = true
 locked_text = "Locked. Nobody answers."
+shared_key = "door_4c"
+key_item = &"key_4c"
 
 [node name="Label4C" type="Label3D" parent="Structure"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 2.28, -0.99)
@@ -632,28 +646,29 @@ pixel_size = 0.003
 modulate = Color(0.85, 0.8, 0.68, 1)
 outline_size = 0
 
-[node name="Door4B" parent="." instance=ExtResource("14_door")]
+[node name="Door4D" parent="." instance=ExtResource("14_door")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 2, 0, -1.2)
 has_peephole = false
-shared_key = "door_4b"
-start_open = true
+locked = true
+locked_text = "Locked. There's faint music somewhere behind it."
 
-[node name="Label4B" type="Label3D" parent="Structure"]
+[node name="Label4D" type="Label3D" parent="Structure"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.28, -0.99)
-text = "4B"
+text = "4D"
 font_size = 56
 pixel_size = 0.003
 modulate = Color(0.85, 0.8, 0.68, 1)
 outline_size = 0
 
-[node name="Door4A" parent="." instance=ExtResource("14_door")]
+[node name="DoorStairs" parent="." instance=ExtResource("14_door")]
 transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 4.2, 0, -1.2)
 has_peephole = false
-shared_key = "door_4a"
+locked = true
+locked_text = "Blocked. Someone piled furniture against it from the stairs."
 
-[node name="Label4A" type="Label3D" parent="Structure"]
+[node name="LabelStairs" type="Label3D" parent="Structure"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 2.28, -0.99)
-text = "4A"
+text = "Stairs"
 font_size = 56
 pixel_size = 0.003
 modulate = Color(0.85, 0.8, 0.68, 1)
@@ -662,20 +677,37 @@ outline_size = 0
 [node name="Behind" type="Node3D" parent="Structure"]
 
 [node name="Flat4AFloor" type="MeshInstance3D" parent="Structure/Behind"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, -0.03, -1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, -0.03, -1.9)
 mesh = SubResource("PrimitiveMesh_36")
 
 [node name="Flat4ABack" type="MeshInstance3D" parent="Structure/Behind"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.6, -2.65)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0.6, -2.65)
 mesh = SubResource("PrimitiveMesh_37")
 
 [node name="Flat4BFloor" type="MeshInstance3D" parent="Structure/Behind"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -0.03, -1.9)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, -0.03, -1.9)
 mesh = SubResource("PrimitiveMesh_36")
 
 [node name="Flat4BBack" type="MeshInstance3D" parent="Structure/Behind"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.6, -2.65)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0.6, -2.65)
 mesh = SubResource("PrimitiveMesh_37")
+
+[node name="Flat4CFloor" type="MeshInstance3D" parent="Structure/Behind"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, -0.03, -1.9)
+mesh = SubResource("PrimitiveMesh_36")
+
+[node name="Flat4CBack" type="MeshInstance3D" parent="Structure/Behind"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.6, -2.65)
+mesh = SubResource("PrimitiveMesh_37")
+
+[node name="Exit4C" type="Area3D" parent="."]
+script = ExtResource("15_place_exit")
+target_scene = "res://content/places/flat_4c.tscn"
+target_entry = "FromCorridor"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Exit4C"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 1, -1.85)
+shape = SubResource("BoxShape3D_38")
 
 [node name="Exit4A" type="Area3D" parent="."]
 script = ExtResource("15_place_exit")
@@ -683,7 +715,7 @@ target_scene = "res://scenes/room/room_01.tscn"
 target_entry = "FromCorridor"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exit4A"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 1, -1.85)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 1, -1.85)
 shape = SubResource("BoxShape3D_38")
 
 [node name="Exit4B" type="Area3D" parent="."]
@@ -692,7 +724,7 @@ target_scene = "res://content/places/flat_4b.tscn"
 target_entry = "FromCorridor"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Exit4B"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -1.85)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 1, -1.85)
 shape = SubResource("BoxShape3D_38")
 
 [node name="Collision" type="StaticBody3D" parent="Structure"]
@@ -738,27 +770,27 @@ shape = SubResource("BoxShape3D_44")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.1, 1, 0)
 shape = SubResource("BoxShape3D_45")
 
-[node name="SideAStairs" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideA4A" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.15, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="SideBStairs" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideB4A" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.05, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="EndStairs" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="End4A" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 1.25, -2.8)
 shape = SubResource("BoxShape3D_47")
 
-[node name="SideA4D" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideA4B" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.95, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="SideB4D" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideB4B" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.85, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="End4D" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="End4B" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 1.25, -2.8)
 shape = SubResource("BoxShape3D_47")
 
@@ -774,27 +806,27 @@ shape = SubResource("BoxShape3D_46")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 1.25, -2.8)
 shape = SubResource("BoxShape3D_47")
 
-[node name="SideA4B" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideA4D" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.45, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="SideB4B" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideB4D" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.55, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="End4B" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="End4D" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1.25, -2.8)
 shape = SubResource("BoxShape3D_47")
 
-[node name="SideA4A" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideAStairs" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.65, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="SideB4A" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="SideBStairs" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.75, 1.25, -2)
 shape = SubResource("BoxShape3D_46")
 
-[node name="End4A" type="CollisionShape3D" parent="Structure/Collision"]
+[node name="EndStairs" type="CollisionShape3D" parent="Structure/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 1.25, -2.8)
 shape = SubResource("BoxShape3D_47")
 
@@ -816,12 +848,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 stream = ExtResource("17_rummage")
 volume_db = -4
 unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="SfxFound" type="AudioStreamPlayer3D" parent="Props/RenovationPile"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 stream = ExtResource("18_item_found")
 volume_db = -6
 unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="Board0" type="MeshInstance3D" parent="Props/RenovationPile"]
 transform = Transform3D(0.34202, -0.939693, 0, 0.939693, 0.34202, 0, 0, 0, 1, 0.1, 0.55, -0.2)
@@ -862,12 +898,16 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
 stream = ExtResource("17_rummage")
 volume_db = -4
 unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="SfxFound" type="AudioStreamPlayer3D" parent="Props/HoseCabinet"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.15)
 stream = ExtResource("18_item_found")
 volume_db = -6
 unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="Box" type="MeshInstance3D" parent="Props/HoseCabinet"]
 mesh = SubResource("PrimitiveMesh_51")
@@ -885,10 +925,39 @@ cast_shadow = 0
 mesh = SubResource("PrimitiveMesh_53")
 
 [node name="Ficus" parent="Props" instance=ExtResource("24_plant")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.4, 0, -0.55)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.55, 0, -0.6)
+
+[node name="UnderFicus" type="Node3D" parent="Props" node_paths=PackedStringArray("interaction_point")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.55, 0, -0.6)
+script = ExtResource("16_searchable")
+interaction_name = "Under the Ficus"
+interaction_range = 1.3
+reach_style = &"pull"
+interaction_point = NodePath("Point")
+requires_knowledge = &"clue_okafor_key"
+search_time = 1.2
+
+[node name="Point" type="Marker3D" parent="Props/UnderFicus"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+
+[node name="SfxSearch" type="AudioStreamPlayer3D" parent="Props/UnderFicus"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+stream = ExtResource("17_rummage")
+volume_db = -4
+unit_size = 3
+max_db = 6
+bus = &"World"
+
+[node name="SfxFound" type="AudioStreamPlayer3D" parent="Props/UnderFicus"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0.3)
+stream = ExtResource("18_item_found")
+volume_db = -6
+unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="Doormat4A" type="MeshInstance3D" parent="Props"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0.006, -0.65)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0.006, -0.65)
 cast_shadow = 0
 mesh = SubResource("PrimitiveMesh_54")
 
@@ -905,6 +974,23 @@ light_energy = 0.9
 omni_range = 4.5
 script = ExtResource("27_flicker_light")
 
+[node name="BulbHum" type="AudioStreamPlayer3D" parent="Lights"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2.55, 0)
+stream = ExtResource("28_hum_bulb")
+volume_db = -28
+unit_size = 1.5
+max_db = 6
+bus = &"World"
+autoplay = true
+
+[node name="Outside" type="Node3D" parent="."]
+script = ExtResource("29_ambience")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.3, 1.55, 0)
+day = ExtResource("30_outside_day")
+night = ExtResource("31_outside_night")
+volume_db = -20
+unit_size = 4
+
 [node name="BulbEast" type="OmniLight3D" parent="Lights"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.2, 2.6, 0)
 light_color = Color(1, 0.84, 0.6, 1)
@@ -912,21 +998,24 @@ light_energy = 0.9
 omni_range = 4.5
 
 [node name="SpawnPoint" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, -0.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0, -0.35)
 
 [node name="From4A" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, -0.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0, -0.35)
 
 [node name="From4B" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -0.35)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4, 0, -0.35)
 
-[node name="Player" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("28_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.2, 0, -0.35)
+[node name="From4C" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0, -0.35)
+
+[node name="Player" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("32_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 0, -0.35)
 camera = NodePath("../CameraRig/Pitch/Camera3D")
 
 [node name="CameraRig" type="Node3D" parent="." node_paths=PackedStringArray("target")]
 transform = Transform3D(0.707107, 0, 0.707107, 0, 1, 0, -0.707107, 0, 0.707107, 0, 0.9, 0)
-script = ExtResource("29_iso_camera")
+script = ExtResource("33_iso_camera")
 target = NodePath("../Player")
 center_pull = 0.3
 room_center = Vector3(0, 0, 0)
@@ -944,13 +1033,16 @@ size = 6.5
 near = 1
 far = 80
 
-[node name="Hud" parent="." instance=ExtResource("30_hud")]
+[node name="Hud" parent="." instance=ExtResource("34_hud")]
 
-[node name="NightOverlay" parent="." instance=ExtResource("31_night_overlay")]
+[node name="NightOverlay" parent="." instance=ExtResource("35_night_overlay")]
+
+[node name="JournalView" type="CanvasLayer" parent="."]
+script = ExtResource("36_journal_view")
 
 [node name="Navigation" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_56")
 
 [node name="Stranded" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("32_groan_a")
+stream = ExtResource("37_groan_a")
 volume_db = -10

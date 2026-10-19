@@ -33,6 +33,7 @@ func _ready() -> void:
 	if _shots:
 		DirAccess.make_dir_recursive_absolute(_shot_dir)
 	# This test covers the room itself: no night, a frozen afternoon clock.
+	Journal.use_memory_only()
 	GameState.new_run(1234)
 	GameState.clock_running = false
 	room = ROOM.instantiate()
@@ -68,6 +69,9 @@ func _run() -> void:
 	await _test_containment()
 	await _test_debug_toggle()
 
+	# Free the room and let the audio server drop its playbacks before quitting.
+	room.queue_free()
+	await get_tree().create_timer(0.3).timeout
 	print("\n%d/%d checks passed" % [_checks - _failures, _checks])
 	get_tree().quit(_failures)
 

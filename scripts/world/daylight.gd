@@ -9,6 +9,11 @@ extends Node
 @export var glass: StandardMaterial3D
 ## Overall brightness of this place's window (a corridor window is weaker).
 @export var strength := 1.0
+## How much of the window light is open sky rather than sun: a north window
+## never gets the sun, only a cool, even light.
+@export_range(0.0, 1.0) var sky := 0.0
+
+const SKY_COLOR := Color(0.74, 0.82, 0.96)
 
 ## [hour, light colour, light energy, ambient colour, ambient energy]
 const KEYS := [
@@ -37,7 +42,7 @@ func apply(hour: float) -> void:
 	var t := 0.0 if b[0] == a[0] else clampf((hour - a[0]) / (b[0] - a[0]), 0.0, 1.0)
 	t = smoothstep(0.0, 1.0, t)
 	if window_light:
-		window_light.light_color = (a[1] as Color).lerp(b[1], t)
+		window_light.light_color = (a[1] as Color).lerp(b[1], t).lerp(SKY_COLOR, sky)
 		window_light.light_energy = lerpf(a[2], b[2], t) * strength
 	if world:
 		world.environment.ambient_light_color = (a[3] as Color).lerp(b[3], t)

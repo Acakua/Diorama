@@ -22,14 +22,22 @@ Corridor runs west to east. Doors on its north wall, from west to east:
 
 | Door | State in slice 1 | Notes |
 |---|---|---|
-| Stairwell | blocked: a heap of chairs and a mattress piled on the landing | Someone barricaded the stairs from below on day 2. The infected squeeze through at night. |
+| 4A | home | End flat by the west window. |
+| 4B | ajar | Mr. Hale's flat, next door. Lootable. |
+| 4C | locked, "Nobody answers"; spare key under the ficus by 4A (knowledge gate) | Mrs. Okafor (70s) left with her son Daniel on day 1. |
 | 4D | locked | Slice 3: survivor inside (Nadia, 19, student). Faint radio music behind the door. |
-| 4C | locked, "Nobody answers" | Mrs. Okafor (70s) left with her son on day 1. Slice 4: keys under the mat on a later day. |
-| 4B | ajar | Mr. Hale's flat. Lootable. |
-| 4A | home | |
+| Stairwell | blocked: a heap of chairs and a mattress piled on the landing | East end. Someone barricaded the stairs from below on day 2. The infected squeeze through at night. |
 
-East end: a tall window with daylight; a dead potted ficus; a fire-hose cabinet (empty, glass
-cracked) and a small renovation pile (planks).
+West end: a tall window with the evening sun; the renovation pile (planks) under it; a dead
+potted ficus between 4A and 4B. A fire-hose cabinet (empty, glass cracked) between 4C and 4D.
+
+Windows only on outside walls. 4A is the end flat: its window is on the west front, with the
+corridor window, and gets the low evening sun (home's back wall; the corridor glimpse in the home
+scene ends at that same west wall). 4B-4D sit in the middle of the row, so their only outside
+wall is the north one, opposite their door: in the flat scenes that is the cut-away +X wall
+(sill, radiator and curtain ends at the cut; shadow-only casters shape the light). North
+windows get no direct sun (Daylight.sky). The back (-Z) walls of 4B and 4C are shared with the
+flat to the west. In the home scene the zombie comes along the corridor from +Z: from the stairs.
 
 ## Mr. Hale (the thing at the door)
 
@@ -46,7 +54,7 @@ a bloody bandage by the sink. Night 1's peephole thought names him.
 - Radio bulletins at day/night times (see night script).
 
 ### Corridor
-- Renovation pile near the east window: **2 planks** (search).
+- Renovation pile under the west window: **2 planks** (search).
 - Fire-hose cabinet: empty, with a scrawled "SORRY" on the glass (flavour).
 
 ### 4B (Hale's flat), seeded
@@ -90,6 +98,18 @@ home. Arriving late starts the night with his attention already raised.
 - Stealthy, chair + 3 planks, no repairs: survives narrowly.
 - Active (re-nails during lulls and the assault, spare planks, flashlight): survives clearly.
 
+## Sound (director's notes)
+
+- Outside, through every window: the city three days in. By day few cars, wind, birds, a siren
+  somewhere and a helicopter far off (it plants the rooftop pickups before the letter names
+  them). At night wind, a fainter siren, one distant crash. 4A's west window hears the street;
+  the north windows of 4B/4C are a courtyard, quieter.
+- Room tone: home and 4C have ticking clocks; 4B's fridge still hums (power is on); the
+  corridor bulb buzzes. Footsteps: boards in the flats, the runner in the corridor.
+- Hale: a dragging step, groans, and ragged breathing that is loudest when he stands still at
+  the door. All of him is muffled through the door and walls (OccludedSound) and clears when the
+  door opens: opening it to look is a mistake you can hear.
+
 ## Later slices (not built)
 
 - Slice 2: Hale (and others) roam floors 3-5 by day; stealth using the same light/noise rules;
@@ -98,3 +118,52 @@ home. Arriving late starts the night with his attention already raised.
   frequency. Can be brought to 4A: eats food, can hold the door, panics in the dark.
 - Slice 4: runs of 5 days to the evacuation (rooftop helicopter on day 5 at 10:00, announced by
   radio on night 3), food as the clock, events deck (power cuts, a looter, a fire on floor 6).
+
+
+## The core mystery (three layers)
+
+The player uncovers these across runs through fragments. Never state them outright in one place.
+
+1. **What happened to Mr. Hale.** The "stray" that bit him was Biscuit, the caretaker Walt
+   Brenner's terrier. Biscuit came back sick from the park where the first cases appeared (day 0).
+   Hale covered for his friend ("a stray on Elm St."). Fragments: Hale's notes, a photo of Walt and
+   Biscuit in 4B (later), dog hair and a leash in the basement (later).
+2. **Who blocked the stairs, and why.** Walt barricaded the stairwell below floor 4 on day 2 to keep
+   Hale (his friend, turned) away from the families on floors 1-3. He knew people were still on
+   floor 4. Guilt is his whole character. He lives in the caretaker's flat in the basement with the
+   master keys.
+3. **The way out.** The radio will announce rooftop pickups for buildings with roof access ("day 5,
+   10:00"). The roof door is locked; Walt has the master key. Reaching him means getting past the
+   barricade and down through floors 3-1. That is the run's end goal (later slices).
+
+Supporting truth (gameplay explained by lore): **the infected keep routines.** They drift back
+"home" at night and to familiar places by day. That is why Hale returns to floor 4 every night.
+Nadia (4D, nursing student) has worked this out; her notebook is a later fragment.
+
+## Journal
+
+Autoload `Journal` (scripts/game/journal.gd), saved to user://journal.json, kept across runs and
+sessions. Categories: clues, notes, people, places. Ids in use:
+
+| Id | Category | Learned from | Unlocks |
+|---|---|---|---|
+| place_home / place_corridor / place_4b / place_4c | places | entering | - |
+| note_hale_table, note_hale_bed | notes | reading in 4B | - |
+| note_hale_calendar | notes | 4B kitchen calendar | clue_okafor_key |
+| clue_okafor_key | clues | the calendar | "Under the Ficus" by 4A (gives the 4C key) |
+| note_daniel_letter | notes | 4C table | clue_roof_keys |
+| clue_roof_keys | clues | the letter | later: the roof |
+| person_hale | people | peephole while he is at the door | - |
+| clue_dark_quiet | clues | he leaves a dark, quiet door | - |
+| clue_planks_tear | clues | a plank torn off | - |
+
+## 4C, Mrs. Okafor's flat (journal slice)
+
+Tidy, plant-filled, knitted throws, sewing table, family photos. She left with her son Daniel on
+day 1. Loot (rolled on first visit): dresser 2 batteries; hall closet 1 plank; sewing table drawer
+1 battery (50%); bookshelf nothing ("Books, and an album full of grandchildren."). On the table:
+Daniel's letter (note_daniel_letter):
+
+> Mum - I'll pick you up Monday at 9. If the phones are down, wait inside. Walt says he'll keep the
+> master keys on him, roof too, in case they start those rooftop pickups they keep talking about
+> on the news. - D.

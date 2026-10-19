@@ -18,6 +18,7 @@ var _failures := 0
 
 
 func _ready() -> void:
+	Journal.use_memory_only()
 	GameState.new_run(77)
 	GameState.clock_running = false
 	room = ROOM.instantiate()
@@ -77,6 +78,9 @@ func _run() -> void:
 	var end := path[path.size() - 1] if path.size() > 0 else player.global_position
 	_check(end.x < -4.1, "with the door open a path leads out through the doorway (ends x=%.2f)" % end.x)
 
+	# Free the room and let the audio server drop its playbacks before quitting.
+	room.queue_free()
+	await get_tree().create_timer(0.3).timeout
 	print("\n%d/%d checks passed" % [_checks - _failures, _checks])
 	get_tree().quit(_failures)
 

@@ -18,6 +18,8 @@ signal interacted(message: String)
 @export var reach_style: StringName = &"press"
 ## Where the hand goes. Falls back to this node's origin.
 @export var interaction_point: Node3D
+## Stays hidden (no prompt, can't be clicked) until the journal knows this id.
+@export var requires_knowledge: StringName = &""
 
 
 func _ready() -> void:
@@ -39,6 +41,11 @@ func get_stand_position(_player_position: Vector3) -> Variant:
 
 func can_interact() -> bool:
 	return true
+
+
+## Known about and usable right now. Detection and clicking go through this.
+func is_available() -> bool:
+	return Journal.knows(requires_knowledge) and can_interact()
 
 
 func interact(player: Node3D) -> void:

@@ -2,59 +2,65 @@
 
 [ext_resource type="AudioStream" path="res://assets/audio/groan_a.wav" id="1_groan_a"]
 [ext_resource type="AudioStream" path="res://assets/audio/groan_b.wav" id="2_groan_b"]
-[ext_resource type="Script" path="res://scripts/zombie/zombie.gd" id="3_zombie"]
-[ext_resource type="Script" path="res://scripts/player/player_animation.gd" id="4_player_animation"]
-[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="5_bevel_box_mesh"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_pants.tres" id="6_zombie_pants"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="7_shoes"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_shirt.tres" id="8_zombie_shirt"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_skin.tres" id="9_zombie_skin"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_hair.tres" id="10_zombie_hair"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_eyes.tres" id="11_zombie_eyes"]
-[ext_resource type="StandardMaterial3D" path="res://assets/materials/stain.tres" id="12_stain"]
-[ext_resource type="AudioStream" path="res://assets/audio/shuffle.wav" id="13_shuffle"]
+[ext_resource type="AudioStream" path="res://assets/audio/groan_c.wav" id="3_groan_c"]
+[ext_resource type="Script" path="res://scripts/zombie/zombie.gd" id="4_zombie"]
+[ext_resource type="Script" path="res://scripts/player/player_animation.gd" id="5_player_animation"]
+[ext_resource type="Script" path="res://scripts/util/bevel_box_mesh.gd" id="6_bevel_box_mesh"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_pants.tres" id="7_zombie_pants"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/shoes.tres" id="8_shoes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_shirt.tres" id="9_zombie_shirt"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_skin.tres" id="10_zombie_skin"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_hair.tres" id="11_zombie_hair"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/zombie_eyes.tres" id="12_zombie_eyes"]
+[ext_resource type="StandardMaterial3D" path="res://assets/materials/stain.tres" id="13_stain"]
+[ext_resource type="Script" path="res://scripts/audio/occluded_sound.gd" id="14_occluded_sound"]
+[ext_resource type="AudioStream" path="res://assets/audio/step_drag_0.wav" id="15_step_drag_0"]
+[ext_resource type="AudioStream" path="res://assets/audio/step_drag_1.wav" id="16_step_drag_1"]
+[ext_resource type="AudioStream" path="res://assets/audio/step_drag_2.wav" id="17_step_drag_2"]
+[ext_resource type="AudioStream" path="res://assets/audio/step_drag_3.wav" id="18_step_drag_3"]
+[ext_resource type="AudioStream" path="res://assets/audio/zombie_breath.wav" id="19_zombie_breath"]
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_1"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.3, 0.16, 0.19)
 bevel = 0.03
-material = ExtResource("6_zombie_pants")
+material = ExtResource("7_zombie_pants")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_2"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.305, 0.035, 0.195)
 bevel = 0.008
-material = ExtResource("6_zombie_pants")
+material = ExtResource("7_zombie_pants")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_3"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.13, 0.42, 0.14)
 bevel = 0.035
-material = ExtResource("6_zombie_pants")
+material = ExtResource("7_zombie_pants")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_4"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.115, 0.4, 0.125)
 bevel = 0.03
-material = ExtResource("6_zombie_pants")
+material = ExtResource("7_zombie_pants")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_5"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.11, 0.075, 0.24)
 bevel = 0.025
-material = ExtResource("7_shoes")
+material = ExtResource("8_shoes")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_6"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.29, 0.2, 0.18)
 bevel = 0.04
-material = ExtResource("8_zombie_shirt")
+material = ExtResource("9_zombie_shirt")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_7"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.36, 0.27, 0.21)
 bevel = 0.05
-material = ExtResource("8_zombie_shirt")
+material = ExtResource("9_zombie_shirt")
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_8"]
 top_radius = 0.05
@@ -62,86 +68,94 @@ bottom_radius = 0.055
 height = 0.09
 radial_segments = 8
 rings = 1
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_9"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.21, 0.24, 0.22)
 bevel = 0.05
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_10"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.225, 0.085, 0.235)
 bevel = 0.035
-material = ExtResource("10_zombie_hair")
+material = ExtResource("11_zombie_hair")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_11"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.225, 0.17, 0.07)
 bevel = 0.03
-material = ExtResource("10_zombie_hair")
+material = ExtResource("11_zombie_hair")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_12"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.035, 0.05, 0.035)
 bevel = 0.01
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_13"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.026, 0.032, 0.01)
 bevel = 0.004
-material = ExtResource("11_zombie_eyes")
+material = ExtResource("12_zombie_eyes")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_14"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.1, 0.3, 0.11)
 bevel = 0.035
-material = ExtResource("8_zombie_shirt")
+material = ExtResource("9_zombie_shirt")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_15"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.085, 0.25, 0.09)
 bevel = 0.03
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_16"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.075, 0.09, 0.05)
 bevel = 0.02
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_17"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.16, 0.12, 0.012)
 bevel = 0.003
-material = ExtResource("12_stain")
+material = ExtResource("13_stain")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_18"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.1, 0.16, 0.012)
 bevel = 0.003
-material = ExtResource("12_stain")
+material = ExtResource("13_stain")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_19"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.12, 0.05, 0.012)
 bevel = 0.003
-material = ExtResource("9_zombie_skin")
+material = ExtResource("10_zombie_skin")
 
 [sub_resource type="PrimitiveMesh" id="PrimitiveMesh_20"]
-script = ExtResource("5_bevel_box_mesh")
+script = ExtResource("6_bevel_box_mesh")
 size = Vector3(0.07, 0.018, 0.012)
 bevel = 0.003
-material = ExtResource("12_stain")
+material = ExtResource("13_stain")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_21"]
+random_pitch = 1
+streams_count = 4
+stream_0/stream = ExtResource("15_step_drag_0")
+stream_1/stream = ExtResource("16_step_drag_1")
+stream_2/stream = ExtResource("17_step_drag_2")
+stream_3/stream = ExtResource("18_step_drag_3")
 
 [node name="Zombie" type="Node3D"]
-script = ExtResource("3_zombie")
-groans = Array[AudioStream]([ExtResource("1_groan_a"), ExtResource("2_groan_b")])
+script = ExtResource("4_zombie")
+groans = Array[AudioStream]([ExtResource("1_groan_a"), ExtResource("2_groan_b"), ExtResource("3_groan_c")])
 
 [node name="Visual" type="Node3D" parent="."]
-script = ExtResource("4_player_animation")
+script = ExtResource("5_player_animation")
 stride_length = 0.85
 leg_swing_deg = 15
 knee_bend_deg = 22
@@ -325,13 +339,28 @@ layers = 5
 mesh = SubResource("PrimitiveMesh_20")
 
 [node name="Voice" type="AudioStreamPlayer3D" parent="."]
+script = ExtResource("14_occluded_sound")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 stream = ExtResource("1_groan_a")
 volume_db = 0
 unit_size = 3
+max_db = 6
+bus = &"World"
 
 [node name="Steps" type="AudioStreamPlayer3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
-stream = ExtResource("13_shuffle")
+script = ExtResource("14_occluded_sound")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+stream = SubResource("AudioStreamRandomizer_21")
+volume_db = -4
+unit_size = 2.5
+max_db = 6
+bus = &"World"
+
+[node name="Breath" type="AudioStreamPlayer3D" parent="."]
+script = ExtResource("14_occluded_sound")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0.1)
+stream = ExtResource("19_zombie_breath")
 volume_db = -6
 unit_size = 2
+max_db = 6
+bus = &"World"

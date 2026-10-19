@@ -35,6 +35,7 @@ func _run() -> void:
 	var placeholder := Node.new()
 	get_tree().root.add_child(placeholder)
 	get_tree().current_scene = placeholder
+	Journal.use_memory_only()
 	Engine.time_scale = SPEED
 	await _full_run()
 	await _careless()
@@ -85,7 +86,7 @@ func _full_run() -> void:
 	_check(GameState.bag.count(&"plank") == 2, "renovation pile: 2 planks in the bag")
 
 	# Into 4B.
-	await _travel_by_walking(Vector3(2.0, 0, -1.8), FLAT)
+	await _travel_by_walking(Vector3(-2.4, 0, -1.8), FLAT)
 	var flat := _place()
 	_check(flat.scene_file_path == FLAT, "4B is open and leads inside")
 	await _shot("s3_flat_4b")
@@ -107,7 +108,7 @@ func _full_run() -> void:
 
 	# Home again (two trips' worth is more than one bag; leave the rest).
 	await _travel_by_walking(Vector3(-3.85, 0, -1.4), CORRIDOR)
-	await _travel_by_walking(Vector3(4.2, 0, -1.8), HOME)
+	await _travel_by_walking(Vector3(-4.6, 0, -1.8), HOME)
 	home = _place()
 	_check(GameState.bag.is_empty() and GameState.stash.count(&"plank") >= 2, "arriving home unpacks the bag")
 	door = home.get_node("Door")

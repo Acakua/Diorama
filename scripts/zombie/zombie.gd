@@ -7,6 +7,8 @@ extends Node3D
 
 signal arrived_at_door
 signal left
+## It left the door because the room stayed dark and quiet.
+signal gave_up
 signal broke_in
 
 enum State { OFFSTAGE, WALK, IDLE, AT_DOOR, BREAK_IN }
@@ -52,7 +54,6 @@ var _break_in_path: Array[Vector3] = []
 var _hit_timer := 0.0
 var _quiet_time := 0.0
 var _groan_timer := 3.0
-var _step_timer := 0.0
 var _swing_time := 10.0
 var _swing_strength := 0.0
 var _time := 0.0
@@ -60,12 +61,15 @@ var _time := 0.0
 @onready var _anim: PlayerAnimation = $Visual
 @onready var _voice: AudioStreamPlayer3D = $Voice
 @onready var _steps: AudioStreamPlayer3D = $Steps
+@onready var _breath: AudioStreamPlayer3D = $Breath
+@onready var _breath_db := _breath.volume_db
 
 
 func _ready() -> void:
 	visible = false
 	add_to_group(&"listeners")
 	door.opened_by_player.connect(_on_door_opened)
+	_anim.stepped.connect(_on_stepped)
 
 
 ## A noise somewhere (see GameState.noise()). Hammering right at the door it
@@ -172,6 +176,7 @@ func _door_step(delta: float) -> void:
 	var level := maxf(attention, aggression)
 	_quiet_time = _quiet_time + delta if level < 0.15 and aggression <= 0.0 else 0.0
 	if _quiet_time > give_up_time:
+		gave_up.emit()
 		leave()
 		return
 	_hit_timer -= delta
@@ -249,6 +254,14 @@ func _update_swing(delta: float) -> void:
 
 
 func _update_sounds(delta: float) -> void:
+	# Ragged breathing whenever it is near; loudest standing still at the door.
+	var breathing := visible and state != State.OFFSTAGE
+	if breathing and not _breath.playing:
+		_breath.play(randf() * 7.0)
+	elif not breathing and _breath.playing:
+		_breath.stop()
+	var still := state == State.AT_DOOR or state == State.IDLE
+	_breath.volume_db = move_toward(_breath.volume_db, _breath_db - (0.0 if still else 6.0), delta * 6.0)
 	if not visible:
 		return
 	_groan_timer -= delta
@@ -257,8 +270,8 @@ func _update_sounds(delta: float) -> void:
 		_voice.stream = groans.pick_random()
 		_voice.pitch_scale = randf_range(0.85, 1.05)
 		_voice.play()
-	if state == State.WALK or state == State.BREAK_IN:
-		_step_timer -= delta
-		if _step_timer <= 0.0:
-			_step_timer = 0.9
-			_steps.play()
+
+
+func _on_stepped() -> void:
+	if visible and (state == State.WALK or state == State.BREAK_IN):
+		_steps.play()

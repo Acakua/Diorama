@@ -32,6 +32,7 @@ var _mouse_mode := false
 	$Prompt/Box/Row/Key/Label, $Prompt/Box/Row/Key2/Label, $Prompt/Box/Row/Key3/Label]
 @onready var _pointer: Pointer = $Pointer
 @onready var _flashlight: Button = $Flashlight
+@onready var _journal: Button = $Journal
 @onready var _status: Label = $Status
 @onready var _bag: Label = $Bag
 @onready var _debug: Label = $Debug
@@ -43,6 +44,8 @@ func _ready() -> void:
 	_status.modulate.a = 0.0
 	_debug.visible = false
 	_flashlight.pressed.connect(_on_flashlight_pressed)
+	_journal.pressed.connect(_on_journal_pressed)
+	Journal.learned.connect(_on_learned)
 
 
 func _input(event: InputEvent) -> void:
@@ -128,6 +131,19 @@ func _process(delta: float) -> void:
 		_debug.text = _debug_text()
 
 
+func _on_journal_pressed() -> void:
+	var view := get_tree().get_first_node_in_group(&"journal_view") as JournalView
+	if view:
+		view.toggle()
+
+
+func _on_learned(entry: Dictionary) -> void:
+	show_status("Journal: " + String(entry["title"]))
+	var pulse := create_tween()
+	pulse.tween_property(_journal, "modulate", Color(1.6, 1.4, 0.9), 0.15)
+	pulse.tween_property(_journal, "modulate", Color.WHITE, 0.6)
+
+
 func _on_flashlight_pressed() -> void:
 	if player:
 		player.toggle_flashlight()
@@ -145,8 +161,9 @@ func _bag_text() -> String:
 	if GameState.has_tool(&"flashlight"):
 		var charge := int(round(GameState.flashlight_charge * 100.0))
 		tools.append("Flashlight %d%%%s" % [charge, " (on)" if GameState.flashlight_on else ""])
-	if GameState.has_tool(&"hammer"):
-		tools.append("Hammer")
+	for id in GameState.equipment:
+		if id != &"flashlight":
+			tools.append(Items.display_name(id))
 	if not tools.is_empty():
 		var prefix := "[Q] " if GameState.has_tool(&"flashlight") else ""
 		lines.append(prefix + "  ·  ".join(tools))

@@ -5,6 +5,12 @@ extends Interactable
 
 @export var title := ""
 @export_multiline var text := ""
+## Kept in the journal under this id once read.
+@export var journal_id: StringName = &""
+## An optional clue the note gives away.
+@export var clue_id: StringName = &""
+@export var clue_title := ""
+@export_multiline var clue_text := ""
 
 
 func get_prompt() -> String:
@@ -16,6 +22,10 @@ func _on_interact(player: Node3D) -> String:
 	if overlay == null:
 		return ""
 	overlay.show_note(title, text)
+	if journal_id != &"":
+		Journal.learn(journal_id, &"notes", title, text)
+	if clue_id != &"":
+		Journal.learn(clue_id, &"clues", clue_title, clue_text)
 	(player as PlayerController).begin_focus(get_interaction_position(), overlay.hide_note,
 			PackedStringArray(["Close", "", ""]))
 	return ""

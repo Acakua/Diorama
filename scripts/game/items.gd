@@ -10,16 +10,26 @@ const DEFS := {
 }
 
 
+## Adds a content item (a key and the like) at runtime; same shape as DEFS.
+## Kept on GameState: a static var would pin this script in memory at exit.
+static func register(id: StringName, def: Dictionary) -> void:
+	GameState.extra_items[id] = def
+
+
 static func display_name(id: StringName) -> String:
-	return DEFS[id]["name"] if DEFS.has(id) else String(id)
+	return _def(id).get("name", String(id))
 
 
 static func stack_size(id: StringName) -> int:
-	return DEFS[id].get("stack", 1) if DEFS.has(id) else 1
+	return _def(id).get("stack", 1)
 
 
 static func is_equipment(id: StringName) -> bool:
-	return DEFS.has(id) and DEFS[id].get("equipment", false)
+	return _def(id).get("equipment", false)
+
+
+static func _def(id: StringName) -> Dictionary:
+	return DEFS.get(id, GameState.extra_items.get(id, {}))
 
 
 ## "Plank x2, Battery" style list for status lines.
