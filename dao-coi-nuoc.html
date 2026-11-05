@@ -2092,9 +2092,10 @@ function buildCreatures(){const T=critTextures();Crit.T=T;
      anim.birds.push({g,l,r,o:i*.9,ph:rand(6),sp:(i%2?1:-1)*rand(.07,.12),rad:rand(9,15),y:rand(5.5,8.5)})}}
 
   // ---- spirit koi glide under the pond's surface, glowing a little brighter after dark
+  // the see-through fins are flat, so one pass draws both faces alike; two passes made three.js re-pick their shader twice per fin every frame (~0.6 ms for the 20 fins)
   {const kg=lathe([[0,0],[.022,.015],[.036,.05],[.042,.09],[.038,.14],[.026,.19],[.012,.225],[0,.24]],14);kg.rotateX(-Math.PI/2);kg.translate(0,0,.12);kg.scale(.72,1,1);
    const tailG=tri([[0,0,0],[0,.045,-.075],[0,0,-.05],[0,-.045,-.075]],[0,1,2,0,2,3]),finG=tri([[0,0,0],[.045,-.012,-.03],[0,-.006,-.045]],[0,1,2]),dorG=tri([[0,0,.04],[0,.03,-.03],[0,0,-.07]],[0,1,2]);
-   const km=std('#ffffff',{map:T.koi,emissiveMap:T.koi,emissive:'#ffffff',emissiveIntensity:.3,roughness:.35}),fm=std('#fff0e0',{emissive:'#ffb070',emissiveIntensity:.5,transparent:true,opacity:.6,side:THREE.DoubleSide,roughness:.4});Crit.koiM=[km,fm];
+   const km=std('#ffffff',{map:T.koi,emissiveMap:T.koi,emissive:'#ffffff',emissiveIntensity:.3,roughness:.35}),fm=std('#fff0e0',{emissive:'#ffb070',emissiveIntensity:.5,transparent:true,opacity:.6,side:THREE.DoubleSide,forceSinglePass:true,roughness:.4});Crit.koiM=[km,fm];
    const c=new V3(3.25,0,6.29),A=new V3(.757,0,.653),Pp=new V3(-.653,0,.757);Crit.koi=[];
    for(let i=0;i<4;i++){const g=new THREE.Group();g.scale.setScalar(1.45);part(g,kg,km,0,0,0).castShadow=false;g.renderOrder=0;const tp=new THREE.Group();tp.position.z=-.115;g.add(tp);part(tp,tailG,fm,0,0,0).castShadow=false;
      for(const sd of[-1,1])part(g,finG,fm,sd*.028,-.012,.06,sd,1,1).castShadow=false;part(g,dorG,fm,0,.03,0).castShadow=false;g.traverse(o=>{if(o.isMesh)o.renderOrder=-1});island.add(g);
@@ -2727,6 +2728,10 @@ buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass(
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
 applyTime(hour,-1);refreshEnv(true);
+// compile every program before the first frame, hidden ones too (rain, snow, the bolt, the furniture behind the walls, the moon moths), so none of them
+// stalls the island the first time it shows (up to ~0.35 s each on a cold shader cache); the scene is drawn into rtScene, so the keys must be made for that target.
+// The first query of a program still waits for the driver to finish linking it, so that is done here too, behind the loading screen.
+{renderer.setRenderTarget(rtScene);const warm=renderer.compileAsync(scene,camera);renderer.setRenderTarget(null);await warm;for(const p of renderer.info.programs)p.getUniforms()}
 requestAnimationFrame(t=>{last=t;frame(t);const L=$('load');if(L){L.style.opacity=0;setTimeout(()=>L.remove(),1000)}});
 idbGet().then(b=>{if(b)loadVRM(b,false).catch(()=>loadBundled());else loadBundled()});
 loadSoft();
