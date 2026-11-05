@@ -1,5 +1,16 @@
-# Godot writes LF; keep it that way on Windows checkouts too.
+# Text files keep LF endings on every checkout, as they are in this folder.
 * text=auto eol=lf
-*.wav binary
+
+# The Claude Code Game Studios hooks run in bash, which breaks on CRLF.
+*.sh text eol=lf
+*.awk text eol=lf
+
+# Binary assets
+*.pdf binary
+*.glb binary
 *.png binary
-*.bat text eol=crlf
+*.blend binary
+
+# The avatar and the soft furnishings are base64 data inside .js files: never diff them.
+dao-model-*.js -diff
+dao-soft.js -diff

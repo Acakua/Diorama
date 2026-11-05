@@ -1,3 +1,30 @@
-.godot/
+# Settings for this machine only
+.claude/settings.local.json
+.claude/launch.json
+CLAUDE.local.md
+project.local.yaml
+
+# Claude Code Game Studios runtime files
+production/session-logs/
+production/session-state/
+.claude/agent-memory/
+.claude/worktrees/
+.scratch/
+docs/consistency-failures.md
+
+# Python and temporary files
+__pycache__/
+*.pyc
 *.tmp
-/tests/screens/
+*.log
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+
+# OS files
+Thumbs.db
+[Dd]esktop.ini
+.DS_Store

@@ -1,7 +1,0 @@
-[gd_resource type="StandardMaterial3D" format=3]
-
-[resource]
-resource_name = "skin"
-albedo_color = Color(0.86, 0.66, 0.52, 1)
-metallic = 0.0
-roughness = 0.70
