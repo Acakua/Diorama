@@ -2613,7 +2613,9 @@ let fpsN=0,fpsT=0,saveTick=0,prevNow=performance.now(),hudT=0,last=performance.n
 const tmpV=new V3(),o3=new THREE.Object3D();
 function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on||!Pace.ok(now))return}
   Perf.poll();renderer.info.reset();const tF=performance.now();
-  const raw=Math.min(.1,(now-last)/1000);last=now;const dt=Math.min(raw,.05);
+  // never below zero: the hand-driven frames (bench, drive, the detailed run) step 16.7 ms each and can leave `last` ahead of the clock;
+  // a negative step would turn the hour back (a false new day) and make every damp() overshoot until the island blows up
+  const raw=Math.max(0,Math.min(.1,(now-last)/1000));last=now;const dt=Math.min(raw,.05);
   Pace.idle+=raw;Auto.step(raw);Idle.step(raw);
   // without timer queries, a frame gap well past the paced interval steps the detail down instead
   const gap=now-prevNow;prevNow=now;if(!Perf.ext&&qWant=='auto'&&!manual&&!document.hidden&&gap<250&&!window.__daoNoAdapt){perfN++;perfMs+=gap;if(perfN>=70){const ms=perfMs/perfN;perfN=0;perfMs=0;if(ms>1000/Pace.fps()*1.35)Auto.down()}}
