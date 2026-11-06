@@ -42,10 +42,24 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #scrub::-moz-range-thumb{width:6px;height:22px;background:var(--ink);border:0;border-radius:1px}
 .ticks{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-dim);margin-top:4px;font-variant-numeric:tabular-nums;text-shadow:0 1px 4px #000a}
 #load{position:fixed;inset:0;display:grid;place-items:center;background:#1a2a2c;font:italic 400 19px var(--display);transition:opacity .9s;pointer-events:none;text-align:center;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px))}
-#journal,#perf,#wxp{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(max(16px,env(safe-area-inset-top,0px)) + 58px);bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 8px);width:min(320px,calc(100vw - 32px));background:#14201fd9;border:1px solid var(--ink-faint);border-radius:3px;padding:14px 16px;overflow:auto;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-#journal h2,#perf h2,#wxp h2{font:italic 400 20px/1.2 var(--display);margin:0 0 10px}#journal h3,#perf h3,#wxp h3{font:500 11px/1 var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--glass-on);margin:14px 0 6px}#journal p,#perf p,#wxp p{font:400 14px/1.45 var(--display);margin:0 0 8px;color:var(--ink)}#journal b{font:500 11px var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
-#pClose,#wClose{position:absolute;right:10px;top:10px;padding:4px 9px;font-size:16px;line-height:1}#perf,#wxp{padding-top:14px}#perf h2,#wxp h2{padding-right:36px}#wxp{bottom:auto}
-#perf .seg,#wxp .seg{display:flex;gap:4px;flex-wrap:wrap}#perf .seg button,#wxp .seg button{padding:7px 10px;font-variant-numeric:tabular-nums}#perf p.pNote,#wxp p.pNote{font:400 12px/1.45 var(--ui);color:var(--ink-dim);margin:6px 0 0}
+#journal,#perf,#wxp,#ledger{position:fixed;right:max(16px,env(safe-area-inset-right,0px));top:calc(max(16px,env(safe-area-inset-top,0px)) + 58px);bottom:calc(max(16px,env(safe-area-inset-bottom,0px)) + 8px);width:min(320px,calc(100vw - 32px));background:#14201fd9;border:1px solid var(--ink-faint);border-radius:3px;padding:14px 16px;overflow:auto;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#journal h2,#perf h2,#wxp h2,#ledger h2{font:italic 400 20px/1.2 var(--display);margin:0 0 10px}#journal h3,#perf h3,#wxp h3,#ledger h3{font:500 11px/1 var(--ui);letter-spacing:.08em;text-transform:uppercase;color:var(--glass-on);margin:14px 0 6px}#journal p,#perf p,#wxp p,#ledger p{font:400 14px/1.45 var(--display);margin:0 0 8px;color:var(--ink)}#journal b{font:500 11px var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
+#pClose,#wClose,#lClose{position:absolute;right:10px;top:10px;padding:4px 9px;font-size:16px;line-height:1}#perf,#wxp,#ledger{padding-top:14px}#perf h2,#wxp h2,#ledger h2{padding-right:36px}#wxp,#ledger{bottom:auto}
+#perf .seg,#wxp .seg,#ledger .seg{display:flex;gap:4px;flex-wrap:wrap}#perf .seg button,#wxp .seg button,#ledger .seg button{padding:7px 10px;font-variant-numeric:tabular-nums}#perf p.pNote,#wxp p.pNote,#ledger p.pNote{font:400 12px/1.45 var(--ui);color:var(--ink-dim);margin:6px 0 0}
+/* Mun's ledger: the shared stores as a small grid, the day's tasks crossed out as they are done */
+#ledger .paw{width:17px;height:17px;margin-left:7px;vertical-align:-1px;fill:var(--glass-on);opacity:.8}
+#lStore{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}#lStore div{border:1px solid var(--ink-faint);border-radius:3px;padding:6px 8px 5px}
+#lStore b{display:block;font:400 20px/1.15 var(--display);font-variant-numeric:tabular-nums}#lStore span{font:500 10.5px/1.3 var(--ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-dim)}
+#lCount{color:var(--ink-dim);margin-left:4px}#lTasks{list-style:none;margin:0;padding:0}
+#lTasks li{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid var(--ink-faint);font:400 14px/1.35 var(--display)}
+#lTasks .nm{flex:1 1 auto;min-width:0}#lTasks .wh{font:400 12px/1.3 var(--ui);color:var(--ink-dim);text-align:right;font-variant-numeric:tabular-nums}
+#lTasks li.done .nm{text-decoration:line-through;text-decoration-color:var(--glass-on);color:var(--ink-dim)}#lTasks li.done .wh{color:var(--glass-on)}
+#lTasks li.empty{display:block;color:var(--ink-dim);font-style:italic}#lTasks .x{align-self:center;padding:3px 8px;font-size:14px;line-height:1}
+#ledger .seg button:disabled,#sGo:disabled{opacity:.45;cursor:default}
+/* the card that opens over a workplace on the island */
+#spot{position:fixed;width:min(250px,calc(100vw - 32px));background:#14201fd9;border:1px solid var(--ink-faint);border-radius:3px;padding:12px 14px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+#spot h3{font:italic 400 18px/1.2 var(--display);margin:0 32px 6px 0}#spot p{font:400 13.5px/1.4 var(--display);margin:0 0 10px;color:var(--ink)}#spot p.pNote{font:400 12px/1.45 var(--ui);color:var(--ink-dim);margin:8px 0 0}
+#sClose{position:absolute;right:8px;top:8px;padding:3px 8px;font-size:15px;line-height:1}#sGo{width:100%}
 #pLive{display:grid;grid-template-columns:auto 1fr;gap:5px 10px;margin:0;font:400 12.5px/1.35 var(--ui);font-variant-numeric:tabular-nums}#pLive dt{color:var(--ink-dim)}#pLive dd{margin:0;min-width:0}#pLive .pSub{grid-column:1/-1;margin-top:6px;color:var(--glass-on)}
 .pBar{display:inline-block;height:6px;background:var(--glass-on);border-radius:1px;margin-right:6px;vertical-align:middle;max-width:60%}
 #pRun{margin-top:8px}#pRun:disabled{opacity:.7;cursor:progress}#pRes table{width:100%;border-collapse:collapse;margin-top:10px;font:400 12px/1.35 var(--ui);font-variant-numeric:tabular-nums}#pRes th,#pRes td{text-align:right;padding:3px 0 3px 8px;border-bottom:1px solid var(--ink-faint)}#pRes th:first-child,#pRes td:first-child{text-align:left;padding-left:0}#pRes th{color:var(--ink-dim);font-weight:500}
@@ -55,7 +69,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
 <div id="hud">
   <div class="top">
-    <div class="hintWrap"><div class="hint">Kéo để xoay · Cuộn hoặc chụm tay để zoom · Nhấp đúp để đến gần một chỗ · Tắt Góc neo để xoay tự do · Phím H ẩn chữ</div><div id="modelMsg" class="hint" role="status"></div><div id="fps" class="hint"></div></div>
+    <div class="hintWrap"><div class="hint">Kéo để xoay · Cuộn hoặc chụm tay để zoom · Nhấp đúp để đến gần một chỗ · Bấm vào chỗ làm việc để nhờ Linh · Tắt Góc neo để xoay tự do · Phím H ẩn chữ</div><div id="modelMsg" class="hint" role="status"></div><div id="fps" class="hint"></div></div>
     <div class="tools">
       <button id="bModel">Nạp mô hình VRoid khác</button>
       <button id="bHat" aria-pressed="true" hidden>Mũ phù thủy</button>
@@ -63,6 +77,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
       <button id="bAnchor" aria-pressed="true">Góc neo</button>
       <button id="bCine" aria-pressed="false">Góc phim</button>
       <button id="bFollow" aria-pressed="false">Đi theo Linh</button>
+      <button id="bLedger" aria-pressed="false">Sổ của Mun</button>
       <button id="bJournal" aria-pressed="false">Nhật ký</button>
       <button id="bRoof" aria-pressed="false">Mở mái nhà</button>
       <button id="bWx" aria-pressed="false">Mùa và thời tiết</button>
@@ -87,6 +102,14 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
   </div>
 </div>
 <aside id="journal" hidden aria-label="Nhật ký của Linh"><h2>Nhật ký của Linh</h2><div id="jList"></div></aside>
+<aside id="ledger" hidden aria-label="Sổ của Mun"><button id="lClose" aria-label="Đóng sổ của Mun">×</button>
+  <h2>Sổ của Mun<svg class="paw" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="5.6" cy="10" rx="2.2" ry="2.8"/><ellipse cx="9.6" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="14.4" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="18.4" cy="10" rx="2.2" ry="2.8"/><path d="M12 11.2c-3.2 0-6 3.3-6 6.1 0 1.9 1.4 2.9 3.1 2.9 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.7 0 3.1-1 3.1-2.9 0-2.8-2.8-6.1-6-6.1z"/></svg></h2>
+  <h3>Kho chung</h3><div id="lStore"></div>
+  <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
+  <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
+  <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
+</aside>
+<div id="spot" hidden role="dialog" aria-labelledby="sName"><button id="sClose" aria-label="Đóng">×</button><h3 id="sName"></h3><p id="sInfo"></p><button id="sGo"></button><p class="pNote" id="sNote"></p></div>
 <aside id="wxp" hidden aria-label="Mùa và thời tiết"><button id="wClose" aria-label="Đóng bảng mùa và thời tiết">×</button><h2>Mùa và thời tiết</h2>
   <h3>Mùa</h3><div class="seg" id="wSea" role="group" aria-label="Mùa"></div><p class="pNote" id="wSeaNote"></p>
   <h3>Thời tiết</h3><div class="seg" id="wWx" role="group" aria-label="Thời tiết"></div><p class="pNote" id="wWxNote"></p>
@@ -1752,7 +1775,8 @@ function kneadPose(t){const s=Math.sin(t*3.2);return{lean:.28,hx:.38,hy:.05*Math
 function picnicPose(t){return{hip:.14,lh:-1.5,lk:.25,rh:-1.4,rk:.35,lean:-.12,hx:.32,hy:.06*Math.sin(t*.5),lsx:-.55,le:-.9,lsz:-.08,rsx:-.75,re:-.9,rsz:.1}}
 function fishPose(t){const u=(t%20)/20,pull=sstep(.86,.9,u)*(1-sstep(.97,1,u));return{hip:.1,lh:-1.45,lk:1.25+.1*Math.sin(t*.8),rh:-1.45,rk:1.25-.1*Math.sin(t*.8),rsx:-.9-.65*pull,re:-.5-.3*pull,rsz:-.08,lsx:-.7-.8*pull,le:-.7,lsz:-.08,lean:.03-.14*pull,hx:.12}}
 const DRY=['breakfast','lunch','cook','dinner','night','sleep','brew','knit','study','reply','sweep','tea','letter','bake'];
-function schedule(h,rain){const D=W.plan||{},late=D.late,S=[[late?6.5:5.75,'wash'],[late?7.2:6.75,'breakfast'],[late?8.05:7.6,'water'],[8.75,'eggs'],[9.75,D.morning||'chop'],[11.75,'lunch'],[12.75,D.a||'read'],[14.5,D.b||'fish'],[15.85,D.c||'tea'],[16.75,'feed'],[17.4,D.fly===false?'sunset':'fly'],[18.2,'sunset'],[18.9,'cook'],[19.75,'dinner'],[20.5,D.eve||'night'],[22,'sleep']];
+// a free slot she has given to one of Mun's tasks (W.plan.tk, filled by Mun.bind) takes that task instead of her own plan for it
+function schedule(h,rain){const D=W.plan||{},T=D.tk||{},late=D.late,S=[[late?6.5:5.75,'wash'],[late?7.2:6.75,'breakfast'],[late?8.05:7.6,'water'],[8.75,'eggs'],[9.75,T.morning||D.morning||'chop'],[11.75,'lunch'],[12.75,T.a||D.a||'read'],[14.5,T.b||D.b||'fish'],[15.85,T.c||D.c||'tea'],[16.75,'feed'],[17.4,D.fly===false?'sunset':'fly'],[18.2,'sunset'],[18.9,'cook'],[19.75,'dinner'],[20.5,D.eve||'night'],[22,'sleep']];
   let id='sleep';for(const[t,a]of S)if(h>=t)id=a;if(rain&&!DRY.includes(id))id='shelter';return id}
 /* graph routing */
 const G={};for(const k in N)G[k]=[];for(const e of E){const d=Math.hypot(N[e[0]][0]-N[e[1]][0],N[e[0]][1]-N[e[1]][1]);G[e[0]].push([e[1],d]);G[e[1]].push([e[0],d])}
@@ -1854,13 +1878,13 @@ function stepActs(dt,t,here,air,T,fwd){const C=Magic.C,id=AG.cur,on=here&&!air,[
   if(id=='brew'&&on&&AG.spot>=1){const c=anim.houseG.localToWorld(q1.copy(anim.cauldron));if(k<.05)anim.brewM.uniforms.uC.value.setRGB(.35,1.5,.7);
     if(Math.random()<dt*14)Magic.emit(q2.set(c.x+rand(-.22,.22),c.y+.02,c.z+rand(-.22,.22)),q3.set(0,rand(.15,.35),0),Math.random()<.7?C.green:C.violet,rand(.8,1.6),.05,-.05,.97);
     if(k>20&&!AG.ev){AG.ev=1;const P=AG.pots||(AG.pots=[{n:'thuốc ngủ ngon',col:'màu tím oải hương',c:new THREE.Color(.9,.5,1.6),k:C.violet},{n:'thuốc mọc rễ cho vườn bí',col:'màu xanh lá non',c:new THREE.Color(.4,1.6,.5),k:C.green},{n:'thuốc chống mưa',col:'màu xanh biển',c:new THREE.Color(.35,.9,1.8),k:C.aqua},{n:'thuốc phát sáng',col:'màu vàng mật ong',c:new THREE.Color(1.8,1.3,.3),k:C.gold}]),p=pick(P);
-      anim.brewM.uniforms.uC.value.copy(p.c);c.y+=.25;burst(c,p.k,46,1.1);W.potions=(W.potions||0)+1;moodAdd(.2);note('Vạc thuốc chuyển sang '+p.col+': mẻ '+p.n+' đã xong, Linh rót vào chai.',6);saveW()}}
+      anim.brewM.uniforms.uC.value.copy(p.c);c.y+=.25;burst(c,p.k,46,1.1);W.potions=(W.potions||0)+1;moodAdd(.2);note('Vạc thuốc chuyển sang '+p.col+': mẻ '+p.n+' đã xong, Linh rót vào chai.',6);Mun.got('brew',1);saveW()}}
   // gathering: herbs and mushrooms float up into the basket; the mosslings come to watch
   if(id=='gather'&&on){if(Math.random()<dt*.4){const a=rand(6.28),x=AG.x+Math.cos(a)*.6,z=AG.z+Math.sin(a)*.6;q1.set(x,hAt(x,z)+.05,z);for(let i=0;i<10;i++)Magic.emit(q1,q2.set(T.x-x,T.y-q1.y+.3,T.z-z).multiplyScalar(rand(.8,1.1)),C.gold,1,.04,.3,.97)}
     if(k>18&&!AG.ev){AG.ev=1;note(pick(['Giỏ đã đầy nấm hương và lá ngải. Một bé rêu tặng Linh cây nấm đỏ.','Linh hái được bó cỏ xạ hương; mấy bé rêu nhảy theo đến tận bìa rừng.','Hái đủ nấm cho nồi súp tối nay. Bé rêu đội nấm cứ bám gót không rời.']),6)}}
   // ember eggs: one by one they float into her basket
   if(id=='eggs'&&on){const left=Crit.eggs.filter(e=>e.visible);if(left.length&&k>2.5+(3-left.length)*2.6){const e=left[0];e.getWorldPosition(q1);e.visible=false;for(let i=0;i<14;i++)Magic.emit(q1,q2.set(T.x-q1.x,T.y-q1.y+.4,T.z-q1.z).multiplyScalar(rand(.9,1.1)),C.ember,.9,.05,.6,.97);
-    if(left.length==1){W.eggs=(W.eggs||0)+3;moodAdd(.1);note('Nhặt được ba quả trứng than hồng, còn ấm nóng như than lò.',6);saveW()}}}
+    if(left.length==1){W.eggs=(W.eggs||0)+3;moodAdd(.1);note('Nhặt được ba quả trứng than hồng, còn ấm nóng như than lò.',6);Mun.got('eggs',3);saveW()}}}
   // knitting, writing: small sparks from needles and quill
   if(id=='knit'&&on){if(Math.random()<dt*.9)Magic.emit(T,q2.set(rand(-.1,.1),.2,rand(-.1,.1)),C.violet,.9,.03);if(k>22&&!AG.ev){AG.ev=1;note('Chiếc khăn len dài thêm một gang tay; Mun đã kịp cuộn tròn trong đống len.',6)}}
   if((id=='study'||id=='reply')&&on&&Math.random()<dt*6)Magic.emit(T,q2.set(rand(-.05,.05),.12,rand(-.05,.05)),C.gold,.7,.025);
@@ -1965,7 +1989,7 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[]};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[]};
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
   const p={late:r()<.2,morning:one(W.wood>=15?['practice','gather','laundry','sweep']:['chop','chop','gather','laundry','sweep']),a:one(['read','practice','nap','study','knit','brew']),b:one(['fish','harvest','brew','gather','play']),c:'tea',fly:r()<.7,eve:one(['stars','night','scope','knit']),wd};
   if(wd==0){p.morning='sweep';p.eve='wards'}else if(wd==1){p.morning='gather';p.a='brew'}else if(wd==2){p.morning='practice';p.a='study'}else if(wd==3){p.morning='gather';p.b='fish'}else if(wd==4){p.a='bake'}else if(wd==5){p.b='fish';p.c='picnic';p.late=r()<.5;letter=false}
@@ -1977,7 +2001,8 @@ function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W
 function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWant=='snow';return raining||(W.rain&&hour>W.rain[0]&&hour<W.rain[1])}
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
-function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0}))}catch(e){}}
+function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
+  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''}))}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
@@ -1985,8 +2010,86 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   W.journal=Array.isArray(q.journal)?q.journal.filter(e=>e&&typeof e.t=='string').slice(0,60).map(e=>({d:int(e.d,1,1,1e6),h:String(e.h??''),t:e.t})):[];
   W.seaWant=[0,1,2,3].includes(q.seaWant)?q.seaWant:-1;W.wxWant=typeof q.wxWant=='string'&&Object.hasOwn(WXN,q.wxWant)?q.wxWant:null;
   W.snowman=int(q.snowman,0,0,1e6);W.sown=int(q.sown,0,0,1e6);W.pileDay=int(q.pileDay,0,0,1e6);
+  // Mun's book: coins, and at most three tasks naming a known activity; tasks done on an earlier day were already crossed out
+  W.coins=int(q.coins,0,0,1e6);
+  W.tasks=Array.isArray(q.tasks)?q.tasks.filter(t=>t&&typeof t=='object'&&typeof t.a=='string'&&Object.hasOwn(TASK,t.a)).slice(0,3)
+    .map(t=>({a:t.a,done:t.done?1:0,n:int(t.n,0,0,999),d:int(t.d,W.day,1,1e6),w:['full','none'].includes(t.w)?t.w:''})).filter(t=>!(t.done&&t.d<W.day)):[];
   if(Array.isArray(q.pump))q.pump.forEach((g,i)=>{const p=furn.pumpkins[i];if(p)p.g=num(g,p.g,0,1)})}catch(e){}}
-function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
+function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
+/* ---------- Mun's ledger: the shared stores and the day's tasks ---------- */
+// Mun keeps the stores and writes down up to three tasks a day. Linh fits each one into a free slot of her day and does it her way; her meals,
+// morning chores, the hens' feed, her flight, supper, evenings and her own special plans stay as they are. A task is one of her activities and
+// counts as done once it has brought something in. Nothing has a deadline: a slot lost to rain or to a skip in time just moves the task on.
+const SLOTS=[['morning',9.75,11.75],['a',12.75,14.5],['b',14.5,15.85],['c',15.85,16.75]],SLOTI={morning:0,a:1,b:2,c:3};
+const KEEP=['letter','picnic','bake','sow','rake','snowman'];   // her own plans for a slot, which a task never takes
+// goal: what she has to bring in; min: the shortest stretch of a slot (island hours) the task needs at 1×; once: when it is done she goes back to her own plan
+const TASK={chop:{name:'Chặt củi',unit:'khúc củi',goal:3,min:1},fish:{name:'Câu cá',unit:'con cá',goal:1,min:.85},eggs:{name:'Nhặt trứng',unit:'quả trứng',goal:3,min:.6,once:1},
+  harvest:{name:'Hái bí',unit:'quả bí',goal:1,min:.6},brew:{name:'Pha thuốc',unit:'chai thuốc',goal:1,min:1.2,once:1}};
+const wetDay=()=>['rain','storm','snow'].includes(W.wxWant);
+const Mun={sig:'',
+  /** The free slot covering hour h, or null. */
+  slotAt(h){for(const s of SLOTS)if(h>=s[1]&&h<s[2])return s;return null},
+  /** Whether task activity a may take slot s at hour h: her own plan for it is neither special nor the same thing, enough of it is left, and no rain is due over outdoor work. */
+  fits(s,a,h){const own=(W.plan||{})[s[0]],from=Math.max(h,s[1]);if(KEEP.includes(own)||own===a||s[2]-from<TASK[a].min)return false;
+    if(DRY.includes(a))return true;if(wetDay())return false;const r=W.wxWant?null:W.rain;return!(r&&r[0]<s[2]&&r[1]>from)},
+  /** Places every open task: one under way in the current slot keeps it, the rest take the earliest slot that fits, in the order Mun wrote them; with none left today they wait for tomorrow. */
+  bind(){const h=hour,now=this.slotAt(h),taken=new Set();
+    for(const t of W.tasks){const keep=t.slot&&(t.done?!TASK[t.a].once:now!==null&&t.slot===now[0]);if(keep)taken.add(t.slot);else t.slot=null}
+    for(const t of W.tasks){if(t.done||t.slot)continue;
+      for(const s of SLOTS){if(taken.has(s[0])||(s!==now&&s[1]<=h)||!this.fits(s,t.a,h))continue;t.slot=s[0];taken.add(s[0]);break}}
+    const tk={};for(const t of W.tasks)if(t.slot)tk[t.slot]=t.a;if(W.plan)W.plan.tk=tk;this.sig=''},
+  /** Once a frame, before schedule(): notes the task she is on, ends one that can bring in nothing more, and moves on any whose slot ran out. */
+  step(dt){if(!W.tasks.length)return;const h=hour,now=this.slotAt(h);let lost=false;
+    for(const t of W.tasks){if(!t.slot||t.done)continue;const s=SLOTS[SLOTI[t.slot]];
+      // a task she is still at when its slot ends runs on into the next free slot if it follows straight on (she finishes what she started); otherwise it moves on
+      if(h>=s[2]){const nx=SLOTS[SLOTI[t.slot]+1];lost=true;
+        if(t.on&&AG.cur===t.a&&nx&&nx[1]===s[2]&&h<nx[2]&&!KEEP.includes((W.plan||{})[nx[0]])&&!W.tasks.some(u=>u.slot===nx[0]))t.slot=nx[0];else{t.slot=null;t.on=0}continue}
+      if(s!==now||AG.cur!==t.a)continue;
+      if(!t.go){t.go=1;logJ('Mun gõ chân vào dòng “'+TASK[t.a].name+'” trong sổ, thế là Linh '+ACT[t.a].go+'.')}
+      if(AG.walking)continue;if(!t.on){t.on=1;t.tt=0;this.arrive(t)}t.tt+=dt;
+      if(t.a=='chop'&&W.wood>=18)this.finish(t,'full');
+      else if(t.a=='harvest'&&!t.n&&t.tt>5&&!AG.hq&&!this.ripeN())this.finish(t,'none')}
+    if(lost)this.bind()},
+  /** She has reached the place of a task. An extra egg round finds a fresh clutch: the ember hens lay again once the morning's eggs are gone. */
+  arrive(t){if(t.a!=='eggs'||!Crit.eggs||Crit.eggs.some(e=>e.visible))return;for(const e of Crit.eggs){e.visible=true;burst(e.getWorldPosition(tmpV),Magic.C.ember,12,.45)}
+    note('Đàn gà than hồng vừa đẻ lứa trứng mới, ổ rơm còn ấm.',5)},
+  /** Called wherever an activity brings something in; it counts toward the task she is doing for Mun, if that is what she is doing now. */
+  got(a,n){const now=this.slotAt(hour);if(!now||AG.cur!==a)return;for(const t of W.tasks)if(t.slot===now[0]&&t.a===a){t.n+=n;if(!t.done&&t.n>=TASK[a].goal)this.finish(t,'');return}},
+  finish(t,why){const k=TASK[t.a];t.done=1;t.d=W.day;t.w=why;
+    logJ(why=='full'?'Đống củi đã đầy, Linh gạch luôn dòng “'+k.name+'” trong sổ của Mun.':why=='none'?'Vườn chưa có quả bí nào chín. Linh nhổ cỏ cho luống bí rồi gạch dòng “'+k.name+'” trong sổ của Mun.':'Gạch dòng “'+k.name+'” trong sổ của Mun: thêm '+t.n+' '+k.unit+'.');
+    if(k.once)this.bind();saveW();this.sig=''},
+  /** Why task a cannot be written down now, or '' when it can. */
+  cant(a){return W.tasks.length>=3?'Sổ hôm nay đã đủ 3 việc.':a=='chop'&&W.wood>=18?'Đống củi đã đầy.':''},
+  /** Writes a task into the book and places it in her day; returns it, or null when it cannot be written. */
+  add(a){if(!Object.hasOwn(TASK,a)||this.cant(a))return null;const t={a,done:0,n:0,d:W.day,w:'',slot:null};W.tasks.push(t);this.bind();saveW();return t},
+  drop(i){const t=W.tasks[i];if(!t||t.done)return;W.tasks.splice(i,1);this.bind();saveW()},
+  /** At midnight the crossed-out lines go; what is left carries over to the new day. */
+  newDay(){W.tasks=W.tasks.filter(t=>!t.done);for(const t of W.tasks){t.slot=null;t.on=0}this.bind()},
+  /** True while what she is doing is one of Mun's tasks. */
+  doing(){const now=this.slotAt(hour),tk=W.plan&&W.plan.tk;return!!(now&&tk&&tk[now[0]]===AG.cur)},
+  ripeN(){let n=0;for(const q of furn.pumpkins)if(q.g>=.82)n++;return n},
+  /** What the book says about a task: done and what came of it, under way, or when she means to do it. */
+  state(t){const k=TASK[t.a];if(t.done)return t.w=='full'?'xong · củi đã đầy':t.w=='none'?'xong · chưa có bí chín':'xong · +'+t.n+' '+k.unit;
+    const now=this.slotAt(hour);if(t.slot&&now&&t.slot===now[0]){if(AG.cur!==t.a)return rainy()&&!DRY.includes(t.a)?'đang trú mưa':'sắp làm';return AG.walking?'đang đi':'đang làm'+(t.n?' · +'+t.n:'')}
+    if(t.slot)return'khoảng '+fmt(SLOTS[SLOTI[t.slot]][1]);return!DRY.includes(t.a)&&wetDay()?'chờ trời tạnh':'để mai'},
+  /** The same as a sentence, for the workplace card just after Mun writes the task down. */
+  when(t){const s=this.state(t);return s=='chờ trời tạnh'||s=='đang trú mưa'?'Trời đang mưa, Linh chờ tạnh rồi làm.':s=='sắp làm'||s.startsWith('đang')?'Linh đi làm ngay.':s.startsWith('khoảng')?'Linh sẽ làm '+s+'.':'Hôm nay hết giờ rảnh, Linh để mai làm.'},
+  /** The store a workplace fills, for its card. */
+  stock(a){const f=v=>Math.floor(v||0);return a=='chop'?'Củi trong kho: '+f(W.wood)+'/18 khúc.':a=='fish'?'Cá trong kho: '+f(W.fish)+' con.':
+    a=='eggs'?'Trứng trong kho: '+f(W.eggs)+' quả. Sáng nào Linh cũng tự nhặt một lượt; Mun nhờ thì cô nhặt thêm lứa mới.':a=='harvest'?'Bí trong kho: '+f(W.stock)+' quả. Ngoài vườn có '+this.ripeN()+' quả đã chín.':'Thuốc trong kho: '+f(W.potions)+' chai.'},
+  build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
+    for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
+  /** Redraws the book when it is open and something in it has changed. */
+  render(force){const el=$('ledger');if(!el||el.hidden)return;const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+      S=[['củi',f(W.wood)+'/18'],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
+    if(!force&&sig===this.sig)return;this.sig=sig;
+    $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
+    const L=$('lTasks');L.textContent='';
+    W.tasks.forEach((t,i)=>{const li=document.createElement('li'),n=document.createElement('span'),w=document.createElement('span');li.className=t.done?'done':'';n.className='nm';n.textContent=TASK[t.a].name;w.className='wh';w.textContent=st[i];li.append(n,w);
+      if(!t.done){const x=document.createElement('button');x.className='x';x.textContent='×';x.setAttribute('aria-label','Bỏ việc '+TASK[t.a].name);x.onclick=()=>{this.drop(i);this.render(true)};li.append(x)}L.append(li)});
+    if(!W.tasks.length){const li=document.createElement('li');li.className='empty';li.textContent='Chưa có việc nào. Linh đang sống theo ý mình.';L.append(li)}
+    $('lCount').textContent=' · '+W.tasks.length+'/3';
+    for(const b of $('lAdd').children){const why=this.cant(b.dataset.a);b.disabled=!!why;b.title=why}}};
 const Life={};
 function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,...o});
   // pumpkins that grow, a pile by the door, logs that come and go
@@ -2017,7 +2120,7 @@ function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,
     else if(id!='sleep')logJ('Linh '+ACT[id].txt);saveW()}
   if(AG.burn>0){AG.burn-=dt;if(Math.random()<dt*5){const q=new V3(-2.2*HS,.3*HS+.5,-.5*HS).applyAxisAngle(mv.c.set(0,1,0),H.rot).add(mv.c.set(H.x,H.y,H.z));spawnSprite(pool.smoke,q,mv.b.set(rand(-.1,.1),.45,rand(-.1,.1)),2.6,.22,.34,.5)}}
   // chopping fills the pile, watering grows the vegetables
-  if(AG.cur=='chop'&&here){const c=Math.floor(t/2.5);if(c!==AG.cc){AG.cc=c;AG.cn=(AG.cn||0)+1;if(AG.cn%3==0&&W.wood<18){W.wood++;updStore();if(W.wood==18)note('Đống củi đã đầy, đủ cho cả mùa lạnh.')}}}
+  if(AG.cur=='chop'&&here){const c=Math.floor(t/2.5);if(c!==AG.cc){AG.cc=c;AG.cn=(AG.cn||0)+1;if(AG.cn%3==0&&W.wood<18){W.wood++;updStore();if(W.wood==18)note('Đống củi đã đầy, đủ cho cả mùa lạnh.');Mun.got('chop',1)}}}
   if(AG.cur=='water'&&here){AG.gT=(AG.gT||0)+dt;for(const q of furn.pumpkins)q.g=Math.min(1,q.g+dt*.0085);if(AG.gT>1){AG.gT=0;updGarden()}}
   // practising spells: sometimes it works
   if(AG.cur=='practice'&&here){if(!AG.pT){AG.pOk=Math.random()<.58;AG.pCol=[C.violet,C.aqua,C.gold,C.green][Math.floor(rand(4))]}AG.pT+=dt;const k=AG.pT;
@@ -2026,11 +2129,11 @@ function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,
     if(k>11)AG.pT=0}
   // harvest: the ripest pumpkin floats home
   const Fl=Life.fly;if(AG.cur=='harvest'&&here){AG.hT+=dt;if(!AG.hq&&AG.hT>3){let b=null;for(const q of furn.pumpkins)if(q.g>=.82&&(!b||q.g>b.g))b=q;if(b){AG.hq={x:b.x,y:b.y+.14,z:b.z,s:b.max,k:0};b.g=.08;updGarden()}else{AG.hT=-12;if(!AG.noBi){AG.noBi=1;note('Chưa có quả bí nào chín. Linh nhổ cỏ cho luống rau.')}}}}
-  if(AG.hq){const q=AG.hq,tg=Life.pileSpots[Math.min(5,W.stock)];q.k+=dt/3;const f=fade(clamp(q.k));Fl.visible=true;Fl.scale.setScalar(q.s);Fl.position.set(lerp(q.x,tg[0],f),lerp(q.y,tg[1]+.14,f)+Math.sin(f*Math.PI)*1.4,lerp(q.z,tg[2],f));Fl.rotation.y+=dt*2;if(Math.random()<dt*30)Magic.emit(Fl.position,mv.b.copy(unit()).multiplyScalar(.15),C.gold,.8,.05);if(q.k>=1){AG.hq=null;Fl.visible=false;W.stock++;updStore();AG.hT=0;moodAdd(.15);note('Hái được một quả bí chín, bay thẳng về thềm nhà.');saveW()}}
+  if(AG.hq){const q=AG.hq,tg=Life.pileSpots[Math.min(5,W.stock)];q.k+=dt/3;const f=fade(clamp(q.k));Fl.visible=true;Fl.scale.setScalar(q.s);Fl.position.set(lerp(q.x,tg[0],f),lerp(q.y,tg[1]+.14,f)+Math.sin(f*Math.PI)*1.4,lerp(q.z,tg[2],f));Fl.rotation.y+=dt*2;if(Math.random()<dt*30)Magic.emit(Fl.position,mv.b.copy(unit()).multiplyScalar(.15),C.gold,.8,.05);if(q.k>=1){AG.hq=null;Fl.visible=false;W.stock++;updStore();AG.hT=0;moodAdd(.15);note('Hái được một quả bí chín, bay thẳng về thềm nhà.');Mun.got('harvest',1);saveW()}}
   // evening sparks
   if(AG.cur=='stars'&&here){AG.sT=(AG.sT||0)+dt;if(AG.sT>5.5){AG.sT=0;mv.b.set(AG.x+rand(-1.5,1.5),AG.y+rand(3,4.6),AG.z+rand(-1.5,1.5));burst(mv.b,[C.violet,C.gold,C.aqua][Math.floor(rand(3))],50,1.5)}if(Math.random()<dt*.05){mv.b.set(rand(-14,14),14,-14);for(let i=0;i<20;i++)Magic.emit(mv.a.copy(mv.b).addScaledVector(mv.c.set(.8,-.5,.2),i*.28),mv.c.set(0,0,0),C.white,.6+i*.02,.09);moodAdd(.15);note('Một ngôi sao băng vừa vụt qua. Linh kịp ước một điều.')}}
   // a fish landing in the basket gets counted
-  if(AG.cur=='fish'&&here){const c=Math.floor(t/20),u=(t%20)/20;if(u>.97&&AG.fc2!==c){AG.fc2=c;W.fish++;if(W.fish%3==1)note('Lại thêm một con cá vào giỏ. Mun ngồi canh, không rời mắt.');Sound.chirp&&Sound.chirp(false)}}
+  if(AG.cur=='fish'&&here){const c=Math.floor(t/20),u=(t%20)/20;if(u>.97&&AG.fc2!==c){AG.fc2=c;W.fish++;if(W.fish%3==1)note('Lại thêm một con cá vào giỏ. Mun ngồi canh, không rời mắt.');Mun.got('fish',1);Sound.chirp&&Sound.chirp(false)}}
   stepCat(dt,t)}
 function stepCat(dt,t){const K=Life.cat;K.tt+=dt;const asleep=AG.cur=='sleep'&&!AG.walking;const air=AG.y-groundAt(AG.x,AG.z)>.22;
   if(K.tt>.14&&!air){K.tt=0;K.trail.push([AG.x,AG.z]);if(K.trail.length>9)K.trail.shift()}
@@ -2288,7 +2391,42 @@ let scrubbing=false;const scrub=$('scrub');
 scrub.addEventListener('input',()=>{hour=+scrub.value;scrubbing=true;plan(schedule(hour,rainy()),true);applyTime(hour,-1)});
 scrub.addEventListener('change',()=>{scrubbing=false});
 $('bCine').onclick=()=>{Cine.on=!Cine.on;setPressed($('bCine'),Cine.on);Cine.t=0;Cine.pause=0;camGoal=null;if(Cine.on){follow=false;setPressed($('bFollow'),false)}else camGoal={pos:camera.position.clone().sub(controls.target).setLength(startDist).add(HOME_T),target:HOME_T.clone(),t:1.6}};
-$('bJournal').onclick=()=>{const j=$('journal');j.hidden=!j.hidden;setPressed($('bJournal'),!j.hidden);renderJ();if(!j.hidden)placePanel(j);if(!j.hidden){$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);$('wxp').hidden=true;setPressed($('bWx'),false)}};
+$('bJournal').onclick=()=>{const j=$('journal');j.hidden=!j.hidden;setPressed($('bJournal'),!j.hidden);renderJ();if(!j.hidden)placePanel(j);if(!j.hidden){$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);$('wxp').hidden=true;setPressed($('bWx'),false);shutLedger()}};
+// Mun's ledger opens like the journal and closes the other panels
+function shutLedger(){$('ledger').hidden=true;setPressed($('bLedger'),false)}
+$('bLedger').onclick=()=>{const p=$('ledger');p.hidden=!p.hidden;setPressed($('bLedger'),!p.hidden);if(p.hidden)return;placePanel(p);p.style.maxHeight=Math.max(160,innerHeight-parseFloat(p.style.top)-16)+'px';Mun.render(true);
+  $('journal').hidden=true;setPressed($('bJournal'),false);$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);$('wxp').hidden=true;setPressed($('bWx'),false)};
+$('lClose').onclick=()=>$('bLedger').click();
+// ---- the workplaces on the island: a hand over one, and a click opens a card to ask Linh for its task (a double click still flies the camera there)
+const SPOTS=[],pickRay=new THREE.Raycaster(),pickXY=new THREE.Vector2(),pickA=new V3(),pickB=new V3();
+function buildSpots(){const y=(x,z,o)=>hAt(x,z)+o,[tx,tz]=hl(HOUSE.tower[0],HOUSE.tower[1]),gx=GARDEN.x,gz=GARDEN.z;
+  SPOTS.push({a:'chop',name:'Đống củi',p0:new V3(CHOP[0],y(CHOP[0],CHOP[1],.4),CHOP[1]),p1:new V3(9.4,y(9.4,-3.9,.4),-3.9),r:.9},
+    {a:'fish',name:'Bến câu',p0:new V3(N.dbank[0],furn.dockY+.3,N.dbank[1]),p1:new V3(N.dockEnd[0],furn.dockY+.3,N.dockEnd[1]),r:.75},
+    {a:'eggs',name:'Chuồng gà',p0:new V3(5.55,y(5.55,3.7,.4),3.7),p1:new V3(6.35,y(6.35,3.4,.2),3.4),r:.65},
+    {a:'harvest',name:'Vườn bí',p0:new V3(gx-1.5,y(gx-1.5,gz,.3),gz),p1:new V3(gx+1.5,y(gx+1.5,gz,.3),gz),r:1.3},
+    {a:'brew',name:'Tháp nấu thuốc',p0:new V3(tx,H.y+.4,tz),p1:new V3(tx,H.y+5.4*HS,tz),r:HOUSE.tower[2]*HS})}
+/** The workplace under screen point (x, y): the nearest one the view ray passes close to; with ground set, none when the island's ground stands in front of it
+ *  (the ray is walked over the height field, which costs microseconds where a raycast against the terrain mesh costs ~50 ms). */
+function spotAt(x,y,ground){if(!SPOTS.length)return null;pickXY.set(x/innerWidth*2-1,-(y/innerHeight)*2+1);pickRay.setFromCamera(pickXY,camera);const ray=pickRay.ray;let best=null,bd=1e9;
+  for(const s of SPOTS){if(ray.distanceSqToSegment(s.p0,s.p1,pickA,pickB)>s.r*s.r)continue;const d=pickA.distanceTo(ray.origin);if(d<bd){bd=d;best=s}}
+  if(best&&ground){const end=bd-best.r;for(let i=1;i<48;i++){ray.at(end*i/48,pickA);if(Math.hypot(pickA.x,pickA.z)<R-.6&&pickA.y<hAt(pickA.x,pickA.z)-.15)return null}}return best}
+const Card={tm:0,s:null,hov:false,
+  show(s,x,y){const el=$('spot');this.s=s;this.fill();el.hidden=false;const w=el.offsetWidth,h=el.offsetHeight;el.style.left=Math.round(clamp(x+14,16,innerWidth-w-16))+'px';el.style.top=Math.round(clamp(y+14,16,innerHeight-h-16))+'px'},
+  fill(){const s=this.s,why=Mun.cant(s.a),b=$('sGo');$('sName').textContent=s.name;$('sInfo').textContent=Mun.stock(s.a);b.textContent='Nhờ Linh '+TASK[s.a].name.toLowerCase();b.disabled=!!why;
+    $('sNote').textContent=why||'Sổ hôm nay: '+W.tasks.length+'/3 việc. Linh làm vào lúc rảnh.'},
+  hide(){clearTimeout(this.tm);this.tm=0;$('spot').hidden=true;this.s=null}};
+$('sGo').onclick=()=>{const s=Card.s;if(!s)return;const t=Mun.add(s.a);if(!t){Card.fill();return}const b=$('sGo');b.disabled=true;b.textContent='Đã ghi vào sổ';$('sNote').textContent=Mun.when(t);Mun.render(true);
+  clearTimeout(Card.tm);Card.tm=setTimeout(()=>Card.hide(),2600)};
+$('sClose').onclick=()=>Card.hide();
+let downAt=null;
+canvas.addEventListener('pointerdown',e=>{downAt=[e.clientX,e.clientY];if(Card.hov){Card.hov=false;canvas.style.cursor=''}});
+addEventListener('pointerdown',e=>{if(!$('spot').hidden&&!$('spot').contains(e.target))Card.hide()},{passive:true});
+canvas.addEventListener('click',e=>{if(!downAt||Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])>6)return;Card.hide();if(e.detail>1)return;
+  const s=spotAt(e.clientX,e.clientY,true),x=e.clientX,y=e.clientY;if(s)Card.tm=setTimeout(()=>Card.show(s,x,y),260)});
+canvas.addEventListener('dblclick',()=>Card.hide());
+canvas.addEventListener('pointermove',e=>{if(e.buttons)return;const on=!!spotAt(e.clientX,e.clientY,false);if(on!==Card.hov){Card.hov=on;canvas.style.cursor=on?'pointer':''}},{passive:true});
+canvas.addEventListener('pointerleave',()=>{if(Card.hov){Card.hov=false;canvas.style.cursor=''}});
+addEventListener('keydown',e=>{if(e.key=='Escape')Card.hide()});
 $('bFollow').onclick=()=>{follow=!follow;setPressed($('bFollow'),follow);camGoal=null;if(follow){Cine.on=false;setPressed($('bCine'),false)}
   if(follow){const d=camera.position.clone().sub(controls.target);d.setLength(Math.min(d.length(),6.2));camGoal={offset:d,t:1.4}}
   else camGoal={pos:camera.position.clone().sub(controls.target).setLength(startDist).add(HOME_T),target:HOME_T.clone(),t:1.6}};
@@ -2391,7 +2529,7 @@ const Inner={g:null,scan(){const hg=anim.houseG;if(!hg)return;if(!this.g){this.g
 function trimCasters(){scene.traverse(o=>{if(!o.isMesh||!o.castShadow||o.isInstancedMesh||o.isSkinnedMesh)return;const g=o.geometry;if(!g.boundingSphere)g.computeBoundingSphere();o.getWorldScale(tmpV);if(g.boundingSphere.radius*Math.max(tmpV.x,tmpV.y,tmpV.z)<.045)o.castShadow=false})}
 // wallpaper mode: left alone, the island sheds its captions and the cursor after 45 s; any movement brings them back
 const Idle={t:0,auto:false,wake(){Idle.t=0;if(Idle.auto){Idle.auto=false;$('hud').classList.remove('off');document.body.classList.remove('idle')}},
-  step(raw){this.t+=raw;const hud=$('hud'),panel=!$('journal').hidden||!$('perf').hidden||!$('wxp').hidden;if(!this.auto&&this.t>45&&!panel&&!hud.classList.contains('off')){this.auto=true;hud.classList.add('off');document.body.classList.add('idle')}}};
+  step(raw){this.t+=raw;const hud=$('hud'),panel=!$('journal').hidden||!$('perf').hidden||!$('wxp').hidden||!$('ledger').hidden;if(this.t>45&&Card.s)Card.hide();if(!this.auto&&this.t>45&&!panel&&!hud.classList.contains('off')){this.auto=true;hud.classList.add('off');document.body.classList.add('idle')}}};
 for(const ev of['pointermove','pointerdown','wheel','keydown','touchstart'])addEventListener(ev,()=>Idle.wake(),{passive:true});
 let fpsShown=0;const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 // the detailed run draws its own frames in short bursts (so it works even while the window is in the background): the four levels in turn, three rounds,
@@ -2427,7 +2565,7 @@ function perfInit(){let s=null;try{s=JSON.parse(localStorage.getItem('dao.perf')
   if(s&&QUAL[s.q]){qWant='manual';qLevel=s.q}if(s&&(s.f=='auto'||[1,2,3,4].includes(s.f)))Pace.want=s.f;applyQ(QUAL[qLevel]);PerfUI.build()}
 function placePanel(el){el.style.top=Math.round(document.querySelector('#hud .tools').getBoundingClientRect().bottom+8)+'px'}
 $('pClose').onclick=()=>$('bPerf').click();
-$('bPerf').onclick=()=>{const p=$('perf');p.hidden=!p.hidden;PerfUI.open=!p.hidden;if(!p.hidden)placePanel(p);setPressed($('bPerf'),PerfUI.open);if(PerfUI.open){$('journal').hidden=true;setPressed($('bJournal'),false);$('wxp').hidden=true;setPressed($('bWx'),false);PerfUI.t=0}};
+$('bPerf').onclick=()=>{const p=$('perf');p.hidden=!p.hidden;PerfUI.open=!p.hidden;if(!p.hidden)placePanel(p);setPressed($('bPerf'),PerfUI.open);if(PerfUI.open){$('journal').hidden=true;setPressed($('bJournal'),false);$('wxp').hidden=true;setPressed($('bWx'),false);shutLedger();PerfUI.t=0}};
 $('pRun').onclick=async()=>{const b=$('pRun'),res=$('pRes');b.disabled=true;res.innerHTML='';const r=await Bench.run((i,n,name)=>{b.textContent=`Đang đo ${i+1}/${n}: mức ${name}`});b.disabled=false;b.textContent='Đo lại';
   if(!r){res.innerHTML='<p class="pNote">Trình duyệt này không cho đo thời gian GPU.</p>';return}
   const f1=x=>isFinite(x)?x.toFixed(1).replace('.',','):'–',fps=Pace.fps();
@@ -2537,7 +2675,7 @@ const WxUI={build(){$('wSea').innerHTML=['-1','0','1','2','3'].map(k=>`<button d
   mark(){if(!$('wSea').firstChild)return;const sw=W.seaWant>=0?W.seaWant:-1;$('wSea').querySelectorAll('button').forEach(b=>setPressed(b,+b.dataset.s===sw));$('wWx').querySelectorAll('button').forEach(b=>setPressed(b,(b.dataset.w||null)===(W.wxWant||null)));
     const si=seasonNow(),d=(W.day-1)%7+1;$('wSeaNote').textContent=W.seaWant>=0?`Đang giữ mùa ${SEAW[si]}.`:`Mỗi mùa kéo dài một tuần trên đảo. Hôm nay là ngày ${d} của mùa ${SEAW[si]}.`;
     const x=W.wx,f=h=>fmt(h);$('wWxNote').textContent=W.wxWant?`Đang giữ thời tiết: ${WXN[W.wxWant].toLowerCase()}.`:!x?'':x.t=='clear'?'Hôm nay trời quang cả ngày.':x.t=='cloudy'?'Hôm nay trời nhiều mây.':x.t=='fog'?`Sáng nay có sương mù, tan vào khoảng ${f(x.b)}.`:`Hôm nay có ${WXN[x.t].toLowerCase()} từ ${f(x.a)} đến ${f(x.b)}.`}};
-$('bWx').onclick=()=>{const p=$('wxp');p.hidden=!p.hidden;setPressed($('bWx'),!p.hidden);if(!p.hidden){placePanel(p);WxUI.mark();$('journal').hidden=true;setPressed($('bJournal'),false);$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false)}};
+$('bWx').onclick=()=>{const p=$('wxp');p.hidden=!p.hidden;setPressed($('bWx'),!p.hidden);if(!p.hidden){placePanel(p);WxUI.mark();$('journal').hidden=true;setPressed($('bJournal'),false);$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);shutLedger()}};
 $('wClose').onclick=()=>$('bWx').click();
 
 /* ---------- seasonal life ---------- */
@@ -2625,7 +2763,8 @@ function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on|
   Wx.step(dt);Sea.step(dt);
   applyTime(hour,dt);
   if(flashK>0){const f=flashK*(.65+.35*Math.sin(U.time.value*70));bounce.intensity+=f*2.4;fill.intensity+=f*1.6;U.zen.value.lerp(col('#dfe8ff'),f*.35);U.hor.value.lerp(col('#dfe8ff'),f*.5)}
-  // who should be doing what
+  // who should be doing what (Mun's tasks first find their slots)
+  Mun.step(sdt);
   const id=schedule(hour,rainy());
   if(id!=AG.cur&&!scrubbing)plan(id,speed>=30);
   if(speed>0)stepAgent(sdt,simT);
@@ -2693,7 +2832,8 @@ function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on|
   // HUD
   fpsN++;fpsT+=raw;PerfUI.tick(raw);if(fpsT>=1){fpsShown=fpsN/fpsT;$('fps').textContent=Math.round(fpsShown)+' khung hình/giây';fpsN=0;fpsT=0;saveTick++;if(saveTick%30==0)saveW()}
   hudT-=raw;if(hudT<=0){hudT=.2;clockEl.textContent=fmt(hour);dayLbl.textContent=WEEK[(W.day-1)%7]+' · ngày '+W.day+' · mùa '+SEAW[Math.max(0,Sea.cur)]+' · '+Wx.label()+' · '+moodLabel();if(!scrubbing&&document.activeElement!==scrub)scrub.value=hour.toFixed(2);
-    const a=ACT[AG.cur],txt='Linh '+(AG.walking?(a.spots&&AG.path.length==0?'chuyển sang luống khác':'đang '+a.go)+'.':a.txt);const show=AG.noteT>0&&AG.note?AG.note:txt;if(show!=lastAct){lastAct=show;lineEl.textContent=show}}
+    const a=ACT[AG.cur],txt=(Mun.doing()?'Việc Mun nhờ: ':'')+'Linh '+(AG.walking?(a.spots&&AG.path.length==0?'chuyển sang luống khác':'đang '+a.go)+'.':a.txt);const show=AG.noteT>0&&AG.note?AG.note:txt;if(show!=lastAct){lastAct=show;lineEl.textContent=show}
+    Mun.render()}
   // render
   {const su=finalQ.material.uniforms,d=tmpV.copy(U.sunD.value),front=d.dot(camera.getWorldDirection(new V3()));su.asp.value=camera.aspect;if(front>-.25){const q=d.clone().multiplyScalar(100).add(camera.position).project(camera);su.sunUv.value.set(clamp(q.x*.5+.5,-.12,1.08),Math.max(clamp(q.y*.5+.5,-.12,1.08),d.y>.05?.9:0));su.flareC.value.copy(U.sunC.value).multiplyScalar(sstep(-.25,.45,front)*.9*(d.y>-.02?1:0))}else su.flareC.value.set(0,0,0)}
   focus=damp(focus,camera.position.distanceTo(controls.target),4,dt);prepQ.material.uniforms.focus.value=focus;
@@ -2726,7 +2866,8 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();
+Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
 applyTime(hour,-1);refreshEnv(true);
