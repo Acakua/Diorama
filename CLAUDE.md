@@ -23,6 +23,16 @@ Talk to the user in Vietnamese.
 - There is no code root (`src/`, `Assets/`, `Source/`): the code sits in the
   project root, so pass file paths to review skills explicitly.
 
+### Roles (user decision, 2026-11-26, copied from D:\Game3\godot-open-rts)
+
+- **Claude Code is the orchestrator only**: it writes briefs, runs workers, reviews
+  (parse check, diff, screenshots) and commits. It does not write page code, shaders,
+  CSS or assets itself. Read `HANDOFF.md`, then `tools/orchestra/RUNBOOK.md`.
+- **Workers** (opencode models, `tools/orchestra/roles.conf`) follow `AGENTS.md`.
+- **Art director: Gemini 4 Hydrogen via the Antigravity CLI `agy`**, following
+  `tools/orchestra/ART-DIRECTOR.md`. It owns `design/art-bible.md`, reviews
+  screenshots, and may edit the art parts of `dao-coi-nuoc.html`.
+
 ## Technology Stack
 
 - **Engine**: three.js r170 (ES module from jsdelivr via an importmap); not one
