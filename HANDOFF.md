@@ -40,6 +40,9 @@
      31 sprite đèn, 12 cầu `#0c0a08`, 11 cầu len Nimbus `#e8ecf2`.
      PERF3 xong (`cf6d0bf`): mặt đất và đáy đảo đổ bóng qua proxy ở layer 1 (14.800 + 1.104 tam
      giác), tam giác pass bóng ~980k → ~632k. Bằng chứng `production/qa/evidence/perf3-shadow-proxies/`.
+     Đo khi máy rảnh (`frame-time-2026-11-26.md` trong thư mục đó): CPU −7–9 %, lượt vẽ −14 %,
+     GPU không đổi. Ở mức Cao trang bị giới hạn bởi GPU (~115 W ở 60 khung/giây) → việc hiệu
+     năng kế tiếp là hậu kỳ/độ phân giải mức Cao, không phải gộp lượt vẽ.
   3. Một lần chụp 17:30 ra khung gần như đen (vật tối bay sát camera?); chưa tái hiện được.
 - Mẹo chụp: mùa/thời tiết ép bằng `__dao.W.seaWant/wxWant` được **lưu** vào `localStorage['dao-world']`;
   trả về `-1`/`null` sau khi chụp. Khung Browser phải đang hiện, không thì rAF dừng.
