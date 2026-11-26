@@ -127,5 +127,13 @@ Brief mỹ thuật luôn dẫn tới `design/art-bible.md` và nêu ảnh nào t
 
 ## 10. Dự án đang ở đâu
 
-*2026-11-26.* Lập bộ điều hành theo Game3; thêm Gemini 4 Hydrogen (agy) làm art director. Vòng
-đầu AD1: Gemini viết `design/art-bible.md` và chấm bộ ảnh hiện tại.
+*2026-11-26.* Lập bộ điều hành theo Game3; thêm Gemini 4 Hydrogen (agy) làm art director.
+AD1–AD3 và PERF1 xong (xem `HANDOFF.md` mục 3).
+
+- Hạn mức agy tính **riêng từng model** nhưng hết rất nhanh: Hydrogen xhigh (AD1, 8 phút) +
+  high (AD2) đã làm cạn high/xhigh/Flash; medium trả lời được một câu rồi cũng hết. Model
+  không phải Gemini trong agy có hạn mức "third-party" riêng (Opus 4.6 làm một vòng AD3 là hết).
+  Mỗi lần hết thì chờ khoảng 7 ngày. Dành Gemini cho việc phán và art bible, đừng dùng cho việc
+  sửa vặt.
+- Khi agy hết giữa chừng, việc sửa vẫn nằm trên đĩa (chỉ thiếu khối báo cáo): soát diff như thường.
+- Worker free `hy4-flash-free` làm PERF1 ổn ở vòng 2 khi lời chê ghi rõ từng điểm kèm số đo.

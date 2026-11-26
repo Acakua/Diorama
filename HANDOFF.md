@@ -25,6 +25,19 @@
 ## 3. Đang ở đâu (26/11/2026)
 
 - Commit cuối trước khi lập đội: `43db1d7` (sổ của Mun, việc Linh xếp vào giờ rảnh).
-- Vòng AD1: Gemini viết art bible và chấm bộ ảnh `.orchestra/shots/AD1/`. Bước sau: chọn các
-  điểm P1 trong bản chấm thành brief sửa mỹ thuật (AD2).
+- Xong: AD1 (art bible, Gemini), AD2 (hoàng hôn, đêm, đáy đảo, vòm cổ ngữ; Gemini), AD3 (bầu trời
+  dưới, giông, viền Linh, DOF, đảo xa; **Claude Opus 4.6 qua agy làm thay**), PERF1 (đóng băng ma
+  trận vật tĩnh, CPU 7,4–9,2 → 5,4–5,9 ms/khung). Bằng chứng: `production/qa/evidence/art-AD1-AD3/`.
+- **Hạn mức:** mọi model Gemini trong agy hết tới khoảng **2026-12-03**; Claude/GPT trong agy
+  ("third-party") cũng hết tới khoảng 2026-12-03; BytePlus mở lại 2026-11-30. Hiện chỉ còn đội
+  opencode `free-*`.
+- Việc kế tiếp:
+  1. Khi Gemini có hạn mức: chạy lại bộ chụp chuẩn, cho `art-director` phán AD2+AD3 (bản AD3 do
+     người thay làm), rồi sửa tiếp: vòm còn viền sáng như bong bóng thủy tinh và dấu "+" trông
+     như bia mộ; trời hoàng hôn hơi đục nâu-tím; tuyết mặt đất mùa đông mỏng (`U.snow` thấp).
+  2. PERF2: gộp các con vật làm từ nhiều khối tiện nhỏ (35 + 20 lượt vẽ MeshBasic có đổ bóng)
+     bằng InstancedMesh; đo lại PERF1 + PERF2 khi máy rảnh (không chạy game).
+  3. Một lần chụp 17:30 ra khung gần như đen (vật tối bay sát camera?); chưa tái hiện được.
+- Mẹo chụp: mùa/thời tiết ép bằng `__dao.W.seaWant/wxWant` được **lưu** vào `localStorage['dao-world']`;
+  trả về `-1`/`null` sau khi chụp. Khung Browser phải đang hiện, không thì rAF dừng.
 - Còn mở: Linh (VRM) giật khi hiện lần đầu (bộ nhớ `reference-shader-compile-measurement`).
