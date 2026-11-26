@@ -38,6 +38,8 @@
   2. PERF2 xong (`0e062de`): lửa đuôi/mào gà thành 2 InstancedMesh, lượt vẽ 743 → 656 (trưa).
      Còn: đo thời gian khung PERF1 + PERF2 khi máy rảnh (không chạy game); ứng viên gộp tiếp:
      31 sprite đèn, 12 cầu `#0c0a08`, 11 cầu len Nimbus `#e8ecf2`.
+     PERF3 xong (`cf6d0bf`): mặt đất và đáy đảo đổ bóng qua proxy ở layer 1 (14.800 + 1.104 tam
+     giác), tam giác pass bóng ~980k → ~632k. Bằng chứng `production/qa/evidence/perf3-shadow-proxies/`.
   3. Một lần chụp 17:30 ra khung gần như đen (vật tối bay sát camera?); chưa tái hiện được.
 - Mẹo chụp: mùa/thời tiết ép bằng `__dao.W.seaWant/wxWant` được **lưu** vào `localStorage['dao-world']`;
   trả về `-1`/`null` sau khi chụp. Khung Browser phải đang hiện, không thì rAF dừng.
