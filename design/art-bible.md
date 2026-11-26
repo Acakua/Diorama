@@ -51,8 +51,8 @@
 | Giờ | Bầu trời (`zen` / `hor`) | Ánh nắng (`sun`) & `si` | Tán lá & Mặt đất | Ghi chú hiện tại vs đề xuất |
 |---|---|---|---|---|
 | **Bình minh (05:30)** | `#27345c` / `#c98067` (hiện tại) | `#ff8a4f`, `si=0.0`, `env=0.5` (hiện tại) | Nhuốm hồng-đồng nhạt từ `hor` | *Chưa thấy ảnh AD1*; cần kiểm tra `si=0` có làm cảnh quá tối trước 06:00 không `(đề xuất: si=0.45..0.6)` |
-| **Buổi sáng (06:30–08:00)** | `#3a6a78`→`#3f8284` / `#e6b187`→`#8fb9a9` (hiện tại) | `#ffb06a`→`#ffd09a`, `si=2.1..3.3` (hiện tại) | Tán sáng ấm, bóng đổ dài rõ | Nửa dưới `skyMat` (`low`) đang hơi xỉn `(đề xuất: bỏ *0.62 quá gắt, dùng *0.78)` |
-| **Trưa (11:00–15:30)** | `#478a90` / `#9cc2b6` (hiện tại); `(đề xuất: #5298a2 / #b6d6ce)` | `#fff1dc`, `si=3.7`, `env=1.0` (hiện tại) | Màu chuẩn mùa, tương phản rõ | Hơi ngả xanh xám nặng nếu trời dưới chân trời tối |
+| **Buổi sáng (06:30–08:00)** | `#3a6a78`→`#3f8284` / `#e6b187`→`#8fb9a9` (hiện tại) | `#ffb06a`→`#ffd09a`, `si=2.1..3.3` (hiện tại) | Tán sáng ấm, bóng đổ dài rõ | Nửa dưới `skyMat` (`low`) đã sáng hơn: `mix(hor,zen,.6)*.78` (AD3) |
+| **Trưa (11:00–15:30)** | `#478a90` / `#9cc2b6` (hiện tại) | `#fff1dc`, `si=3.7`, `env=1.0` (hiện tại) | Màu chuẩn mùa, tương phản rõ | Nửa dưới bầu trời đã sáng hơn nhờ `low=mix(hor,zen,.6)*.78` (AD3) |
 | **Hoàng hôn (17:30–19:12)** | `#5a7c96`→`#4b5582`→`#222c54` / `#f2c28e`→`#f5a066`→`#866078` | `#ffb46a`→`#ff8045`→`#8aa0de`, `si=2.8→1.5→0`, `env=0.86→0.76→0.64` (hiện tại) | Ấm và đọc rõ khối ở 18:00 nhờ `si`, `env` và đèn bật từ `17.0–18.4h` | Đã cập nhật ở AD2; `fireOn` vẫn giữ `hour>18.7` (chờ AD2b nếu cần đồng bộ khói/lò sưởi) |
 | **Đêm (20:20–24:00)** | `#111933`→`#0f162c` / `#233356`→`#1e2c4c` (hiện tại) | Trăng `#9cb4f0`, `si=1.25`, `env=0.78` (hiện tại) | Cỏ, cối xay gió và hàng thông giữ được sắc lam-lục tối có khối | Đã nâng ở AD2 (`c1=#384468`/`#344062`, `c2=#202744`/`#1d243e`) |
 
@@ -61,7 +61,7 @@
 | Mùa | Tán lá (`SEAP.leaf` / `PAL`) | Cỏ (`SEAP.grass`) & Mặt đất | Trời & Nước |
 |---|---|---|---|
 | **Xuân (`0`)** | Xanh cốm non `#9fd46b`, `#b5df79`, `#8ccb5b`, `#c8e98a` + 16% hoa hồng `#f4a6c2`..`#ffffff` (hiện tại) | Cỏ tươi sáng `[0.8, 1.16, 0.74]` + cánh hoa rơi `SEAP.petal` (hiện tại) | Trong mát; `(đề xuất: đảo phụ xa thêm sắc hoa xuân)` |
-| **Hạ (`1`)** | Xanh lục đậm `#4d8c39`, `#5c9b41`, `#437e33`, `#68a548` (hiện tại) | Cỏ xanh rậm `[0.84, 1.1, 0.78]` (hiện tại) | Khi giông (`storm`) trời cần ngả chàm-xám sẫm `(đề xuất)` |
+| **Hạ (`1`)** | Xanh lục đậm `#4d8c39`, `#5c9b41`, `#437e33`, `#68a548` (hiện tại) | Cỏ xanh rậm `[0.84, 1.1, 0.78]` (hiện tại) | Khi giông (`storm`) trời ngả chì-chàm thẫm: `grey` lerp sang `#465363`, `sky0.z`/`sky0.h` hạ thêm `stormK*.18` (AD3) |
 | **Thu (`2`)** | Cam-hổ phách-vàng `PAL`: `#e0812c`, `#d56a22`, `#d9642a`, `#ecb535`, `#f4b63f` + thông `#2c4f33` (hiện tại) | Cỏ vàng olive `[1, 1, 1]` + lá rụng dưới gốc `C.litter` `#c0632a` (hiện tại) | Trời ấm trong; nước xanh rêu phản chiếu bầu trời |
 | **Đông (`3`)** | 90% lá rụng hết, còn ít lá khô `#8a6a4a`, `#7a5c40` và tán tuyết `#eef2f7`; thông phủ tuyết ở mặt trên (hiện tại) | `addSnow` phủ `vec3(.9,.93,.97)`, cỏ `[0.93, 0.95, 1.02]` (hiện tại) | `applyTime` pha trời `#a9bcc8`/`#d5dde2`; nước đóng băng `uIce` `0.62..0.96`; `(đề xuất: thêm tuyết lên viền đá bờ đảo & đảo phụ xa)` |
 
@@ -96,7 +96,7 @@
   - **Nước (`buildWater`):** Shader bán trong suốt có sóng FBM, phản chiếu bầu trời theo Fresnel, bọt trắng ở ghềnh/thác, đóng băng có vết nứt khi mùa đông (`uIce`). Lưu ý: dòng thác đổ khỏi mép đảo phải uốn cong và tan thành sương bọt ở chân thác thay vì dải thẳng đơ.
   - **Đáy đảo & Tinh thể (`buildBowl`, `buildDepths`):** Đá đáy đảo **bắt buộc dùng `roughness >= 0.88`** (đã chỉnh lên `0.92` với tông đất đá trầm `#4a3a2e` / `#725845` / `#5e4d41` / `#382b22` tại AD2), lưu `Deep.bowlMat` để nhận `addSnow` vào mùa đông, và mép `lip` trong `buildTerrain` pha `0.65` vào `#4a3a2e` thay vì cắt gắt; tinh thể lục giác đáy đảo (`#c9a8ff`, `#a8fff0`) phát sáng dịu vừa phải (`emissiveIntensity ~0.6–0.9`) để giữ vai trò phép thuật ẩn sâu, không lấn át mặt đảo.
 - **Mức độ chi tiết bề mặt:** Texture procedural 512×512 hạt mịn (`tileNoise`) kết hợp màu đỉnh (`vertexColors`) + hiệu ứng rêu/lá rụng; tránh họa tiết sắc nét kiểu ảnh chụp hay bề mặt trơn lì không hạt.
-- **Độ sâu trường ảnh (`dofQ`):** Giữ `dofQ` nhẹ để tạo cảm giác mô hình thu nhỏ ở tầm gần, nhưng **không làm mờ chủ thể chính hay biến đốm sáng thành chấm rỗ** `(đề xuất: giảm amt từ Hh/1080*9 xuống Hh/1080*4.5..5.5 và loại trừ/nới vùng bokeh với hạt phát sáng ở cự ly gần)`.
+- **Độ sâu trường ảnh (`dofQ`):** Giữ `dofQ` nhẹ để tạo cảm giác mô hình thu nhỏ ở tầm gần, nhưng **không làm mờ chủ thể chính hay biến đốm sáng thành chấm rỗ**. AD3: giảm `amt` từ `Hh/1080*9` xuống `Hh/1080*5` và hệ số focus từ `1.25` xuống `0.95`, vùng rõ nét rộng hơn, bán kính bokeh giảm gần nửa.
 
 ---
 
@@ -104,12 +104,12 @@
 
 - **Linh (mô hình VRoid toon `MToon` trong `dao-model-*.js`):**
   - Bảng màu hiện tại (`styleLinh`): tóc đen ánh tím `#34323f`, mắt tím `#b08cff`, áo cardigan màu yến mạch `#b6a585`, váy/quần `#2d2737`, giày `#5b3f2c`, mũ phớt `#2b2530` kèm dải ruy-băng nâu đỏ `#7a3d2c`.
-  - **Vấn đề đọc hình:** Hiện `parametricRimColorFactor` đang đặt `#000000` và không có đường viền/tách sáng (`rim`), khiến Linh ở tầm nhìn tổng thể (`startDist = 67`) và tầm gần trong bóng râm bị lẫn vào gỗ hàng rào và nền đất.
-  - **Quy tắc kết hợp:** Giữ chất liệu MToon dịu (không chói màu anime gắt), **bổ sung viền sáng ấm mảnh** (`parametricRimColorFactor` màu kem/oải hương nhạt `#d8c6b8` hoặc `#b8a4d6` với power cao) và làm sáng nhẹ sắc áo/mũ (`#cab896` cho áo, nhấn dải ruy-băng mũ/hoa oải hương rõ hơn) để Linh đọc ra ngay ở cả cận cảnh lẫn góc nhìn đảo.
+  - **Vấn đề đọc hình:** Đã bổ sung `parametricRimColorFactor '#e2d2c0'` với `parametricRimFresnelPowerFactor=4.5`, `parametricRimLiftFactor=0.08` (AD3), tạo viền kem ấm mảnh giúp Linh tách khỏi nền.
+  - **Quy tắc kết hợp:** Giữ chất liệu MToon dịu (không chói màu anime gắt), viền sáng ấm mảnh (`parametricRimColorFactor '#e2d2c0'`, power `4.5`), áo cardigan `'#c4b494'` (shade `'#7a6b56'`) sáng hơn gỗ hàng rào.
 - **Đàn gà lửa (`buildHens`):** Thân nâu sẫm `#3a2620` với mào và đuôi lửa cam-vàng phát sáng (`#fff0a0`→`#ff7a1a`). Tỷ lệ tách biệt rất tốt, là điểm dẫn mắt tự nhiên quanh chuồng gà — giữ nguyên phong cách này.
 - **Cá koi (`Crit.koi`):** Thân trắng ngà `#f6f2ea` đốm cam đỏ `#ff7a2a`/`#d8261c` với vây bán trong suốt (`forceSinglePass: true`). Độ tương phản với nền nước xanh thẫm `#041314` rất tốt.
 - **Mun (`Life.cat`):** Mèo đen `#17141f` với đôi mắt vàng hổ phách phát sáng (`#ffd76a`, `emissiveIntensity: 1.6`). Vì lông rất tối, ở tầm xa và ban đêm cần giữ ánh mắt vàng và bóng khói tím `#2a2040` rõ ràng; khi Mun bước ra thảm cỏ tối có thể nâng lông lên xám than rất đậm `#231f2e` để vẫn thấy phom dáng mèo thay vì chấm đen bệt.
-- **Nimbus (`Crit2.sheep`):** Cừu mây `#f6f8fb` hiện hơi sáng gắt hơn cả Linh ở góc nhìn toàn đảo; có thể giữ sắc trắng ngà dịu (`#eaedf4`) để không cướp tiêu điểm khỏi Linh và ngôi nhà.
+- **Nimbus (`Crit2.sheep`):** Cừu mây `#e8ecf2` (AD3: hạ từ `#f6f8fb`), `emissiveIntensity:0` (AD3: tắt emissive); sắc trắng ngà dịu hơn để không cướp tiêu điểm khỏi Linh và ngôi nhà.
 
 ---
 
@@ -120,7 +120,7 @@
 - **Tuyết (`snow` & `addSnow`):** Hạt tuyết tròn mềm bay chậm (`anim.snow`), đồng bộ với lớp phủ tuyết `vec3(.9,.93,.97)` trên mặt hướng lên trời. Riêng `buildGrass` cần phủ tuyết giảm dần theo chiều cao lá (`vH`) thay vì làm xám trắng đều cả bụi cỏ.
 - **Đom đóm (`anim.fireflies`) & Bướm đêm (`Crit2.moths`):** Đom đóm mùa hạ dùng sắc vàng-lục ấm (`Color(4, 5.4, 1.2)`), số lượng vừa phải (40 đốm), bay thấp quanh thảm cỏ và ghế đá; không tăng mật độ gây rối khung hình.
 - **Phép thuật (`Magic`):** Màu sắc gắn với từng phép (tím `#a880ff`, vàng ấm, xanh ngọc, lửa than), điểm nhấn phải nhỏ gọn và mềm. Đốm tinh linh đi theo Linh (`Magic.wisp`) dùng độ phân giải/dạng hào quang mịn để khi `dofQ` hoạt động không bị vỡ thành hình tròn lấm tấm hạt.
-- **Vòm bảo vệ (`Place.ward`):** **Không được phép trông giống khiên lục giác khoa học viễn tưởng (`hexd`, `vec3(.3,.6,1.2)`)** và **tuyệt đối không bật/đọng lại vào ban ngày hoặc khi trời mưa/tuyết**. Đã đổi shader sang **vòng cổ ngữ mờ và sương ánh trăng vàng-oải hương nhạt** (`vec3(.88,.76,1.)` pha `vec3(1.,.86,.58)`, độ sáng giữ ở `uA*.34` / `uA*.22` và `vis=smoothstep(.02,.2,uA)`) ôm sát vành đảo (`vUv.y ~ 0.255`) và tan nhanh; phần logic tắt `Wd.t` / `Wd.d.visible` chờ AD2b xử lý.
+- **Vòm bảo vệ (`Place.ward`):** **Không được phép trông giống khiên lục giác khoa học viễn tưởng (`hexd`, `vec3(.3,.6,1.2)`)** và **tuyệt đối không bật/đọng lại vào ban ngày hoặc khi trời mưa/tuyết**. Đã đổi shader sang **vòng cổ ngữ mờ và sương ánh trăng vàng-oải hương nhạt** (`vec3(.88,.76,1.)` pha `vec3(1.,.86,.58)`, độ sáng giữ ở `uA*.34` / `uA*.15` (AD3: giảm mist từ `.22`) và `vis=smoothstep(.02,.2,uA)`) ôm sát vành đảo (`vUv.y ~ 0.27`, Fresnel power `3.2`, mist Gaussian `σ=.08`; AD3: thu hẹp + nâng vị trí) và tan nhanh; phần logic tắt `Wd.t` / `Wd.d.visible` chờ AD2b xử lý.
 - **Mây (`anim.clouds`):** Các cụm mây phẳng xoay theo góc nhìn (`puffTex`) nhẹ nhàng, ánh theo màu `sky0.c1` / `sky0.c2`, đứng lùi xa sau đảo để không che tán cây chính.
 
 ---
