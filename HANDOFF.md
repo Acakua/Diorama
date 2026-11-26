@@ -35,8 +35,9 @@
   1. Khi Gemini có hạn mức: chạy lại bộ chụp chuẩn, cho `art-director` phán AD2+AD3 (bản AD3 do
      người thay làm), rồi sửa tiếp: vòm còn viền sáng như bong bóng thủy tinh và dấu "+" trông
      như bia mộ; trời hoàng hôn hơi đục nâu-tím; tuyết mặt đất mùa đông mỏng (`U.snow` thấp).
-  2. PERF2: gộp các con vật làm từ nhiều khối tiện nhỏ (35 + 20 lượt vẽ MeshBasic có đổ bóng)
-     bằng InstancedMesh; đo lại PERF1 + PERF2 khi máy rảnh (không chạy game).
+  2. PERF2 xong (`0e062de`): lửa đuôi/mào gà thành 2 InstancedMesh, lượt vẽ 743 → 656 (trưa).
+     Còn: đo thời gian khung PERF1 + PERF2 khi máy rảnh (không chạy game); ứng viên gộp tiếp:
+     31 sprite đèn, 12 cầu `#0c0a08`, 11 cầu len Nimbus `#e8ecf2`.
   3. Một lần chụp 17:30 ra khung gần như đen (vật tối bay sát camera?); chưa tái hiện được.
 - Mẹo chụp: mùa/thời tiết ép bằng `__dao.W.seaWant/wxWant` được **lưu** vào `localStorage['dao-world']`;
   trả về `-1`/`null` sau khi chụp. Khung Browser phải đang hiện, không thì rAF dừng.
