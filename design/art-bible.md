@@ -33,7 +33,7 @@
 |---|---|---|
 | Nền trời ban ngày (zenith) | `#478a90` | Hiện tại: `STOPS` (11h); `(đề xuất: #4f949e)` trong trẻo hơn |
 | Chân trời ban ngày (horizon) | `#9cc2b6` | Hiện tại: `STOPS` (11h); `(đề xuất: #b8d8d2)` sáng nhẹ hơn |
-| Nền trời đêm sâu | `#0a1024` / `#141f3a` | Hiện tại: `STOPS` (0h/20.2h); `(đề xuất: #101830 / #1d2d4e)` đỡ bệt đen |
+| Nền trời đêm sâu | `#0f162c` / `#1e2c4c`..`#233356` | Hiện tại: `STOPS` (0h/4.8h/20.2h/24h) |
 | Gỗ sẫm kết cấu nhà | `#4d3221` / `#432c1d` | Hiện tại: `cD()` trong `buildHouse` |
 | Gỗ ván ấm & thân cây | `#a0704c` / `#54392a` | Hiện tại: `cW()` (`buildHouse`) và `buildTrees` |
 | Tường vữa kem ấm | `#e4d8bf` | Hiện tại: `cP()` (`buildHouse`) |
@@ -53,8 +53,8 @@
 | **Bình minh (05:30)** | `#27345c` / `#c98067` (hiện tại) | `#ff8a4f`, `si=0.0`, `env=0.5` (hiện tại) | Nhuốm hồng-đồng nhạt từ `hor` | *Chưa thấy ảnh AD1*; cần kiểm tra `si=0` có làm cảnh quá tối trước 06:00 không `(đề xuất: si=0.45..0.6)` |
 | **Buổi sáng (06:30–08:00)** | `#3a6a78`→`#3f8284` / `#e6b187`→`#8fb9a9` (hiện tại) | `#ffb06a`→`#ffd09a`, `si=2.1..3.3` (hiện tại) | Tán sáng ấm, bóng đổ dài rõ | Nửa dưới `skyMat` (`low`) đang hơi xỉn `(đề xuất: bỏ *0.62 quá gắt, dùng *0.78)` |
 | **Trưa (11:00–15:30)** | `#478a90` / `#9cc2b6` (hiện tại); `(đề xuất: #5298a2 / #b6d6ce)` | `#fff1dc`, `si=3.7`, `env=1.0` (hiện tại) | Màu chuẩn mùa, tương phản rõ | Hơi ngả xanh xám nặng nếu trời dưới chân trời tối |
-| **Hoàng hôn (18:00–18:30)** | `#3f4f78` / `#ef8d58` (hiện tại); `(đề xuất: #4b5582 / #f5a066)` | `#ff6f38`, `si=0.9` tại 18.5h (hiện tại); `(đề xuất: giữ si=1.5 tại 18.5h)` | Tối nhanh, dễ bệt ở mặt khuất | **Hiện tại 18:00 quá tối** do `si` tụt sớm mà đèn cửa sổ chưa bật (`night` mới ~0.07) |
-| **Đêm (20:20–24:00)** | `#0a1024` / `#1b2642` (hiện tại); `(đề xuất: #111a36 / #223254)` | Trăng `#8fa6e6`, `si=0.95`, `env=0.62` (hiện tại); `(đề xuất: env=0.78)` | Cỏ và cây gần như đen trừ chỗ có đèn | Đẩy `envLvl` và ánh trăng dịu để đọc được hình khối cối xay gió và hàng thông |
+| **Hoàng hôn (17:30–19:12)** | `#5a7c96`→`#4b5582`→`#222c54` / `#f2c28e`→`#f5a066`→`#866078` | `#ffb46a`→`#ff8045`→`#8aa0de`, `si=2.8→1.5→0`, `env=0.86→0.76→0.64` (hiện tại) | Ấm và đọc rõ khối ở 18:00 nhờ `si`, `env` và đèn bật từ `17.0–18.4h` | Đã cập nhật ở AD2; `fireOn` vẫn giữ `hour>18.7` (chờ AD2b nếu cần đồng bộ khói/lò sưởi) |
+| **Đêm (20:20–24:00)** | `#111933`→`#0f162c` / `#233356`→`#1e2c4c` (hiện tại) | Trăng `#9cb4f0`, `si=1.25`, `env=0.78` (hiện tại) | Cỏ, cối xay gió và hàng thông giữ được sắc lam-lục tối có khối | Đã nâng ở AD2 (`c1=#384468`/`#344062`, `c2=#202744`/`#1d243e`) |
 
 ### Theo mùa (`SEAP` & `buildTrees` `PAL`)
 
@@ -73,9 +73,9 @@
 - **Ánh sáng môi trường (`bounce`, `fill`, `scene.environmentIntensity`):**
   - `bounce`: `HemisphereLight('#ffffff', '#6b5a3e', .34 * envLvl)`.
   - `fill`: `DirectionalLight` từ hướng ngược sáng `(-20, 14, 26)`, cường độ `.75 * envLvl`, màu pha giữa `sky0.s` và `sky0.h` để giữ chi tiết trong vùng râm.
-  - Cần giữ tỷ lệ **nắng chính / phụ khoảng 3:1 vào ban ngày** (hiện tại `3.7 : 0.75` — tốt), và **không hạ `envLvl` xuống quá `0.65` ở hoàng hôn/đêm** `(đề xuất: kìm sàn envLvl >= 0.72 ban đêm, tăng fill nhẹ lúc 18:00–19:00)` để tránh hiện tượng sập tối.
+  - Cần giữ tỷ lệ **nắng chính / phụ khoảng 3:1 vào ban ngày** (hiện tại `3.7 : 0.75` — tốt), và **không hạ `envLvl` xuống quá `0.64` ở chạng vạng và `>= 0.76` ở hoàng hôn/đêm** (đã cập nhật ở AD2: `18.5h env=0.76`, `19.2h env=0.64`, đêm `0.78`) để tránh hiện tượng sập tối.
 - **Đèn đêm và cửa sổ (`inLight`, `porch`, `anim.glass`, `Place.lamps`, `anim.hearthL`):**
-  - Cửa sổ nhà (`anim.glass` emissive `#ffb35c` tối đa `2.4`), đèn hiên (`porch`, `#ffb066`), đèn lò sưởi (`anim.hearthL`, `#ff9a4a`) và đèn cột pha lê dọc đường (`Place.lampGlow`) phải bắt đầu **bật ấm dần ngay từ 17:30–18:00** `(đề xuất: đẩy ngưỡng night trong stepPlaces và khối // night-life lights từ sstep(17.8,19,h) xuống sstep(17.0,18.4,h), đồng thời mở fireOn sớm từ hour>17.4 thay vì hour>18.7)` để hoàng hôn không bị "tắt đèn giữa trời sập tối".
+  - Cửa sổ nhà (`anim.glass` emissive `#ffb35c` tối đa `2.4`), đèn hiên (`porch`, `#ffb066`), đèn lò sưởi (`anim.hearthL`, `#ff9a4a`) và đèn cột pha lê dọc đường (`Place.lampGlow`) bắt đầu **bật ấm dần ngay từ 17:00–18:24** (đã cập nhật ở AD2: `night` dùng `sstep(17.0, 18.4, h)` trong `stepPlaces` và `// night-life lights`; đèn hiên `pOn = awake ? sstep(.3, .6, night) : 0`; cửa sổ có mức nền hoàng hôn `win = Math.max(inside, awake ? .65 * sstep(.15, .55, night) : 0)`). Riêng `fireOn` hiện vẫn giữ `hour>18.7` (thuộc phần logic chờ AD2b).
   - Đêm khuya sau khi Linh đi ngủ (`awake == false`), đèn đường giảm còn `0.18` (hiện tại) để giữ sự yên tĩnh, chỉ còn cửa sổ tháp hoặc lò sưởi âm ỉ.
 - **Sương mù (`scene.fog`):** Chỉ bật rõ khi thời tiết `fog` (`fogK=1`), tuyết (`0.35`) hoặc mưa (`0.2`), cự ly tính theo khoảng cách camera `dd` (`near = dd * lerp(3, .45, fogK)`, `far = dd * lerp(8, 1.7, fogK)`). Màu sương pha `sky0.h` với `#9aa4aa`.
 
@@ -94,7 +94,7 @@
   - **Mái nhà & Tháp:** Ngói gỗ phủ rêu (`#5a3a2a`..`#5f6c34`) và đá phiến xám xanh (`#3d4250`), độ nhám cao, xếp từng phiến nổi khối.
   - **Tán lá & Cỏ:** Lá mảng phẳng `InstancedMesh` tụ thành từng cụm tròn mềm trên đầu cành; cỏ 3 lá mỏng vuốt nhọn (`buildGrass`), `roughness: 0.85`, chuyển động gió theo `uWind`.
   - **Nước (`buildWater`):** Shader bán trong suốt có sóng FBM, phản chiếu bầu trời theo Fresnel, bọt trắng ở ghềnh/thác, đóng băng có vết nứt khi mùa đông (`uIce`). Lưu ý: dòng thác đổ khỏi mép đảo phải uốn cong và tan thành sương bọt ở chân thác thay vì dải thẳng đơ.
-  - **Đáy đảo & Tinh thể (`buildBowl`, `buildDepths`):** Đá đáy đảo **bắt buộc dùng `roughness >= 0.88`** `(hiện tại là 0.52 — quá bóng)` và nhận lớp `addSnow` vào mùa đông; tinh thể lục giác đáy đảo (`#c9a8ff`, `#a8fff0`) phát sáng dịu vừa phải (`emissiveIntensity ~0.6–0.9`) để giữ vai trò phép thuật ẩn sâu, không lấn át mặt đảo.
+  - **Đáy đảo & Tinh thể (`buildBowl`, `buildDepths`):** Đá đáy đảo **bắt buộc dùng `roughness >= 0.88`** (đã chỉnh lên `0.92` với tông đất đá trầm `#4a3a2e` / `#725845` / `#5e4d41` / `#382b22` tại AD2), lưu `Deep.bowlMat` để nhận `addSnow` vào mùa đông, và mép `lip` trong `buildTerrain` pha `0.65` vào `#4a3a2e` thay vì cắt gắt; tinh thể lục giác đáy đảo (`#c9a8ff`, `#a8fff0`) phát sáng dịu vừa phải (`emissiveIntensity ~0.6–0.9`) để giữ vai trò phép thuật ẩn sâu, không lấn át mặt đảo.
 - **Mức độ chi tiết bề mặt:** Texture procedural 512×512 hạt mịn (`tileNoise`) kết hợp màu đỉnh (`vertexColors`) + hiệu ứng rêu/lá rụng; tránh họa tiết sắc nét kiểu ảnh chụp hay bề mặt trơn lì không hạt.
 - **Độ sâu trường ảnh (`dofQ`):** Giữ `dofQ` nhẹ để tạo cảm giác mô hình thu nhỏ ở tầm gần, nhưng **không làm mờ chủ thể chính hay biến đốm sáng thành chấm rỗ** `(đề xuất: giảm amt từ Hh/1080*9 xuống Hh/1080*4.5..5.5 và loại trừ/nới vùng bokeh với hạt phát sáng ở cự ly gần)`.
 
@@ -120,7 +120,7 @@
 - **Tuyết (`snow` & `addSnow`):** Hạt tuyết tròn mềm bay chậm (`anim.snow`), đồng bộ với lớp phủ tuyết `vec3(.9,.93,.97)` trên mặt hướng lên trời. Riêng `buildGrass` cần phủ tuyết giảm dần theo chiều cao lá (`vH`) thay vì làm xám trắng đều cả bụi cỏ.
 - **Đom đóm (`anim.fireflies`) & Bướm đêm (`Crit2.moths`):** Đom đóm mùa hạ dùng sắc vàng-lục ấm (`Color(4, 5.4, 1.2)`), số lượng vừa phải (40 đốm), bay thấp quanh thảm cỏ và ghế đá; không tăng mật độ gây rối khung hình.
 - **Phép thuật (`Magic`):** Màu sắc gắn với từng phép (tím `#a880ff`, vàng ấm, xanh ngọc, lửa than), điểm nhấn phải nhỏ gọn và mềm. Đốm tinh linh đi theo Linh (`Magic.wisp`) dùng độ phân giải/dạng hào quang mịn để khi `dofQ` hoạt động không bị vỡ thành hình tròn lấm tấm hạt.
-- **Vòm bảo vệ (`Place.ward`):** **Không được phép trông giống khiên lục giác khoa học viễn tưởng (`hexd`, `vec3(.3,.6,1.2)`)** và **tuyệt đối không bật/đọng lại vào ban ngày hoặc khi trời mưa/tuyết**. Nếu giữ tính năng kết giới lúc đi ngủ (`sleep`) hoặc nghi thức `wards`, phải đổi sang **dải cổ ngữ mờ và sương ánh trăng vàng-tím nhạt** ôm sát mép đảo rồi tan biến hoàn toàn trong vài giây, thay cho lồng lưới lục giác bao trùm cả hòn đảo.
+- **Vòm bảo vệ (`Place.ward`):** **Không được phép trông giống khiên lục giác khoa học viễn tưởng (`hexd`, `vec3(.3,.6,1.2)`)** và **tuyệt đối không bật/đọng lại vào ban ngày hoặc khi trời mưa/tuyết**. Đã đổi shader sang **vòng cổ ngữ mờ và sương ánh trăng vàng-oải hương nhạt** (`vec3(.88,.76,1.)` pha `vec3(1.,.86,.58)`, độ sáng giữ ở `uA*.34` / `uA*.22` và `vis=smoothstep(.02,.2,uA)`) ôm sát vành đảo (`vUv.y ~ 0.255`) và tan nhanh; phần logic tắt `Wd.t` / `Wd.d.visible` chờ AD2b xử lý.
 - **Mây (`anim.clouds`):** Các cụm mây phẳng xoay theo góc nhìn (`puffTex`) nhẹ nhàng, ánh theo màu `sky0.c1` / `sky0.c2`, đứng lùi xa sau đảo để không che tán cây chính.
 
 ---
