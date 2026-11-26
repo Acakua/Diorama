@@ -317,7 +317,16 @@ function buildTerrain(T){
   for(let i=0;i<rings;i++)for(let j=0;j<segs;j++){const a=1+i*segs+j,b=1+i*segs+(j+1)%segs,d=a+segs,e=b+segs;idx.push(a,b,d,b,e,d)}
   const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));g.setAttribute('color',new THREE.Float32BufferAttribute(colr,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();
   const mat=new THREE.MeshStandardMaterial({vertexColors:true,roughness:.96,map:T.ground,bumpMap:T.ground,bumpScale:1.3});
-  terrain=new THREE.Mesh(g,mat);terrain.receiveShadow=true;terrain.castShadow=true;island.add(terrain);
+  terrain=new THREE.Mesh(g,mat);terrain.receiveShadow=true;terrain.castShadow=false;island.add(terrain);
+  camera.layers.enable(1);
+  const N=96,ext=R+.1,pp=[],pi=[];
+  for(let j=0;j<=N;j++)for(let i=0;i<=N;i++){const x=(i/N*2-1)*ext,z=(j/N*2-1)*ext;pp.push(x,hAt(x,z)-.03,z)}
+  for(let j=0;j<N;j++)for(let i=0;i<N;i++){const x0=(i/N*2-1)*ext,x1=((i+1)/N*2-1)*ext,z0=(j/N*2-1)*ext,z1=((j+1)/N*2-1)*ext;
+    const cx=Math.max(x0,Math.min(0,x1)),cz=Math.max(z0,Math.min(0,z1));if(cx*cx+cz*cz>ext*ext)continue;
+    const a=j*(N+1)+i,b=a+1,d=a+N+1,e=d+1;pi.push(a,d,b,b,d,e)}
+  const pg=new THREE.BufferGeometry();pg.setAttribute('position',new THREE.Float32BufferAttribute(pp,3));pg.setIndex(pi);
+  const proxy=new THREE.Mesh(pg,new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false}));
+  proxy.castShadow=true;proxy.receiveShadow=false;proxy.layers.set(1);island.add(proxy);
 }
 
 function buildBowl(){
@@ -331,7 +340,13 @@ function buildBowl(){
   g.setAttribute('color',new THREE.BufferAttribute(c,3));g.computeVertexNormals();
   {const n=g.attributes.normal,w=sw+1;for(let j=0;j<=sh;j++){const i0=j*w,i1=i0+sw;const x=n.getX(i0)+n.getX(i1),y=n.getY(i0)+n.getY(i1),z=n.getZ(i0)+n.getZ(i1),l=Math.hypot(x,y,z)||1;n.setXYZ(i0,x/l,y/l,z/l);n.setXYZ(i1,x/l,y/l,z/l)}}
   g.attributes.uv.array.forEach((_,i,arr)=>{arr[i]*=i%2?5:9});
-  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.92,map:stoneMat.map,bumpMap:stoneMat.map,bumpScale:1.4,side:THREE.DoubleSide}));m.castShadow=true;m.receiveShadow=true;island.add(m);Deep.bowlMat=m.material;
+  const m=new THREE.Mesh(g,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.92,map:stoneMat.map,bumpMap:stoneMat.map,bumpScale:1.4,side:THREE.DoubleSide}));m.castShadow=false;m.receiveShadow=true;island.add(m);Deep.bowlMat=m.material;
+  const bs=new THREE.SphereGeometry(R,48,12,Math.PI/2,6.2832,Math.PI/2,Math.PI/2),bp=bs.attributes.position;
+  for(let i=0;i<bp.count;i++){const v=new V3().fromBufferAttribute(bp,i),dep=clamp(-v.y/R),amp=sstep(.0,.16,dep);
+    const n=fbm3(v.x*.28+5,v.y*.28,v.z*.28,5),n2=fbm3(v.x*1.3,v.y*2.6,v.z*1.3,3);
+    v.multiplyScalar(1+(n-.5)*.05*amp+(n2-.5)*.012*amp);v.y=v.y*D+.02;bp.setXYZ(i,v.x,v.y,v.z)}
+  const bproxy=new THREE.Mesh(bs,new THREE.MeshBasicMaterial({colorWrite:false,depthWrite:false,side:THREE.DoubleSide}));
+  bproxy.castShadow=true;bproxy.receiveShadow=false;bproxy.layers.set(1);island.add(bproxy);
   const B=new Batch(stoneMat);
   for(let i=0;i<16;i++){const a=rand(6.283),dep=rand(.05,.5),r=R*Math.sqrt(1-dep*dep)*.99,s=rand(.08,.2);B.add(pick(ROCKS),jitter(pick(['#6f4a33','#8b5a3a','#5a3d2c']),.15),M(Math.cos(a)*r,-dep*R*.92,Math.sin(a)*r,rand(3),rand(3),rand(3),s,s*.7,s))}
   B.build(island);
@@ -1428,7 +1443,7 @@ const skyGeo=new THREE.SphereGeometry(300,48,32),sky=new THREE.Mesh(skyGeo,skyMa
 const skyScene=new THREE.Scene();skyScene.add(new THREE.Mesh(skyGeo,skyMat));
 const pmrem=new THREE.PMREMGenerator(renderer);let envRT=null,lastEnvH=-99,lastEnvT=-99;
 function refreshEnv(force){const t=performance.now()/1000;if(!force&&t-lastEnvT<1.2)return;lastEnvT=t;const n=pmrem.fromScene(skyScene,0,1,1000);scene.environment=n.texture;envRT&&envRT.dispose();envRT=n}
-const sun=new THREE.DirectionalLight('#fff',3);sun.castShadow=true;sun.shadow.mapSize.set(4096,4096);const sc=sun.shadow.camera;sc.left=-18;sc.right=18;sc.top=18;sc.bottom=-18;sc.near=1;sc.far=120;sun.shadow.bias=-.00035;sun.shadow.normalBias=.03;scene.add(sun,sun.target);
+const sun=new THREE.DirectionalLight('#fff',3);sun.castShadow=true;sun.shadow.mapSize.set(4096,4096);const sc=sun.shadow.camera;sc.left=-18;sc.right=18;sc.top=18;sc.bottom=-18;sc.near=1;sc.far=120;sun.shadow.bias=-.00035;sun.shadow.normalBias=.03;sc.layers.enable(1);scene.add(sun,sun.target);
 const bounce=new THREE.HemisphereLight('#ffffff','#6b5a3e',.35);scene.add(bounce);const fill=new THREE.DirectionalLight('#fff',.7);fill.position.set(-20,14,26);scene.add(fill);
 const inLight=new THREE.PointLight('#ffb066',0,9,1.6),porch=new THREE.PointLight('#ffb066',0,7,1.8);scene.add(inLight,porch);
 {const q=new V3(.1,1.9,0).applyAxisAngle(new V3(0,1,0),H.rot);inLight.position.set(H.x+q.x,H.y+q.y,H.z+q.z);const p=new V3(-.74*HS,1.44*HS,(HOUSE.hz+.3)*HS).applyAxisAngle(new V3(0,1,0),H.rot);porch.position.set(H.x+p.x,H.y+p.y,H.z+p.z)}
