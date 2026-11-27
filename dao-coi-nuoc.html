@@ -27,6 +27,7 @@ button{font:500 12.5px/1 var(--ui);color:var(--ink);background:var(--glass);bord
 button:hover{border-color:var(--ink-dim)}
 button[aria-pressed="true"]{background:var(--glass-on);color:var(--on-ink);border-color:var(--glass-on)}
 button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outline-offset:2px}
+#hud #bLedger.badge::after,#ledger .lTab.badge::after{content:"";display:inline-block;width:6px;height:6px;margin-left:6px;border-radius:50%;background:var(--glass-on);box-shadow:0 0 0 1px var(--on-ink);vertical-align:middle}
 .bottom{display:flex;flex-direction:column;gap:10px;max-width:760px;width:100%}
 .say{display:flex;align-items:baseline;gap:14px;text-shadow:0 1px 10px #000a}
 #clock{font:400 clamp(30px,5vw,44px)/1 var(--display);font-variant-numeric:tabular-nums}
@@ -56,10 +57,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #lTasks li.done .nm{text-decoration:line-through;text-decoration-color:var(--glass-on);color:var(--ink-dim)}#lTasks li.done .wh{color:var(--glass-on)}
 #lTasks li.empty{display:block;color:var(--ink-dim);font-style:italic}#lTasks .x{align-self:center;padding:3px 8px;font-size:14px;line-height:1}
 #ledger #lOrders{list-style:none;margin:0;padding:0}
-#ledger #lOrders li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint);font:400 14px/1.35 var(--display)}
-#ledger #lOrders li b{flex:1 1 100%;font-weight:500}#ledger #lOrders .nm{font:400 12px/1.3 var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
-#ledger #lOrders .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);text-align:right;font-variant-numeric:tabular-nums}
-#ledger #lOrders button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lOrders button:disabled{opacity:.45;cursor:default}#ledger #lOrders .x{align-self:center}
+#ledger #lOrders li{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint);font:400 14px/1.35 var(--display)}
+#ledger #lOrders li b{grid-column:1/-1;font-weight:500}#ledger #lOrders .nm{grid-column:1/-1;font:400 12px/1.3 var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
+#ledger #lOrders .oPay{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:nowrap}
+#ledger #lOrders .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);text-align:left;font-variant-numeric:tabular-nums}
+#ledger #lOrders .oBtns{display:flex;gap:6px;flex:0 0 auto;align-items:center}
+#ledger #lOrders button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lOrders button:disabled{opacity:.45;cursor:default}
 #ledger #lOrders li.empty{display:block;color:var(--ink-dim);font-style:italic}
 #ledger #lUpg{list-style:none;margin:0;padding:0}
 #ledger #lUpg li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint)}
@@ -77,8 +80,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 @media (max-width:560px){.hint{display:none}.tools{justify-content:flex-start}}
 #lAway{margin:0 0 12px;padding:10px 12px;border:1px solid var(--ink-faint);border-radius:3px;background:#0d16158c}
 #lAway h3{margin:0 0 6px}#lAway p{margin:0 0 6px}#lAway button{margin-top:2px}
-#nightHud{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:calc(max(16px,env(safe-area-inset-top,0px)) + 66px);font:400 12.5px/1.4 var(--ui);color:var(--ink);text-shadow:0 1px 6px #0009;pointer-events:none;min-width:170px}
-#nightHud .nhTop{font-variant-numeric:tabular-nums}#nightHud .nhBar{display:block;width:150px;height:5px;margin:4px 0;border:1px solid var(--ink-faint);border-radius:1px;background:#0d1615b3}#nightHud .nhBar i{display:block;height:100%;background:var(--glass-on)}
+#lGuide{margin:0 0 12px;padding:10px 12px;border:1px solid var(--glass-on);border-radius:3px;background:#0d16158c}
+#lGuide h3{margin:0 0 6px}#lGuide p{margin:0 0 6px}#lGuide button{margin-top:2px}
+#ledger .lTabs{margin:0 0 12px}#ledger .lTabs button[aria-selected="true"]{background:var(--glass-on);color:var(--on-ink);border-color:var(--glass-on)}
+#nightHud{font:400 12.5px/1.4 var(--ui);color:var(--ink);text-shadow:0 1px 6px #0009;pointer-events:none;max-width:100%;margin-top:4px}
+#nightHud .nhTop{font-variant-numeric:tabular-nums}#nightHud .nhBar{display:block;width:150px;max-width:100%;height:5px;margin:4px 0;border:1px solid var(--ink-faint);border-radius:1px;background:#0d1615b3}#nightHud .nhBar i{display:block;height:100%;background:var(--glass-on)}
 #nightHud .nhGain{color:var(--glass-on);font-variant-numeric:tabular-nums}
 #ledger #lDef{font:400 12.5px/1.4 var(--ui)}#ledger #lDef .dSum{margin-bottom:6px;color:var(--ink-dim)}
 #ledger #lDef .dRow{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:6px 0;border-bottom:1px solid var(--ink-faint)}
@@ -98,7 +104,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
 <div id="hud">
   <div class="top">
-    <div class="hintWrap"><div class="hint">Kéo để xoay · Cuộn hoặc chụm tay để zoom · Nhấp đúp để đến gần một chỗ · Bấm vào chỗ làm việc để nhờ Linh · Tắt Góc neo để xoay tự do · Phím H ẩn chữ</div><div id="modelMsg" class="hint" role="status"></div><div id="fps" class="hint"></div></div>
+    <div class="hintWrap"><div class="hint">Kéo để xoay · Cuộn hoặc chụm tay để zoom · Nhấp đúp để đến gần một chỗ · Bấm vào chỗ làm việc để nhờ Linh · Tắt Góc neo để xoay tự do · Phím H ẩn chữ</div><div id="modelMsg" class="hint" role="status"></div><div id="fps" class="hint"></div><div id="nightHud" hidden></div></div>
     <div class="tools">
       <button id="bModel">Nạp mô hình VRoid khác</button>
       <button id="bHat" aria-pressed="true" hidden>Mũ phù thủy</button>
@@ -114,7 +120,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
       <button id="bPerf" aria-pressed="false">Hiệu năng</button>
     </div>
   </div>
-  <div id="nightHud" hidden></div>
   <div class="bottom">
     <div class="say"><div class="clk"><div id="dayLbl"></div><div id="clock">08:00</div></div><div id="line"></div></div>
     <div class="bar">
@@ -134,18 +139,40 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 <aside id="journal" hidden aria-label="Nhật ký của Linh"><h2>Nhật ký của Linh</h2><div id="jList"></div></aside>
 <aside id="ledger" hidden aria-label="Sổ của Mun"><button id="lClose" aria-label="Đóng sổ của Mun">×</button>
   <h2>Sổ của Mun<svg class="paw" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="5.6" cy="10" rx="2.2" ry="2.8"/><ellipse cx="9.6" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="14.4" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="18.4" cy="10" rx="2.2" ry="2.8"/><path d="M12 11.2c-3.2 0-6 3.3-6 6.1 0 1.9 1.4 2.9 3.1 2.9 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.7 0 3.1-1 3.1-2.9 0-2.8-2.8-6.1-6-6.1z"/></svg></h2>
+  <section id="lGuide" hidden aria-label="Cách chơi"><h3>Cách chơi</h3>
+    <p>Linh tự sống trên đảo. Bạn là Mun: giữ sổ, nhờ việc và lo cho cô.</p>
+    <p>Nhờ Linh chặt củi, câu cá, nhặt trứng… rồi gửi hàng theo đơn hạc giấy để lấy xu.</p>
+    <p>Dùng xu mua nâng cấp; nấu món ở bếp để bán giá cao hoặc ăn trước đêm.</p>
+    <p>Đêm xuống ma sương leo lên mép đảo. Dựng tháp, nâng vòm ở mục Phòng thủ. Thua cũng không mất gì.</p>
+    <p>Tắt trang cũng được: đảo vẫn chạy tối đa một ngày, Mun sẽ kể lại.</p>
+    <button id="lGuideOk">Đã hiểu</button>
+  </section>
   <section id="lAway" hidden><h3>Trong lúc bạn vắng…</h3><div id="lAwayLines"></div><button id="lAwayOk">Mun biết rồi</button></section>
-  <h3>Kho chung</h3><div id="lStore"></div>
-  <h3>Đơn hạc giấy</h3><ul id="lOrders"></ul>
-  <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
-  <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
-  <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
-  <h3>Bếp và chạn</h3><div id="lDish"></div><ul id="lCook"></ul>
-  <p class="pNote">Linh nấu lần lượt từng món trong hàng. Nguyên liệu trừ ngay khi dặn nấu; chọn bữa tối trước đêm để được thêm sức.</p>
-  <div class="seg" id="lRecipes" role="group" aria-label="Nấu món"></div>
-  <p class="pNote">Bữa tối trước đêm</p><div class="seg" id="lMeal" role="group" aria-label="Bữa tối trước đêm"></div>
-  <h3>Nâng cấp</h3><ul id="lUpg"></ul>
-  <h3>Phòng thủ</h3><div id="lDef"></div>
+  <div id="lTabs" class="seg lTabs" role="tablist" aria-label="Mục trong sổ">
+    <button id="lTab-home" class="lTab" role="tab" data-tab="home" aria-selected="true" aria-controls="lPanel-home">Nhà</button>
+    <button id="lTab-trade" class="lTab" role="tab" data-tab="trade" aria-selected="false" aria-controls="lPanel-trade">Buôn bán</button>
+    <button id="lTab-upg" class="lTab" role="tab" data-tab="upg" aria-selected="false" aria-controls="lPanel-upg">Nâng cấp</button>
+    <button id="lTab-def" class="lTab" role="tab" data-tab="def" aria-selected="false" aria-controls="lPanel-def">Phòng thủ</button>
+  </div>
+  <div id="lPanel-home" role="tabpanel" aria-labelledby="lTab-home">
+    <h3>Kho chung</h3><div id="lStore"></div>
+    <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
+    <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
+    <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
+  </div>
+  <div id="lPanel-trade" role="tabpanel" aria-labelledby="lTab-trade" hidden>
+    <h3>Đơn hạc giấy</h3><ul id="lOrders"></ul>
+    <h3>Bếp và chạn</h3><div id="lDish"></div><ul id="lCook"></ul>
+    <p class="pNote">Linh nấu lần lượt từng món trong hàng. Nguyên liệu trừ ngay khi dặn nấu; chọn bữa tối trước đêm để được thêm sức.</p>
+    <div class="seg" id="lRecipes" role="group" aria-label="Nấu món"></div>
+    <p class="pNote">Bữa tối trước đêm</p><div class="seg" id="lMeal" role="group" aria-label="Bữa tối trước đêm"></div>
+  </div>
+  <div id="lPanel-upg" role="tabpanel" aria-labelledby="lTab-upg" hidden>
+    <h3>Nâng cấp</h3><ul id="lUpg"></ul>
+  </div>
+  <div id="lPanel-def" role="tabpanel" aria-labelledby="lTab-def" hidden>
+    <h3>Phòng thủ</h3><div id="lDef"></div>
+  </div>
 </aside>
 <div id="spot" hidden role="dialog" aria-labelledby="sName"><button id="sClose" aria-label="Đóng">×</button><h3 id="sName"></h3><p id="sInfo"></p><button id="sGo"></button><p class="pNote" id="sNote"></p></div>
 <aside id="wxp" hidden aria-label="Mùa và thời tiết"><button id="wClose" aria-label="Đóng bảng mùa và thời tiết">×</button><h2>Mùa và thời tiết</h2>
@@ -2059,7 +2086,7 @@ function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.tex
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,hour:+hour.toFixed(2),at:Date.now(),wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
   def:{tw:W.def.tw.slice(),ward:W.def.ward,charm:W.def.charm,charms:W.def.charms.slice(),cry:W.def.cry,core:W.def.core,nights:W.def.nights,lvl:W.def.lvl,calm:W.def.calm,ate:W.def.ate,ateK:W.def.ateK},
   dish:{...W.dish},dishEver:{...W.dishEver},cookQ:W.cookQ.map(q=>({k:q.k,left:+q.left.toFixed(3)})),meal:W.meal,
-  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg)}))}catch(e){}}
+  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg),guide:W.guide||0}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
@@ -2088,7 +2115,7 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   // the kitchen: old saves get empty dishes, an empty queue and no supper plan
   {const dish={},ever={};for(const k in RECIPE){dish[k]=int(q.dish&&q.dish[k],0,0,99);ever[k]=(q.dishEver&&q.dishEver[k])?1:0}W.dish=dish;W.dishEver=ever;
     W.cookQ=Array.isArray(q.cookQ)?q.cookQ.filter(x=>x&&Object.hasOwn(RECIPE,x.k)&&Number.isFinite(+x.left)).slice(0,3).map(x=>({k:x.k,left:num(x.left,0,0,2)})):[];
-    W.meal=Object.hasOwn(RECIPE,q.meal)?q.meal:null}
+    W.meal=Object.hasOwn(RECIPE,q.meal)?q.meal:null;W.guide=q.guide?1:0}
   if(Array.isArray(q.pump))q.pump.forEach((g,i)=>{const p=furn.pumpkins[i];if(p)p.g=num(g,p.g,0,1)})}catch(e){}}
 function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();Orders.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
 /* ---------- Mun's ledger: the shared stores and the day's tasks ---------- */
@@ -2155,7 +2182,7 @@ const Mun={sig:'',
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);Kitchen.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+  render(force){LedgerUI.badge();const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);Kitchen.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
       S=[['củi',f(W.wood)+'/'+woodMax()],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
@@ -2198,11 +2225,11 @@ const Orders={sig:'',
   render(force){const L=$('lOrders');if(!L)return;
       const sig=W.orders.map(o=>o.id+':'+o.t+':'+Object.entries(o.need).map(([k,n])=>k+n).join(',')+':'+o.pay+':'+o.d).join('|')+'|'+this.K.map(k=>this.have(k)).join();
     if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
-    W.orders.forEach((o,i)=>{const t=this.ORDER_T[o.t],li=document.createElement('li'),b=document.createElement('b'),need=document.createElement('span'),pay=document.createElement('span'),go=document.createElement('button'),x=document.createElement('button');
-      b.textContent=t.from;need.className='nm';need.textContent=Object.entries(o.need).map(([k,n])=>this.have(k)+'/'+n+' '+this.UNIT[k]).join(' · ');pay.className='wh';pay.textContent='+'+o.pay+' xu';
+    W.orders.forEach((o,i)=>{const t=this.ORDER_T[o.t],li=document.createElement('li'),b=document.createElement('b'),need=document.createElement('span'),row=document.createElement('div'),pay=document.createElement('span'),btns=document.createElement('div'),go=document.createElement('button'),x=document.createElement('button');
+      b.textContent=t.from;need.className='nm';need.textContent=Object.entries(o.need).map(([k,n])=>this.have(k)+'/'+n+' '+this.UNIT[k]).join(' · ');row.className='oPay';pay.className='wh';pay.textContent='+'+o.pay+' xu';btns.className='oBtns';
       go.textContent='Gửi hàng';const why=this.can(o);go.disabled=!!why;go.title=why;go.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.send(j)};
       x.className='x';x.textContent='×';x.setAttribute('aria-label','Bỏ đơn của '+t.from);x.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.drop(j)};
-      li.append(b,need,pay,go,x);L.append(li)});
+      btns.append(go,x);row.append(pay,btns);li.append(b,need,row);L.append(li)});
     if(!W.orders.length){const li=document.createElement('li');li.className='empty';li.textContent='Chưa có đơn nào. Hạc giấy thường tới vào buổi sáng.';L.append(li)}}};
 const UPG={
   rack:{name:'Giá củi thứ hai',cost:50,desc:'Gắn thêm một giá củi, kho chứa được ba mươi khúc.'},
@@ -2429,6 +2456,35 @@ const Kitchen={sig:'',
     const R=$('lRecipes');R.textContent='';for(const k in RECIPE){const b=document.createElement('button'),why=this.can(k);b.textContent=RECIPE[k].name+' · '+Object.entries(RECIPE[k].need).map(([i,n])=>n+' '+ING[i]).join(', ');b.title=why||RECIPE[k].desc;b.disabled=!!why;b.onclick=()=>{this.queue(k);this.render(true)};R.append(b)}
     const M=$('lMeal');M.textContent='';for(const k of['Không',...Object.keys(RECIPE).filter(k=>f(W.dish[k])>=1)]){const b=document.createElement('button');b.textContent=k=='Không'?'Không':RECIPE[k].name;b.setAttribute('aria-pressed',(k=='Không'?!W.meal:W.meal==k)?'true':'false');b.title=k=='Không'?'Không ăn gì trước đêm.':RECIPE[k].desc;b.onclick=()=>{this.choose(k=='Không'?null:k);this.render(true)};M.append(b)}
   }
+};
+const LedgerUI={
+  tabs:['home','trade','upg','def'],
+  key:'home',alert:false,ack:Object.create(null),seenDish:0,
+  /** Total cooked dishes; a rise means the kitchen just finished one. */
+  dishes(){let n=0;for(const k in W.dish)n+=Math.floor(W.dish[k]||0);return n},
+  /** Ids of orders that can be sent right now. */
+  senders(){return W.orders.filter(o=>Orders.can(o)==='').map(o=>o.id).join(',')},
+  /** Cheap enough for Mun.render and a once-a-second timer. */
+  badge(){const send=this.senders(),dish=this.dishes();
+    const fresh=send?send.split(',').filter(id=>!Object.hasOwn(this.ack,id)):[];
+    if(fresh.length||dish>this.seenDish)this.alert=true;
+    for(const id of fresh)this.ack[id]=1;this.seenDish=dish;
+    $('bLedger').classList.toggle('badge',this.alert);
+    const tab=$('lTab-trade');if(tab)tab.classList.toggle('badge',this.alert)},
+  /** Marks the current state as seen so the same order or dish does not keep the dot lit. */
+  seen(){this.ack=Object.create(null);for(const id of this.senders().split(','))if(id)this.ack[id]=1;this.seenDish=this.dishes();this.alert=false;this.badge()},
+  /** Shows one panel, remembers the choice; opening Buôn bán clears its dot. */
+  open(key,store=true){if(!this.tabs.includes(key))key='home';this.key=key;
+    for(const k of this.tabs){const tab=$('lTab-'+k),panel=$('lPanel-'+k);if(tab)tab.setAttribute('aria-selected',k===key?'true':'false');if(panel)panel.hidden=k!==key}
+    if(store)try{localStorage.setItem('dao-ledger-tab',key)}catch(e){}
+    if(key==='trade')this.seen()},
+  build(){let saved='home';try{saved=localStorage.getItem('dao-ledger-tab')||'home'}catch(e){}
+    this.seenDish=this.dishes();this.badge();
+    const bar=$('lTabs');if(bar)for(const b of bar.querySelectorAll('[data-tab]'))b.onclick=()=>this.open(b.dataset.tab);
+    const guide=$('lGuide');if(guide){if(!W.guide)guide.hidden=false;const ok=$('lGuideOk');if(ok)ok.onclick=()=>{guide.hidden=true;W.guide=1;saveW()}}
+    this.open(saved);
+    setInterval(()=>this.badge(),1000);
+    if(!W.guide&&$('ledger').hidden)$('bLedger').click()}
 };
 function buildDefence(){const D=Place.def={};
   const prof=[[0,0],[.12,.014],[.21,.05],[.26,.11],[.265,.18],[.24,.26],[.19,.35],[.13,.43],[.075,.5],[.03,.545],[0,.565]];
@@ -3260,7 +3316,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Kitchen.build();Away.show();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Kitchen.build();LedgerUI.build();Away.show();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
