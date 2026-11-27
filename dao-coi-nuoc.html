@@ -75,6 +75,8 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 .pBar{display:inline-block;height:6px;background:var(--glass-on);border-radius:1px;margin-right:6px;vertical-align:middle;max-width:60%}
 #pRun{margin-top:8px}#pRun:disabled{opacity:.7;cursor:progress}#pRes table{width:100%;border-collapse:collapse;margin-top:10px;font:400 12px/1.35 var(--ui);font-variant-numeric:tabular-nums}#pRes th,#pRes td{text-align:right;padding:3px 0 3px 8px;border-bottom:1px solid var(--ink-faint)}#pRes th:first-child,#pRes td:first-child{text-align:left;padding-left:0}#pRes th{color:var(--ink-dim);font-weight:500}
 @media (max-width:560px){.hint{display:none}.tools{justify-content:flex-start}}
+#lAway{margin:0 0 12px;padding:10px 12px;border:1px solid var(--ink-faint);border-radius:3px;background:#0d16158c}
+#lAway h3{margin:0 0 6px}#lAway p{margin:0 0 6px}#lAway button{margin-top:2px}
 </style>
 
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
@@ -115,6 +117,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 <aside id="journal" hidden aria-label="Nhật ký của Linh"><h2>Nhật ký của Linh</h2><div id="jList"></div></aside>
 <aside id="ledger" hidden aria-label="Sổ của Mun"><button id="lClose" aria-label="Đóng sổ của Mun">×</button>
   <h2>Sổ của Mun<svg class="paw" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="5.6" cy="10" rx="2.2" ry="2.8"/><ellipse cx="9.6" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="14.4" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="18.4" cy="10" rx="2.2" ry="2.8"/><path d="M12 11.2c-3.2 0-6 3.3-6 6.1 0 1.9 1.4 2.9 3.1 2.9 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.7 0 3.1-1 3.1-2.9 0-2.8-2.8-6.1-6-6.1z"/></svg></h2>
+  <section id="lAway" hidden><h3>Trong lúc bạn vắng…</h3><div id="lAwayLines"></div><button id="lAwayOk">Mun biết rồi</button></section>
   <h3>Kho chung</h3><div id="lStore"></div>
   <h3>Đơn hạc giấy</h3><ul id="lOrders"></ul>
   <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
@@ -2031,12 +2034,12 @@ function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W
 function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWant=='snow';return raining||(W.rain&&hour>W.rain[0]&&hour<W.rain[1])}
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
-function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
+function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,hour:+hour.toFixed(2),at:Date.now(),wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
   coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg)}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
-  W.day=int(q.day,1,1,1e6);W.wood=num(q.wood,5,0,1e3);W.stock=num(q.stock,1,0,1e3);W.fish=num(q.fish,0,0,1e4);W.eggs=num(q.eggs,0,0,1e4);W.potions=num(q.potions,0,0,1e4);
+  W.day=int(q.day,1,1,1e6);W.wood=num(q.wood,5,0,1e3);W.stock=num(q.stock,1,0,1e3);W.fish=num(q.fish,0,0,1e4);W.eggs=num(q.eggs,0,0,1e4);W.potions=num(q.potions,0,0,1e4);hour=num(q.hour,8,0,24);
   W.journal=Array.isArray(q.journal)?q.journal.filter(e=>e&&typeof e.t=='string').slice(0,60).map(e=>({d:int(e.d,1,1,1e6),h:String(e.h??''),t:e.t})):[];
   W.seaWant=[0,1,2,3].includes(q.seaWant)?q.seaWant:-1;W.wxWant=typeof q.wxWant=='string'&&Object.hasOwn(WXN,q.wxWant)?q.wxWant:null;
   W.snowman=int(q.snowman,0,0,1e6);W.sown=int(q.sown,0,0,1e6);W.pileDay=int(q.pileDay,0,0,1e6);
@@ -2175,6 +2178,53 @@ const Upg={sig:'',
       if(has(k)){const own=document.createElement('span');own.className='wh';own.textContent='Đã có';li.append(own)}
       else{const btn=document.createElement('button');btn.textContent='Mua · '+u.cost+' xu';const why=this.can(k);btn.disabled=!!why;btn.title=why;btn.onclick=()=>this.buy(k);li.append(btn)}
       L.append(li)}}};
+const Away={
+  sum:null,eat:null,capped:false,
+  init(){
+    addEventListener('pagehide',()=>saveW());
+    setInterval(()=>saveW(),30000);
+    let q=null;try{q=JSON.parse(localStorage.getItem('dao-world')||'null')}catch(e){}
+    if(!q||typeof q!='object'||typeof q.at!='number'||!Number.isFinite(q.at))return;
+    const real=(Date.now()-q.at)/1000;if(!(real>=60))return;
+    const ih=Math.min(24,real*24/DAY_S),h0=hour%24,e=h0+ih;hour=e%24;
+    const cross=t=>Math.floor((e-t)/24)-Math.floor((h0-t)/24);
+    const mid=cross(24),morn=cross(8),eve=cross(19);
+    const snap=()=>({wood:W.wood,stock:W.stock,fish:W.fish,eggs:W.eggs,potions:W.potions,day:W.day});
+    const from=snap(),before=new Set(W.orders.map(o=>o.id));
+    for(let i=0;i<mid;i++){W.day++;Orders.newDay();W.tasks=W.tasks.filter(t=>!t.done)}
+    this.eat={wood:eve*2,pump:eve};
+    W.wood=Math.max(0,Math.min(woodMax(),Math.floor(W.wood+ih*.25-this.eat.wood)));
+    W.fish=Math.max(0,Math.floor(W.fish+ih*.15*(has('rod')?1.5:1)));
+    W.eggs=Math.max(0,Math.floor(W.eggs+morn*(has('coop')?5:3)));
+    W.stock=Math.max(0,Math.floor(W.stock+Math.floor(ih/8*(has('patch')?1.6:1))-this.eat.pump));
+    W.potions=Math.max(0,Math.floor(W.potions+Math.floor(ih/12*(has('kettle')?2:1))));
+    this.sum={ih,from,to:snap(),orders:W.orders.filter(o=>!before.has(o.id)).length};
+    this.capped=ih>=24;saveW();
+  },
+  show(){
+    const s=this.sum;if(!s||s.ih<.5)return;
+    const el=$('lAway'),box=$('lAwayLines');if(!el||!box)return;
+    el.hidden=false;box.textContent='';
+    const line=t=>{const p=document.createElement('p');p.textContent=t;box.append(p)};
+    const mins=Math.round(s.ih*60),hh=Math.floor(mins/60),mm=mins%60;
+    let span=hh?hh+' giờ':'';if(mm)span+=(span?' ':'')+mm+' phút';if(!span)span='0 phút';
+    line('Đảo đã trôi qua '+span+'.');
+    const d=k=>Math.max(0,s.to[k]-s.from[k]),gains=[];
+    if(d('wood'))gains.push('chặt thêm '+d('wood')+' khúc củi');
+    if(d('fish'))gains.push('câu được '+d('fish')+' con cá');
+    if(d('eggs'))gains.push('nhặt '+d('eggs')+' quả trứng');
+    if(d('stock'))gains.push('hái được '+d('stock')+' quả bí');
+    if(d('potions'))gains.push('nấu '+d('potions')+' chai thuốc');
+    if(gains.length)line('Linh '+gains.join(', ')+'.');
+    const eat=[];if(this.eat.wood)eat.push(this.eat.wood+' khúc củi');if(this.eat.pump)eat.push(this.eat.pump+' quả bí');
+    if(eat.length)line('Bếp đã dùng '+eat.join(' và ')+'.');
+    if(s.orders)line('Có '+s.orders+' đơn hàng mới bằng hạc giấy.');
+    if(this.capped)line('Mun chỉ ghi được một ngày, phần còn lại Linh ngủ quên mất.');
+    $('lAwayOk').onclick=()=>{el.hidden=true};
+    logJ('Mun mở sổ ghi: trong lúc bạn vắng, đảo trôi qua '+span+', Linh vẫn giữ bếp ấm.');
+    if($('ledger').hidden)$('bLedger').click();
+  }
+};
 const Life={};
 function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,...o});
   // pumpkins that grow, a pile by the door, logs that come and go
@@ -2536,7 +2586,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -2981,7 +3031,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Away.show();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
