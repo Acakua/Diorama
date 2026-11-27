@@ -1,6 +1,6 @@
 # Game Brief: Đảo Cối Nước — Mun quản gia
 
-*2026-11-05 · bản nháp đã được người dùng duyệt · chưa có code*
+*2026-11-05 · bản nháp đã được người dùng duyệt · 2026-11-27: mở rộng thành game hoàn chỉnh (xem mục "Phạm vi v2")*
 
 **One-sentence pitch:** Linh là phù thủy giỏi phép nhưng chẳng biết lo toan cuộc sống; bạn là Mun, con mèo bạn thân của cô, người giữ kho, lên kế hoạch và nhắc việc. Linh làm, Mun lo, và hòn đảo lớn dần qua từng mùa.
 
@@ -44,3 +44,33 @@
 **Art & audio direction:** giữ phong cách diorama hiện tại; Sổ của Mun như cuốn sổ tay có dấu chân mèo; tiếng mèo kêu khẽ, tiếng giở giấy.
 
 **Reference game:** The Sims khi nhân vật bật "ý chí tự do". Giữ lại khoảng 10% của nó: xếp việc cho một nhân vật vẫn tự sống, quỹ chung, mua nâng cấp. Không xây nhà tự do, không có nhu cầu tụt dần.
+
+---
+## Phạm vi v2 (người dùng chốt 2026-11-27)
+
+Người dùng muốn đảo thành một game quản lý kiểu nông trại chơi thư giãn, **làm liên tục tới khi
+chơi được trọn vẹn**, và **thay phần trang trí bằng chiến đấu kiểu AFK: giữ đảo ban đêm** (trận
+hiện ngay trên đảo 3D). Vẫn không có thua, không có hạn chót.
+
+| Mốc | Nội dung | Ghi chú |
+|---|---|---|
+| G1 | Đơn hàng hạc giấy: 1–2 đơn/ngày, gửi hàng từ kho lấy xu | khép vòng làm → bán |
+| G2 | Nâng cấp có hình trên đảo, mua bằng xu | kho củi lớn, luống bí mới, kệ thuốc, chuồng gà rộng, cần câu |
+| G3 | Tóm tắt khi quay lại (tối đa 1 ngày đảo) | |
+| G4 | Luống trồng theo mùa và pha chế ở vạc | hạt giống mua bằng xu; món nấu bán giá cao hơn |
+| G5 | **Giữ đảo ban đêm** | xem dưới |
+| G6 | Chơi thử một năm đảo, cân bằng, xuất bản | |
+
+### Giữ đảo ban đêm (G5)
+- Đêm xuống (khoảng 21h–4h), **ma sương** bò lên từ mép đảo theo từng sóng, đi về phía nhà.
+- **Vòm cổ ngữ** (đã có) là thanh máu của đảo; **tháp phép** (mua và nâng bằng xu, tinh thể) và
+  **Linh** tự bắn. Người chơi không điều khiển trận: chỉ chuẩn bị (nâng tháp, nâng vòm, chọn
+  phép cho Linh, mang thuốc) — kiểu AFK.
+- Thắng đêm: sáng ra nhận **tinh thể** và đôi khi **lõi sương** (đồ hiếm) để nâng cấp phòng thủ.
+- Vòm vỡ: không mất gì trong kho; Linh đuổi ma đi lúc bình minh, chỉ mất phần thưởng đêm đó.
+  Độ khó tăng chậm theo số đêm đã giữ; người chơi có thể chọn "đêm yên" để tắt trận.
+- Khi vắng mặt: các đêm được mô phỏng bằng công thức (không vẽ), tính chung với tóm tắt G3.
+- Hiệu năng: ma sương vẽ bằng InstancedMesh, tối đa khoảng 40 con cùng lúc; giữ 60 khung/giây.
+
+Phần "Out of scope" ở trên thay đổi: **có** chiến đấu (giữ đảo ban đêm, tự động); vẫn không có
+trang trí tự do, không có chợ giá dao động, không điều khiển nhân vật trực tiếp.
