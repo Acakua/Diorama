@@ -99,6 +99,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #ledger #lCook .wh{font:400 12px/1.3 var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
 #ledger #lCook li.empty{display:block;color:var(--ink-dim);font-style:italic}
 #ledger #lRecipes,#ledger #lMeal{margin:0 0 8px}
+/* the market boat: cheap surplus sales and a crystal pouch, and the island goals like upgrade rows */
+#ledger #lMkt{list-style:none;margin:0 0 8px;padding:0}
+#ledger #lMkt li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:6px 0;border-bottom:1px solid var(--ink-faint);font:400 13px/1.35 var(--display)}
+#ledger #lMkt li b{flex:1 1 auto;font-weight:500}#ledger #lMkt .nm{font:400 12px/1.3 var(--ui);color:var(--ink-dim)}#ledger #lMkt .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);font-variant-numeric:tabular-nums}
+#ledger #lMkt .mBtns{display:flex;gap:6px}#ledger #lMkt button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lMkt button:disabled{opacity:.45;cursor:default}
+#ledger #lGoals{list-style:none;margin:0 0 6px;padding:0}
+#ledger #lGoals li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint)}
+#ledger #lGoals li b{flex:1 1 100%;font-weight:500}#ledger #lGoals .nm{font:400 12px/1.3 var(--ui);color:var(--ink-dim)}#ledger #lGoals .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);font-variant-numeric:tabular-nums}
+#ledger #lGoals button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lGoals li.fin{font:italic 400 14px/1.4 var(--display);color:var(--glass-on)}
 </style>
 
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
@@ -155,6 +164,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
     <button id="lTab-def" class="lTab" role="tab" data-tab="def" aria-selected="false" aria-controls="lPanel-def">Phòng thủ</button>
   </div>
   <div id="lPanel-home" role="tabpanel" aria-labelledby="lTab-home">
+    <section id="lGoalSec" aria-label="Mục tiêu đảo"><h3>Mục tiêu đảo</h3><ul id="lGoals"></ul><p class="pNote" id="lGoalFoot"></p></section>
     <h3>Kho chung</h3><div id="lStore"></div>
     <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
     <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
@@ -166,6 +176,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
     <p class="pNote">Linh nấu lần lượt từng món trong hàng. Nguyên liệu trừ ngay khi dặn nấu; chọn bữa tối trước đêm để được thêm sức.</p>
     <div class="seg" id="lRecipes" role="group" aria-label="Nấu món"></div>
     <p class="pNote">Bữa tối trước đêm</p><div class="seg" id="lMeal" role="group" aria-label="Bữa tối trước đêm"></div>
+    <section id="lMktSec" aria-label="Thuyền chợ"><h3>Thuyền chợ</h3><p class="pNote">Thuyền chợ ghé mỗi ngày, mua rẻ hàng dư. Đơn hạc giấy vẫn trả hời hơn.</p><p class="pNote" id="lMktRoom"></p><ul id="lMkt"></ul></section>
   </div>
   <div id="lPanel-upg" role="tabpanel" aria-labelledby="lTab-upg" hidden>
     <h3>Nâng cấp</h3><ul id="lUpg"></ul>
@@ -2069,7 +2080,7 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{},def:{tw:[1,0,0],ward:1,charm:'bolt',charms:['bolt'],cry:0,core:0,nights:0,lvl:0,calm:0,ate:0,ateK:''},dish:{soup:0,pie:0,omelet:0,tea:0},dishEver:{},cookQ:[],meal:null};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{},def:{tw:[1,0,0],ward:1,charm:'bolt',charms:['bolt'],cry:0,core:0,nights:0,lvl:0,calm:0,ate:0,ateK:''},dish:{soup:0,pie:0,omelet:0,tea:0},dishEver:{},cookQ:[],meal:null,sent:0,mkt:{day:1,n:0},goals:[]};
 function has(k){return!!W.upg[k]}
 function woodMax(){return has('rack')?30:18}
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
@@ -2086,7 +2097,8 @@ function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.tex
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,hour:+hour.toFixed(2),at:Date.now(),wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
   def:{tw:W.def.tw.slice(),ward:W.def.ward,charm:W.def.charm,charms:W.def.charms.slice(),cry:W.def.cry,core:W.def.core,nights:W.def.nights,lvl:W.def.lvl,calm:W.def.calm,ate:W.def.ate,ateK:W.def.ateK},
   dish:{...W.dish},dishEver:{...W.dishEver},cookQ:W.cookQ.map(q=>({k:q.k,left:+q.left.toFixed(3)})),meal:W.meal,
-  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg),guide:W.guide||0}))}catch(e){}}
+  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg),guide:W.guide||0,
+  sent:W.sent||0,mkt:{day:W.mkt.day,n:W.mkt.n},goals:W.goals.slice()}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
@@ -2116,6 +2128,9 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   {const dish={},ever={};for(const k in RECIPE){dish[k]=int(q.dish&&q.dish[k],0,0,99);ever[k]=(q.dishEver&&q.dishEver[k])?1:0}W.dish=dish;W.dishEver=ever;
     W.cookQ=Array.isArray(q.cookQ)?q.cookQ.filter(x=>x&&Object.hasOwn(RECIPE,x.k)&&Number.isFinite(+x.left)).slice(0,3).map(x=>({k:x.k,left:num(x.left,0,0,2)})):[];
     W.meal=Object.hasOwn(RECIPE,q.meal)?q.meal:null;W.guide=q.guide?1:0}
+  // the market boat and the island goals; old saves start with nothing sent, no goals claimed and an empty daily room
+  W.sent=int(q.sent,0,0,1e6);W.mkt={day:int(q.mkt&&q.mkt.day,W.day,1,1e6),n:int(q.mkt&&q.mkt.n,0,0,15)};
+  W.goals=Array.isArray(q.goals)?[...new Set(q.goals.filter(k=>typeof k=='string'&&Goals.IDS.includes(k)))]:[];
   if(Array.isArray(q.pump))q.pump.forEach((g,i)=>{const p=furn.pumpkins[i];if(p)p.g=num(g,p.g,0,1)})}catch(e){}}
 function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();Orders.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
 /* ---------- Mun's ledger: the shared stores and the day's tasks ---------- */
@@ -2182,7 +2197,7 @@ const Mun={sig:'',
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){LedgerUI.badge();const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);Kitchen.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+  render(force){LedgerUI.badge();const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);Kitchen.render(force);Market.render(force);Goals.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
       S=[['củi',f(W.wood)+'/'+woodMax()],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
@@ -2220,7 +2235,7 @@ const Orders={sig:'',
   have(k){return Object.hasOwn(RECIPE,k)?Math.floor(W.dish[k]||0):Math.floor(W[k]||0)},
   spend(k,n){if(Object.hasOwn(RECIPE,k))W.dish[k]=Math.max(0,(W.dish[k]||0)-n);else W[k]=Math.max(0,(W[k]||0)-n)},
   can(o){const miss=[];for(const k in o.need){const n=o.need[k]-this.have(k);if(n>0)miss.push('Còn thiếu '+n+' '+this.UNIT[k])}return miss.join(', ')},
-  send(i){const o=W.orders[i];if(!o||this.can(o))return;for(const k in o.need)this.spend(k,o.need[k]);W.coins+=o.pay;W.orders.splice(i,1);if(typeof updStore=='function')updStore();logJ('Linh buộc gói hàng vào chân hạc giấy gửi '+this.ORDER_T[o.t].from+'. Mun ghi thêm '+o.pay+' xu.');saveW()},
+  send(i){const o=W.orders[i];if(!o||this.can(o))return;for(const k in o.need)this.spend(k,o.need[k]);W.coins+=o.pay;W.sent++;W.orders.splice(i,1);if(typeof updStore=='function')updStore();logJ('Linh buộc gói hàng vào chân hạc giấy gửi '+this.ORDER_T[o.t].from+'. Mun ghi thêm '+o.pay+' xu.');saveW()},
   drop(i){if(!W.orders[i])return;W.orders.splice(i,1);saveW()},
   render(force){const L=$('lOrders');if(!L)return;
       const sig=W.orders.map(o=>o.id+':'+o.t+':'+Object.entries(o.need).map(([k,n])=>k+n).join(',')+':'+o.pay+':'+o.d).join('|')+'|'+this.K.map(k=>this.have(k)).join();
@@ -2263,7 +2278,7 @@ const Away={
     const snap=()=>({wood:W.wood,stock:W.stock,fish:W.fish,eggs:W.eggs,potions:W.potions,day:W.day});
     const from=snap(),before=new Set(W.orders.map(o=>o.id));
     for(let i=0;i<mid;i++){W.day++;Orders.newDay();W.tasks=W.tasks.filter(t=>!t.done)}
-    this.eat={wood:eve*2,pump:eve};
+    this.eat={wood:eve,pump:eve};
     W.wood=Math.max(0,Math.min(woodMax(),Math.floor(W.wood+ih*.25-this.eat.wood)));
     W.fish=Math.max(0,Math.floor(W.fish+ih*.15*(has('rod')?1.5:1)));
     W.eggs=Math.max(0,Math.floor(W.eggs+morn*(has('coop')?5:3)));
@@ -2459,7 +2474,7 @@ const Kitchen={sig:'',
 };
 const LedgerUI={
   tabs:['home','trade','upg','def'],
-  key:'home',alert:false,ack:Object.create(null),seenDish:0,
+  key:'home',alert:false,tradeAlert:false,ack:Object.create(null),seenDish:0,seenGoals:'',
   /** Total cooked dishes; a rise means the kitchen just finished one. */
   dishes(){let n=0;for(const k in W.dish)n+=Math.floor(W.dish[k]||0);return n},
   /** Ids of orders that can be sent right now. */
@@ -2467,17 +2482,21 @@ const LedgerUI={
   /** Cheap enough for Mun.render and a once-a-second timer. */
   badge(){const send=this.senders(),dish=this.dishes();
     const fresh=send?send.split(',').filter(id=>!Object.hasOwn(this.ack,id)):[];
-    if(fresh.length||dish>this.seenDish)this.alert=true;
+    if(fresh.length||dish>this.seenDish)this.tradeAlert=true;
     for(const id of fresh)this.ack[id]=1;this.seenDish=dish;
+    const goal=Goals.claimable(),goalDot=!!goal&&goal!==this.seenGoals;
+    if(this.tradeAlert||goalDot)this.alert=true;
     $('bLedger').classList.toggle('badge',this.alert);
-    const tab=$('lTab-trade');if(tab)tab.classList.toggle('badge',this.alert)},
+    const tab=$('lTab-trade');if(tab)tab.classList.toggle('badge',this.tradeAlert);
+    const home=$('lTab-home');if(home)home.classList.toggle('badge',goalDot)},
   /** Marks the current state as seen so the same order or dish does not keep the dot lit. */
-  seen(){this.ack=Object.create(null);for(const id of this.senders().split(','))if(id)this.ack[id]=1;this.seenDish=this.dishes();this.alert=false;this.badge()},
-  /** Shows one panel, remembers the choice; opening Buôn bán clears its dot. */
+  seen(){this.ack=Object.create(null);for(const id of this.senders().split(','))if(id)this.ack[id]=1;this.seenDish=this.dishes();this.tradeAlert=false;this.alert=false;this.badge()},
+  /** Shows one panel, remembers the choice; opening Buôn bán clears its dot, opening Nhà clears the goals dot. */
   open(key,store=true){if(!this.tabs.includes(key))key='home';this.key=key;
     for(const k of this.tabs){const tab=$('lTab-'+k),panel=$('lPanel-'+k);if(tab)tab.setAttribute('aria-selected',k===key?'true':'false');if(panel)panel.hidden=k!==key}
     if(store)try{localStorage.setItem('dao-ledger-tab',key)}catch(e){}
-    if(key==='trade')this.seen()},
+    if(key==='trade')this.seen();
+    if(key==='home'){this.seenGoals=Goals.claimable();const unack=this.senders().split(',').filter(id=>id&&!Object.hasOwn(this.ack,id)).length;if(!unack&&this.dishes()<=this.seenDish)this.tradeAlert=false;if(!this.tradeAlert)this.alert=false;this.badge()}},
   build(){let saved='home';try{saved=localStorage.getItem('dao-ledger-tab')||'home'}catch(e){}
     this.seenDish=this.dishes();this.badge();
     const bar=$('lTabs');if(bar)for(const b of bar.querySelectorAll('[data-tab]'))b.onclick=()=>this.open(b.dataset.tab);
@@ -2485,6 +2504,72 @@ const LedgerUI={
     this.open(saved);
     setInterval(()=>this.badge(),1000);
     if(!W.guide&&$('ledger').hidden)$('bLedger').click()}
+};
+/* The market boat: surplus sold cheaply (paper-crane orders still pay more), coins traded for crystals. */
+const Market={sig:'',
+  P:{wood:1,eggs:2,fish:3,stock:4,potions:7,soup:13,pie:17,omelet:11,tea:20},
+  /** At most fifteen goods a day; the room resets lazily when the island day changes. */
+  room(){if(W.mkt.day!==W.day){W.mkt.day=W.day;W.mkt.n=0}return 15-W.mkt.n},
+  /** Goods go through the same getter and setter the paper-crane orders use, so dishes land in W.dish. */
+  sell(k,n){const room=this.room();if(!(n>0)||Orders.have(k)<n||room<n)return;Orders.spend(k,n);const pay=n*this.P[k];W.coins+=pay;W.mkt.n+=n;
+    logJ('Mun bán '+n+' '+Orders.UNIT[k]+' cho thuyền chợ, được '+pay+' xu.');updStore();saveW();this.render(true)},
+  buy(){if(W.coins<40)return;W.coins-=40;W.def.cry+=10;
+    logJ('Mun mua một túi mười tinh thể từ thuyền chợ, trả 40 xu.');updStore();saveW();this.render(true)},
+  build(){this.sig='';this.render(true)},
+  render(force){const el=$('ledger');if(!el||el.hidden)return;const L=$('lMkt');if(!L)return;const room=this.room(),
+      sig=W.day+':'+room+':'+Math.floor(W.coins)+':'+Orders.K.map(k=>Orders.have(k)).join();
+    if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
+    for(const k of Orders.K){const n=Orders.have(k);if(n<=0)continue;
+      const li=document.createElement('li'),name=document.createElement('b'),have=document.createElement('span'),price=document.createElement('span'),btns=document.createElement('div'),one=document.createElement('button'),five=document.createElement('button');
+      name.textContent=Orders.UNIT[k];have.className='nm';have.textContent='có '+n;price.className='wh';price.textContent=this.P[k]+' xu / món';btns.className='mBtns';
+      one.textContent='Bán 1';let why=room<1?'Thuyền chợ hôm nay đã nhận đủ 15 món.':'';one.disabled=!!why;one.title=why;one.onclick=()=>this.sell(k,1);
+      five.textContent='Bán 5';why=n<5?'Chưa có đủ 5 món để bán.':room<5?'Thuyền chợ chỉ nhận thêm '+room+' món hôm nay.':'';five.disabled=!!why;five.title=why;five.onclick=()=>this.sell(k,5);
+      btns.append(one,five);li.append(name,have,price,btns);L.append(li)}
+    const li=document.createElement('li'),name=document.createElement('b'),detail=document.createElement('span'),buy=document.createElement('button'),why=W.coins<40?'Còn thiếu '+(40-Math.floor(W.coins))+' xu.':'';
+    name.textContent='Túi tinh thể · 10 tinh thể';detail.className='wh';detail.textContent='cho vòm cổ ngữ';buy.textContent='Mua · 40 xu';buy.disabled=!!why;buy.title=why;buy.onclick=()=>this.buy();
+    li.append(name,detail,buy);L.append(li);
+    const roomEl=$('lMktRoom');if(roomEl)roomEl.textContent='Hôm nay thuyền còn nhận '+room+' món.'}
+};
+/* Island goals read the state Mun already keeps. The last one closes chapter one; the game keeps running. */
+const Goals={sig:'',fired:false,
+  IDS:['first-order','first-upg','first-dish','nights-3','tower-2','orders-15','dishes-4','upg-5','tower-3','nights-14'],
+  defs:{
+    'first-order':{text:'Gửi đơn hạc giấy đầu tiên',need:()=>[W.sent,1],gift:{coins:10}},
+    'first-upg':{text:'Mua món nâng cấp đầu tiên',need:()=>[Object.keys(W.upg).length,1],gift:{cry:10}},
+    'first-dish':{text:'Nấu món đầu tiên trong bếp',need:()=>[Object.keys(W.dishEver).filter(k=>W.dishEver[k]).length,1],gift:{coins:15}},
+    'nights-3':{text:'Giữ vòm cổ ngữ qua 3 đêm',need:()=>[W.def.nights,3],gift:{coins:20}},
+    'tower-2':{text:'Dựng tháp thứ hai',need:()=>[W.def.tw.filter(l=>l>0).length,2],gift:{cry:30}},
+    'orders-15':{text:'Gửi 15 đơn hạc giấy',need:()=>[W.sent,15],gift:{coins:60}},
+    'dishes-4':{text:'Nấu đủ bốn món',need:()=>[Object.keys(W.dishEver).filter(k=>W.dishEver[k]).length,4],gift:{cry:40}},
+    'upg-5':{text:'Mua đủ năm món nâng cấp',need:()=>[Object.keys(W.upg).length,5],gift:{cry:80}},
+    'tower-3':{text:'Dựng đủ ba tháp',need:()=>[W.def.tw.filter(l=>l>0).length,3],gift:{core:1}},
+    'nights-14':{text:'Giữ vòm cổ ngữ qua 14 đêm',need:()=>[W.def.nights,14],gift:{cry:150}}
+  },
+  giftText(g){const s=[];if(g.coins)s.push(g.coins+' xu');if(g.cry)s.push(g.cry+' tinh thể');if(g.core)s.push(g.core+' lõi sương');return s.join(' · ')},
+  /** The first three unclaimed goals, in order. */
+  shown(){const out=[];for(const id of this.IDS)if(!W.goals.includes(id)){out.push(id);if(out.length===3)break}return out},
+  /** Cheap enough for the once-a-second badge check: only goals on screen can be claimed. */
+  claimable(){return this.shown().filter(id=>{const [have,want]=this.defs[id].need();return have>=want}).join(',')},
+  ready(){return!!this.claimable()},
+  claim(id){const g=this.defs[id];if(!g||W.goals.includes(id))return;const [have,want]=g.need();if(have<want)return;
+    const gift=g.gift;if(gift.coins)W.coins+=gift.coins;if(gift.cry)W.def.cry+=gift.cry;if(gift.core)W.def.core+=gift.core;W.goals.push(id);
+    const text=g.text;logJ('Mun đánh dấu xong: '+text+'.');note('Xong mục tiêu: '+text+' · '+this.giftText(gift),5,false);updStore();saveW();
+    if(W.goals.length===this.IDS.length)this.finale();else this.render(true)},
+  finale(){if(this.fired)return;this.fired=true;
+    const t='Chương một khép lại: đảo Cối Nước đã yên bình. Linh và Mun cứ thế sống tiếp, ngày qua ngày.';
+    logJ(t);note(t,10,false);this.render(true)},
+  build(){this.sig='';this.fired=false;this.render(true)},
+  render(force){const el=$('ledger');if(!el||el.hidden)return;const L=$('lGoals');if(!L)return;const done=W.goals.length,shown=this.shown(),
+      sig=W.goals.join()+':'+shown.map(id=>this.defs[id].need().join('/')).join('|');
+    if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
+    const foot=$('lGoalFoot');
+    if(done>=this.IDS.length){const li=document.createElement('li');li.className='fin';li.textContent='Chương một đã xong. Người giữ đảo: Mun.';L.append(li);
+      if(foot)foot.textContent='Đã xong '+done+'/'+this.IDS.length+' mục tiêu.';return}
+    for(const id of shown){const g=this.defs[id],[have,want]=g.need(),li=document.createElement('li'),b=document.createElement('b'),prog=document.createElement('span'),gift=document.createElement('span');
+      b.textContent=g.text;prog.className='nm';prog.textContent=Math.min(have,want)+'/'+want;gift.className='wh';gift.textContent='Quà: '+this.giftText(g.gift);li.append(b,prog,gift);
+      if(have>=want){const btn=document.createElement('button');btn.textContent='Nhận quà';btn.onclick=()=>this.claim(id);li.append(btn)}
+      L.append(li)}
+    if(foot)foot.textContent='Đã xong '+done+'/'+this.IDS.length+' mục tiêu.'}
 };
 function buildDefence(){const D=Place.def={};
   const prof=[[0,0],[.12,.014],[.21,.05],[.26,.11],[.265,.18],[.24,.26],[.19,.35],[.13,.43],[.075,.5],[.03,.545],[0,.565]];
@@ -2870,7 +2955,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get def(){return Def},get kitchen(){return Kitchen},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get market(){return Market},get goals(){return Goals},get away(){return Away},get def(){return Def},get kitchen(){return Kitchen},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -3316,7 +3401,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Kitchen.build();LedgerUI.build();Away.show();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Kitchen.build();Market.build();Goals.build();LedgerUI.build();Away.show();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
