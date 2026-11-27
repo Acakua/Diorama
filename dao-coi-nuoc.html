@@ -11,6 +11,7 @@
   --ink:#f4efe2; --ink-dim:#f4efe2b3; --ink-faint:#f4efe240;
   --glass:#14201f8c; --glass-on:#e9b872; --on-ink:#1d1710;
   --display:"Literata",Georgia,serif; --ui:"Be Vietnam Pro",system-ui,sans-serif;
+  --toolbar-h:110px;
 }
 html,body{height:100%;margin:0;background:#1a2a2c;color:var(--ink);overflow:hidden;font-family:var(--ui)}
 canvas#w{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
@@ -91,9 +92,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #lGuide{margin:0 0 12px;padding:10px 12px;border:1px solid var(--glass-on);border-radius:3px;background:#0d16158c}
 #lGuide h3{margin:0 0 6px}#lGuide p{margin:0 0 6px}#lGuide button{margin-top:2px}
 #ledger .lTabs{margin:0 0 12px;flex-wrap:nowrap;gap:4px}#ledger .lTab{flex:1 1 0;min-width:0;padding:6px 2px;font-size:12px;white-space:nowrap;text-align:center}#ledger .lTab.badge::after{margin-left:4px}#ledger .lTab[aria-selected="true"]{background:var(--glass-on);color:var(--on-ink);border-color:var(--glass-on)}
-#nightHud{font:400 12.5px/1.4 var(--ui);color:var(--ink);text-shadow:0 1px 6px #0009;pointer-events:none;max-width:100%;margin-top:4px}
-#nightHud .nhTop{font-variant-numeric:tabular-nums}#nightHud .nhBar{display:block;width:150px;max-width:100%;height:5px;margin:4px 0;border:1px solid var(--ink-faint);border-radius:1px;background:#0d1615b3}#nightHud .nhBar i{display:block;height:100%;background:var(--glass-on)}
-#nightHud .nhGain{color:var(--glass-on);font-variant-numeric:tabular-nums}
+@media (max-width:420px){#ledger .lTabs{overflow-x:auto;scrollbar-width:none}#ledger .lTab{flex:0 0 auto;padding:6px 8px}}
+#nightHud{width:260px;max-width:100%;background:#14201fe6;border:1px solid var(--ink-faint);border-radius:3px;padding:8px 12px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);text-shadow:0 1px 6px #0009;pointer-events:none}
+#nightHud .nhTop{font:400 15px/1.35 var(--display);font-variant-numeric:tabular-nums}
+#nightHud .nhBar{display:block;width:100%;height:6px;margin:5px 0;border-radius:1px;background:#0d1615b3;overflow:hidden}
+#nightHud .nhBar i{display:block;height:100%;width:100%;background:var(--glass-on);transition:width .25s,background .25s}
+#nightHud .nhBar i.low{background:#e07a5f}
+#nightHud .nhGain{font:400 12px/1.35 var(--ui);color:var(--glass-on);font-variant-numeric:tabular-nums}
 #ledger #lDef{font:400 13px/1.4 var(--ui)}#ledger #lDef .dSum{font:400 13px/1.4 var(--ui);color:var(--ink-dim);margin-bottom:8px}
 #ledger #lDef .dSum b{font:400 14px/1 var(--display);color:var(--ink);font-variant-numeric:tabular-nums}
 #ledger #lDef .dCard{border:1px solid var(--ink-faint);border-radius:3px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;margin-bottom:6px}
@@ -160,10 +165,26 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #help li{font:400 12px/1.45 var(--ui);color:var(--ink-dim);margin:0 0 4px}
 #help button{display:block;width:100%;white-space:nowrap;margin-top:8px}
 @media (max-width:700px){.popWrap{position:static}.row2{position:relative}#menu,#help{left:0;right:0;width:auto;max-width:none}}
+#toasts{position:absolute;left:50%;top:max(16px,env(safe-area-inset-top,0px));transform:translateX(-50%);width:min(420px,calc(100vw - 32px));display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none;z-index:4}
+.toast{width:100%;background:#14201fe6;border:1px solid var(--ink-faint);border-left:3px solid var(--ink-faint);border-radius:3px;padding:8px 12px;font:400 13px/1.4 var(--ui);color:var(--ink);text-shadow:0 1px 6px #0009;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:0;transform:translateY(-6px);transition:opacity .25s,transform .25s}
+.toast.on{opacity:1;transform:none}
+.toast[data-kind="gold"]{border-left-color:var(--glass-on)}
+.toast[data-kind="violet"]{border-left-color:#b79bff}
+@media (prefers-reduced-motion:reduce){.toast{transform:none}}
+.day{display:none}
+.viewHint{display:block;font:500 12px/1.3 var(--ui);color:var(--ink-dim);margin-bottom:4px}
+body.viewMode .day{display:block}
+@media (max-width:700px){
+  #toasts{top:var(--toolbar-h,110px)}
+  #ledger,#journal{left:0;right:0;bottom:0;top:auto!important;width:auto;max-width:none;height:70vh;max-height:70vh;border-radius:3px 3px 0 0;padding-top:20px}
+  #ledger::before,#journal::before{content:"";position:absolute;left:50%;top:6px;width:36px;height:4px;border-radius:2px;background:var(--ink-faint);transform:translateX(-50%)}
+}
+@media (max-width:700px){body:has(#ledger:not([hidden])) .bottom,body:has(#journal:not([hidden])) .bottom{display:none}body:has(#ledger:not([hidden])) #ledger,body:has(#journal:not([hidden])) #journal{top:calc(var(--toolbar-h,110px) + 70px)!important;height:auto;max-height:none}}
 </style>
 
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
 <div id="hud">
+  <div id="toasts" aria-live="polite"><div id="nightHud" aria-live="off" hidden></div></div>
   <div class="top">
     <div class="hintWrap">
       <section id="status" aria-label="Trạng thái đảo">
@@ -182,7 +203,6 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
       </section>
       <div id="modelMsg" class="hint" role="status"></div>
       <div id="fps" class="hint" hidden></div>
-      <div id="nightHud" hidden></div>
     </div>
     <div class="tools">
       <div class="row">
@@ -216,6 +236,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
             <button id="bSound" role="menuitemcheckbox" aria-checked="false" aria-pressed="false">Âm thanh</button>
             <button id="bPerf" role="menuitemcheckbox" aria-checked="false" aria-pressed="false">Hiệu năng</button>
             <button id="bRoof" role="menuitemcheckbox" aria-checked="false" aria-pressed="false">Mở mái nhà</button>
+            <button id="bView" role="menuitemcheckbox" aria-checked="false" aria-pressed="false">Chế độ ngắm</button>
             <button id="bHat" role="menuitemcheckbox" aria-checked="true" aria-pressed="true" hidden>Mũ phù thủy</button>
             <button id="bModel" role="menuitem">Nạp mô hình VRoid khác</button>
           </div>
@@ -234,6 +255,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
         <button data-s="30" aria-pressed="false">30×</button>
       </div>
       <div class="day">
+        <div class="viewHint">Chế độ ngắm · kéo để xem giờ khác</div>
         <input id="scrub" type="range" min="0" max="24" step="0.01" value="8" aria-label="Giờ trong ngày">
         <div class="ticks"><span>0h</span><span>6h</span><span>12h</span><span>18h</span><span>24h</span></div>
       </div>
@@ -2462,7 +2484,8 @@ const Def={
     if(held){d.nights++;d.lvl=Math.min(1e6,d.lvl+1);bonus=5+2*Math.min(d.nights,20);cry+=bonus;d.cry+=bonus;if(Math.random()<.15){core=1;d.core++}}
     else d.lvl=Math.max(0,d.lvl-1);
     this.last={held,kills:this.kills,cry,core};this.state.length=0;for(const w of this.pool)w.alive=false;
-    if(this.fxOn){if(held)logJ('Đêm '+d.nights+': vòm cổ ngữ giữ vững, Mun nhặt được '+bonus+' tinh thể.');else logJ('Đêm qua vòm cổ ngữ vỡ, ma sương tan dần trước bình minh. Mun vẫn nhặt được '+this.kills+' tinh thể.')}
+    if(this.fxOn){if(held)logJ('Đêm '+d.nights+': vòm cổ ngữ giữ vững, Mun nhặt được '+bonus+' tinh thể.');else logJ('Đêm qua vòm cổ ngữ vỡ, ma sương tan dần trước bình minh. Mun vẫn nhặt được '+this.kills+' tinh thể.');
+      Toast.show(held?'Bình minh: vòm giữ vững · '+this.kills+' ma sương tan · +'+cry+' tinh thể':'Bình minh: vòm vỡ, kho vẫn nguyên · '+this.kills+' ma sương tan','violet',8)}
   },
   step(dt,h){const fight=this.nightAt(h)&&!W.def.calm;if(fight&&!this.active)this.begin(h);else if(!fight&&this.active)this.resolve();this.on=fight;
     if(dt>0&&this.active&&!this.lost){let left=Math.min(dt,3);while(left>0){const d=Math.min(.1,left);this.sim(d);left-=d}}this.hud()},
@@ -2509,7 +2532,7 @@ const Def={
   startNight(){hour=21.45;plan(schedule(hour,rainy()),true);applyTime(hour,-1);W.def.calm=0;if(this.active)this.resolve();this.begin();this.on=true;this.hud();saveW()},
   hud(){const el=$('nightHud');if(!el)return;if(!this.on){el.hidden=true;return}if(!this.hudTop)this.build();if(!this.hudTop)return;const now=performance.now();if(now-this.hudAt<250)return;this.hudAt=now;
     const pct=this.ward.max?Math.max(0,Math.min(100,this.ward.hp/this.ward.max*100)):100;
-    el.hidden=false;this.hudTop.textContent='Đêm '+(W.def.nights+1)+' · Sóng '+this.wave+'/6';this.hudBar.style.width=pct.toFixed(1)+'%';this.hudGain.textContent='Tan: '+this.kills+' · +'+this.cryGain+' tinh thể'},
+    el.hidden=false;this.hudTop.textContent='Đêm '+(W.def.nights+1)+' · Sóng '+this.wave+'/6';this.hudBar.style.width=pct.toFixed(1)+'%';this.hudBar.classList.toggle('low',pct<35);this.hudGain.textContent='Tan '+this.kills+' · +'+this.cryGain+' tinh thể'},
   cost(k,a){const d=W.def;
     if(k=='build'&&(a===1||a===2))return a===1?{coins:60,cry:10,core:0}:{coins:120,cry:25,core:0};
     if(k=='tw'&&a>=0&&a<3)return d.tw[a]>=10?null:{coins:0,cry:12*d.tw[a]*d.tw[a],core:0};
@@ -2641,6 +2664,12 @@ const Status={ready:false,vals:null,osig:-1,sendable:0,
     this.vals=[c,y,wd,wm,pk,fi,eg,po,osig,night,left];
   }
 };
+const Toast={
+  nodes:null,timers:null,seq:0,
+  view:(()=>{const v=$('bView');if(!v)return()=>{};const set=q=>{v.setAttribute('aria-checked',q?'true':'false');v.setAttribute('aria-pressed',q?'true':'false');document.body.classList.toggle('viewMode',q);try{localStorage.setItem('dao-view',q?'1':'0')}catch(e){}};let q=false;try{q=localStorage.getItem('dao-view')==='1'}catch(e){}set(q);v.addEventListener('click',()=>set(v.getAttribute('aria-checked')!=='true'));return set})(),
+  init(){const c=$('toasts');if(!c||this.nodes)return;this.nodes=[];this.timers=[];for(let i=0;i<3;i++){const d=document.createElement('div');d.className='toast';d.hidden=true;c.appendChild(d);this.nodes.push(d);this.timers.push({a:0,b:0})}},
+  show(t,kind='info',sec=4){this.init();if(!this.nodes)return;const i=this.seq++%3,d=this.nodes[i],tm=this.timers[i];clearTimeout(tm.a);clearTimeout(tm.b);d.dataset.kind=kind;d.textContent=t;d.hidden=false;void d.offsetWidth;d.classList.add('on');tm.a=setTimeout(()=>{d.classList.remove('on');tm.b=setTimeout(()=>{d.hidden=true},260)},sec*1000)}
+};
 const LedgerUI={
   tabs:['today','trade','kitchen','upg','def'],
   key:'today',alert:false,tradeAlert:false,kitchenAlert:false,ack:Object.create(null),seenDish:0,seenGoals:'',
@@ -2673,8 +2702,10 @@ const LedgerUI={
     if(key==='today'){this.seenGoals=Goals.claimable();this.badge()}},
   build(){let saved='home';try{saved=localStorage.getItem('dao-ledger-tab')||'home'}catch(e){}
     if(saved==='home')saved='today';
-    const setH=()=>{const tools=document.querySelector('#hud .tools');if(tools)document.documentElement.style.setProperty('--toolbar-h',Math.round(tools.getBoundingClientRect().bottom+8)+'px')};
-    setH();addEventListener('resize',setH);
+    const tools=document.querySelector('#hud .tools'),status=$('status');
+    const setH=()=>{if(tools)document.documentElement.style.setProperty('--toolbar-h',Math.round(tools.getBoundingClientRect().bottom+8)+'px')};
+    this.setH=setH;setH();
+    if(typeof ResizeObserver!=='undefined'){const ro=new ResizeObserver(setH);if(tools)ro.observe(tools);if(status)ro.observe(status)}else addEventListener('resize',setH);
     this.seenDish=this.dishes();this.badge();
     const bar=$('lTabs');if(bar)for(const b of bar.querySelectorAll('[data-tab]'))b.onclick=()=>this.open(b.dataset.tab);
     const guide=$('lGuide');if(guide){if(!W.guide)guide.hidden=false;const ok=$('lGuideOk');if(ok)ok.onclick=()=>{guide.hidden=true;W.guide=1;saveW()}}
@@ -2797,7 +2828,7 @@ function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({co
 function updGarden(){const c=new THREE.Color(),a=new THREE.Color('#6f8a3a'),b=new THREE.Color('#e4832a'),o=new THREE.Object3D();furn.pumpkins.forEach((q,i)=>{const s=q.max*(.32+.68*q.g);o.position.set(q.x,q.y+s*.66,q.z);o.scale.setScalar(s);o.rotation.y=i;o.updateMatrix();Life.pump.setMatrixAt(i,o.matrix);Life.pump.setColorAt(i,c.copy(a).lerp(b,sstep(.45,.95,q.g)))});Life.pump.instanceMatrix.needsUpdate=true;if(Life.pump.instanceColor)Life.pump.instanceColor.needsUpdate=true}
 function updStore(){const o=new THREE.Object3D(),c=new THREE.Color('#e4832a');Life.pile.count=Math.min(6,W.stock);Life.pileSpots.forEach((q,i)=>{const s=.14+(i%3)*.012;o.position.set(q[0],q[1]+s*.66,q[2]);o.scale.setScalar(s);o.rotation.y=i*2;o.updateMatrix();Life.pile.setMatrixAt(i,o.matrix);Life.pile.setColorAt(i,c)});Life.pile.instanceMatrix.needsUpdate=true;if(Life.pile.instanceColor)Life.pile.instanceColor.needsUpdate=true;
   Life.logs.count=Math.min(30,W.wood);Life.logSpots.forEach((q,i)=>{o.position.set(q[0],q[1],q[2]);o.scale.setScalar(1);o.rotation.y=0;o.updateMatrix();Life.logs.setMatrixAt(i,o.matrix)});Life.logs.instanceMatrix.needsUpdate=true}
-function note(t,sec=5,log=true){AG.note=t;AG.noteT=sec;if(log)logJ(t)}
+function note(t,sec=5,log=true){const s=t.toLowerCase();const kind=/(^|[\s(])xu(?=[\s.,;:!)]|$)|quà/.test(s)?'gold':/(^|[\s(])đêm(?=[\s.,;:!)]|$)|(^|[\s(])vòm(?=[\s.,;:!)]|$)|ma sương|tinh thể/.test(s)?'violet':'info';Toast.show(t,kind,sec);if(log)logJ(t)}
 function burst(p0,c,n=40,sp=1.6){const p=p0.clone(),v=new V3();for(let i=0;i<n;i++)Magic.emit(p,v.copy(unit()).multiplyScalar(sp*rand(.45,1)),c,rand(.7,1.4),.075,.75)}
 function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,fwd);AG.noteT=(AG.noteT||0)-dt;AG.startle=Math.max(0,(AG.startle||0)-dt);
   if(AG.lastLogged!==AG.cur&&here&&!air){AG.lastLogged=AG.cur;AG.pT=0;AG.hT=0;const id=AG.cur;
@@ -3086,7 +3117,7 @@ $('bCine').onclick=()=>{Cine.on=!Cine.on;setPressed($('bCine'),Cine.on);Cine.t=0
 $('bJournal').onclick=()=>{const j=$('journal');j.hidden=!j.hidden;setPressed($('bJournal'),!j.hidden);renderJ();if(!j.hidden)placePanel(j);if(!j.hidden){$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);$('wxp').hidden=true;setPressed($('bWx'),false);shutLedger()}};
 // Mun's ledger opens like the journal and closes the other panels
 function shutLedger(){$('ledger').hidden=true;setPressed($('bLedger'),false)}
-$('bLedger').onclick=()=>{const p=$('ledger');p.hidden=!p.hidden;setPressed($('bLedger'),!p.hidden);if(p.hidden)return;placePanel(p);p.style.maxHeight=Math.max(160,innerHeight-parseFloat(p.style.top)-16)+'px';Mun.render(true);
+$('bLedger').onclick=()=>{const p=$('ledger');p.hidden=!p.hidden;setPressed($('bLedger'),!p.hidden);if(p.hidden)return;LedgerUI.setH();placePanel(p);p.style.maxHeight=Math.max(160,innerHeight-parseFloat(p.style.top)-16)+'px';Mun.render(true);
   $('journal').hidden=true;setPressed($('bJournal'),false);$('perf').hidden=true;PerfUI.open=false;setPressed($('bPerf'),false);$('wxp').hidden=true;setPressed($('bWx'),false)};
 $('lClose').onclick=()=>$('bLedger').click();
 // ---- the workplaces on the island: a hand over one, and a click opens a card to ask Linh for its task (a double click still flies the camera there)
@@ -3548,7 +3579,7 @@ function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on|
   // HUD
   fpsN++;fpsT+=raw;PerfUI.tick(raw);if(fpsT>=1){fpsShown=fpsN/fpsT;$('fps').hidden=$('perf').hidden;$('fps').textContent=Math.round(fpsShown)+' khung hình/giây';fpsN=0;fpsT=0;saveTick++;if(saveTick%30==0)saveW()}
   hudT-=raw;if(hudT<=0){hudT=.2;Status.tick();clockEl.textContent=fmt(hour);dayLbl.textContent=WEEK[(W.day-1)%7]+' · ngày '+W.day+' · mùa '+SEAW[Math.max(0,Sea.cur)]+' · '+Wx.label()+' · '+moodLabel();if(!scrubbing&&document.activeElement!==scrub)scrub.value=hour.toFixed(2);
-    const a=ACT[AG.cur],txt=(Mun.doing()?'Việc Mun nhờ: ':'')+'Linh '+(AG.walking?(a.spots&&AG.path.length==0?'chuyển sang luống khác':'đang '+a.go)+'.':a.txt);const show=AG.noteT>0&&AG.note?AG.note:txt;if(show!=lastAct){lastAct=show;lineEl.textContent=show}
+    const a=ACT[AG.cur],txt=(Mun.doing()?'Việc Mun nhờ: ':'')+'Linh '+(AG.walking?(a.spots&&AG.path.length==0?'chuyển sang luống khác':'đang '+a.go)+'.':a.txt);if(txt!=lastAct){lastAct=txt;lineEl.textContent=txt}
     Mun.render()}
   // render
   {const su=finalQ.material.uniforms,d=tmpV.copy(U.sunD.value),front=d.dot(camera.getWorldDirection(new V3()));su.asp.value=camera.aspect;if(front>-.25){const q=d.clone().multiplyScalar(100).add(camera.position).project(camera);su.sunUv.value.set(clamp(q.x*.5+.5,-.12,1.08),Math.max(clamp(q.y*.5+.5,-.12,1.08),d.y>.05?.9:0));su.flareC.value.copy(U.sunC.value).multiplyScalar(sstep(-.25,.45,front)*.9*(d.y>-.02?1:0))}else su.flareC.value.set(0,0,0)}
