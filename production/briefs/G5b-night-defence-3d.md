@@ -13,7 +13,7 @@ fairy-tale skirmish, not horror (`design/art-bible.md` §1 "Không khí chung", 
   — read by heading, not whole.
 - `dao-coi-nuoc.html`:
   - `const Def={` (G5a): `Def.state` (live wraiths `{a,p,hp,max,slow,id}`), `Def.fx` (ring buffer
-    of `{type,from:[x,z],to:[x,z],t}`), `Def.on`, `Def.ward` (`{hp,max}`), `TW_POS`, `W.def.tw`,
+    of 64 preallocated `{type,from:[x,z],to:[x,z],t}`; `type` is `''` (unused), `'shot'` (tower), `'bolt'|'star'|'frost'` (Linh's charm), `'hit'` or `'kill'`; `t` is `Def.time` in night-seconds when it happened), `Def.time`, `Def.on`, `Def.ward` (`{hp,max}`), `TW_POS`, `W.def.tw`,
     `W.def.charm`. Wraith island-local position: XZ `(R+0.4)*(cos a, sin a)`,
     `y = -4 + 4.6*min(p,1)`.
   - `Place.ward` (search `Place.ward={d,m,t:-1}`, about line 507) and the line that drives it
@@ -53,11 +53,11 @@ the ward while `Def.on`, see Spec).
     At night (`Def.on`) a little brighter; by day calm.
 - **Beams** — one `LineSegments` with 64 segments, `BufferGeometry` positions using
   `DynamicDrawUsage`, `LineBasicMaterial({vertexColors:true, transparent:true, blending:THREE.AdditiveBlending, depthWrite:false})`.
-  Each frame draw every `Def.fx` entry younger than 0.25 s as a segment from its `from` (at tower
+  Each frame draw every `Def.fx` entry of type shot/bolt/star/frost with `Def.time - t < 0.25` as a segment from its `from` (at tower
   crystal height, or `HOUSE.tower` top ≈ 4.5 m for charms) to its `to` (wraith position). Colours:
   tower shot `#c7a8ff`, `bolt` `#ffb35c`, `star` `#ffe08a`, `frost` `#a8f0ff`; fade by age.
   Unused segments collapse to zero length. `setDrawRange` to the used count.
-- **Kill puff**: when an `fx` entry of type `kill` is new, call `burst(worldPos, Magic.C.violet, 18, .7)`.
+- **Kill puff**: when an `fx` entry of type `kill` is new (remember the newest `t` you handled), call `burst(worldPos, Magic.C.violet, 18, .7)`.
   `star`: also a gold `burst(...,10,.5)` at the target. Never more than 6 bursts per frame.
 - **Ward**: while `Def.on`, keep `Place.ward` visible and its `uA` at least
   `0.35 + 0.5*(1-hp/max)` (brighter when hurt), with a short flash (+0.3, 0.2 s) on each `hit`

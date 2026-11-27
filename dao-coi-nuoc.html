@@ -77,6 +77,13 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 @media (max-width:560px){.hint{display:none}.tools{justify-content:flex-start}}
 #lAway{margin:0 0 12px;padding:10px 12px;border:1px solid var(--ink-faint);border-radius:3px;background:#0d16158c}
 #lAway h3{margin:0 0 6px}#lAway p{margin:0 0 6px}#lAway button{margin-top:2px}
+#nightHud{position:absolute;left:max(16px,env(safe-area-inset-left,0px));top:calc(max(16px,env(safe-area-inset-top,0px)) + 66px);font:400 12.5px/1.4 var(--ui);color:var(--ink);text-shadow:0 1px 6px #0009;pointer-events:none;min-width:170px}
+#nightHud .nhTop{font-variant-numeric:tabular-nums}#nightHud .nhBar{display:block;width:150px;height:5px;margin:4px 0;border:1px solid var(--ink-faint);border-radius:1px;background:#0d1615b3}#nightHud .nhBar i{display:block;height:100%;background:var(--glass-on)}
+#nightHud .nhGain{color:var(--glass-on);font-variant-numeric:tabular-nums}
+#ledger #lDef{font:400 12.5px/1.4 var(--ui)}#ledger #lDef .dSum{margin-bottom:6px;color:var(--ink-dim)}
+#ledger #lDef .dRow{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:6px 0;border-bottom:1px solid var(--ink-faint)}
+#ledger #lDef .dRow b{flex:1 1 100%;font-weight:500}#ledger #lDef .dRow .nm{color:var(--ink-dim)}#ledger #lDef .dRow .wh{color:var(--glass-on);font-variant-numeric:tabular-nums}
+#ledger #lDef button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lDef button:disabled{opacity:.45;cursor:default}
 </style>
 
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
@@ -98,6 +105,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
       <button id="bPerf" aria-pressed="false">Hiệu năng</button>
     </div>
   </div>
+  <div id="nightHud" hidden></div>
   <div class="bottom">
     <div class="say"><div class="clk"><div id="dayLbl"></div><div id="clock">08:00</div></div><div id="line"></div></div>
     <div class="bar">
@@ -124,6 +132,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
   <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
   <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
   <h3>Nâng cấp</h3><ul id="lUpg"></ul>
+  <h3>Phòng thủ</h3><div id="lDef"></div>
 </aside>
 <div id="spot" hidden role="dialog" aria-labelledby="sName"><button id="sClose" aria-label="Đóng">×</button><h3 id="sName"></h3><p id="sInfo"></p><button id="sGo"></button><p class="pNote" id="sNote"></p></div>
 <aside id="wxp" hidden aria-label="Mùa và thời tiết"><button id="wClose" aria-label="Đóng bảng mùa và thời tiết">×</button><h2>Mùa và thời tiết</h2>
@@ -2020,7 +2029,7 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{}};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{},def:{tw:[1,0,0],ward:1,charm:'bolt',charms:['bolt'],cry:0,core:0,nights:0,lvl:0,calm:0}};
 function has(k){return!!W.upg[k]}
 function woodMax(){return has('rack')?30:18}
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
@@ -2035,6 +2044,7 @@ function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWan
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,hour:+hour.toFixed(2),at:Date.now(),wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
+  def:{tw:W.def.tw.slice(),ward:W.def.ward,charm:W.def.charm,charms:W.def.charms.slice(),cry:W.def.cry,core:W.def.core,nights:W.def.nights,lvl:W.def.lvl,calm:W.def.calm},
   coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg)}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
@@ -2043,6 +2053,12 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   W.journal=Array.isArray(q.journal)?q.journal.filter(e=>e&&typeof e.t=='string').slice(0,60).map(e=>({d:int(e.d,1,1,1e6),h:String(e.h??''),t:e.t})):[];
   W.seaWant=[0,1,2,3].includes(q.seaWant)?q.seaWant:-1;W.wxWant=typeof q.wxWant=='string'&&Object.hasOwn(WXN,q.wxWant)?q.wxWant:null;
   W.snowman=int(q.snowman,0,0,1e6);W.sown=int(q.sown,0,0,1e6);W.pileDay=int(q.pileDay,0,0,1e6);
+  // the night ward: old saves and hand-edited saves both start from the default defence state
+  const d=W.def,qd=q.def&&typeof q.def=='object'?q.def:{},DC=['bolt','star','frost'];
+  d.tw=[0,1,2].map(i=>int(qd.tw&&qd.tw[i],i===0?1:0,0,10));d.ward=int(qd.ward,1,1,12);
+  d.cry=Math.floor(num(qd.cry,0,0,1e6));d.core=Math.floor(num(qd.core,0,0,1e4));d.nights=int(qd.nights,0,0,1e6);d.lvl=int(qd.lvl,0,0,1e6);d.calm=qd.calm?1:0;
+  d.charms=Array.isArray(qd.charms)?DC.filter(k=>qd.charms.includes(k)):[];if(!d.charms.includes('bolt'))d.charms.unshift('bolt');
+  d.charm=DC.includes(qd.charm)&&d.charms.includes(qd.charm)?qd.charm:'bolt';
   // Mun's book: coins, and at most three tasks naming a known activity; tasks done on an earlier day were already crossed out
   W.coins=int(q.coins,0,0,1e6);
   W.upg=Array.isArray(q.upg)?q.upg.filter(k=>typeof k=='string'&&Object.hasOwn(UPG,k)).reduce((o,k)=>(o[k]=1,o),{}):{};
@@ -2120,7 +2136,7 @@ const Mun={sig:'',
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
       S=[['củi',f(W.wood)+'/'+woodMax()],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
@@ -2199,6 +2215,7 @@ const Away={
     W.stock=Math.max(0,Math.floor(W.stock+Math.floor(ih/8*(has('patch')?1.6:1))-this.eat.pump));
     W.potions=Math.max(0,Math.floor(W.potions+Math.floor(ih/12*(has('kettle')?2:1))));
     this.sum={ih,from,to:snap(),orders:W.orders.filter(o=>!before.has(o.id)).length};
+    const na=cross(4.5);this.nightRes=null;for(let i=0;i<na;i++)this.nightRes=Def.simNight();
     this.capped=ih>=24;saveW();
   },
   show(){
@@ -2219,10 +2236,82 @@ const Away={
     const eat=[];if(this.eat.wood)eat.push(this.eat.wood+' khúc củi');if(this.eat.pump)eat.push(this.eat.pump+' quả bí');
     if(eat.length)line('Bếp đã dùng '+eat.join(' và ')+'.');
     if(s.orders)line('Có '+s.orders+' đơn hàng mới bằng hạc giấy.');
+    if(this.nightRes){const r=this.nightRes;line(r.held?'Đêm qua vòm giữ vững: '+r.kills+' ma sương tan, +'+r.cry+' tinh thể.':'Đêm qua vòm vỡ: '+r.kills+' ma sương tan, không có tiền thưởng.');if(r.pot)line('Linh đã ném một chai thuốc vào vòm giữa đêm.')}
     if(this.capped)line('Mun chỉ ghi được một ngày, phần còn lại Linh ngủ quên mất.');
     $('lAwayOk').onclick=()=>{el.hidden=true};
     logJ('Mun mở sổ ghi: trong lúc bạn vắng, đảo trôi qua '+span+', Linh vẫn giữ bếp ấm.');
     if($('ledger').hidden)$('bLedger').click();
+  }
+};
+const Def={
+  TW:[[8.5*Math.cos(.6),8.5*Math.sin(.6)],[8.5*Math.cos(2.7),8.5*Math.sin(2.7)],[8.5*Math.cos(4.8),8.5*Math.sin(4.8)]],
+  RAD:R+.4,NAME:['bolt','star','frost'],
+  state:[],fx:Array.from({length:64},()=>({type:'',from:[0,0],to:[0,0],t:-1})),on:false,ward:{hp:0,max:0},wave:0,last:null,
+  active:false,lost:false,fxOn:true,hudAt:0,fxI:0,
+  pool:Array.from({length:64},()=>({a:0,p:0,hp:0,max:0,slow:0,id:0,alive:false})),
+  build(){this.sig='';const el=$('nightHud');if(el&&!this.hudTop){el.innerHTML='<div class="nhTop"></div><i class="nhBar"><i></i></i><div class="nhGain"></div>';this.hudTop=el.querySelector('.nhTop');this.hudBar=el.querySelector('.nhBar i');this.hudGain=el.querySelector('.nhGain')}this.render(true)},
+  nightAt(h){return h>=21||h<4.5},
+  waveAt(k){return(21.5+k*1.15-21)*40},
+  begin(h){const d=W.def;this.L=d.lvl;this.ward.max=100+35*(d.ward-1);this.ward.hp=this.ward.max;this.time=0;this.wave=0;this.pending=0;this.pendN=0;this.spawnAcc=0;this.kills=0;this.cryGain=0;this.coreGain=0;this.pot=false;this.lost=false;this.active=true;this.charmT=0;this.towerT=[0,0,0];this.seq=0;this.state.length=0;for(const w of this.pool)w.alive=false;for(const f of this.fx)f.type='';if(h!==undefined){this.time=((h-21+24)%24)*40;while(this.wave<6&&this.time>=this.waveAt(this.wave))this.wave++}},
+  take(){for(let i=0;i<this.pool.length;i++){const w=this.pool[i];if(!w.alive){w.alive=true;return w}}return null},
+  spawn(){const w=this.take();if(!w)return;w.a=Math.random()*6.283185307179586;w.p=0;w.max=18*(1+.08*this.L);w.hp=w.max;w.slow=0;w.id=++this.seq;this.state.push(w)},
+  emit(type,fx,fz,tx,tz){if(!this.fxOn)return;const f=this.fx[this.fxI++%64];f.type=type;f.from[0]=fx;f.from[1]=fz;f.to[0]=tx;f.to[1]=tz;f.t=+this.time.toFixed(2)},
+  hurt(w,dmg,fx,fz,charm){const x=this.RAD*Math.cos(w.a),z=this.RAD*Math.sin(w.a);if(charm)this.emit(charm,fx,fz,x,z);w.hp-=dmg;this.emit('hit',x,z,x,z);if(w.hp<=0&&w.alive){w.alive=false;this.kills++;this.cryGain++;W.def.cry++;this.emit('kill',x,z,x,z);const i=this.state.indexOf(w);if(i>=0)this.state.splice(i,1)}},
+  target(){let best=null;for(const w of this.state)if(!best||w.p>best.p)best=w;return best},
+  towerTarget(q){let best=null;for(const w of this.state){const d=Math.hypot(this.RAD*Math.cos(w.a)-q[0],this.RAD*Math.sin(w.a)-q[1]);if(d<=11&&(!best||w.p>best.p))best=w}return best},
+  sim(dt){if(this.lost)return;this.time+=dt;
+    while(this.wave<6&&this.time>=this.waveAt(this.wave)){this.pendN=3+this.wave+Math.floor(this.L*.4);this.pending+=this.pendN;this.wave++}
+    if(this.pending>0){this.spawnAcc+=dt*this.pendN/8;while(this.spawnAcc>=1&&this.pending>0&&this.state.length<40){this.spawnAcc--;this.pending--;this.spawn()}}
+    for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];w.p+=dt/14*(w.slow>0?.5:1);w.slow=Math.max(0,w.slow-dt)}
+    for(let i=0;i<3;i++){const t=W.def.tw[i];if(!t)continue;this.towerT[i]-=dt;if(this.towerT[i]>0)continue;const q=this.TW[i],w=this.towerTarget(q);if(!w)continue;this.towerT[i]=1;this.emit('shot',q[0],q[1],this.RAD*Math.cos(w.a),this.RAD*Math.sin(w.a));this.hurt(w,5+4*(t-1),q[0],q[1],false)}
+    const ch=W.def.charm,sx=HOUSE.tower[0],sz=HOUSE.tower[1];this.charmT-=dt;
+    if(this.charmT<=0){if(ch=='bolt'){this.charmT=3;const w=this.target();if(w)this.hurt(w,22,sx,sz,ch)}
+      else if(ch=='star'){this.charmT=6;const lead=this.target();if(lead)for(let i=this.state.length-1;i>=0;i--){const w=this.state[i],da=Math.atan2(Math.sin(w.a-lead.a),Math.cos(w.a-lead.a));if(Math.abs(da)*this.RAD<=4)this.hurt(w,12,sx,sz,ch)}}
+      else{this.charmT=5;for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];if(w.p>.5)this.hurt(w,6,sx,sz,ch)}}}
+    let atWard=0;for(const w of this.state)if(w.p>=1)atWard++;
+    if(atWard)this.ward.hp-=2.5*atWard*dt;
+    if(!this.pot&&W.potions>=1&&this.ward.hp<this.ward.max*.35){this.pot=true;W.potions--;this.ward.hp=Math.min(this.ward.max,this.ward.hp+this.ward.max*.4);if(this.fxOn)note('Linh ném một chai thuốc vào vòm, vòm sáng rực trở lại.')}
+    if(this.ward.hp<=0){this.ward.hp=0;this.lost=true;this.state.length=0;for(const w of this.pool)w.alive=false;if(this.fxOn)note('Vòm cổ ngữ vỡ, ma sương tràn qua mép đảo rồi tan khi trời sáng. Kho vẫn nguyên.')}
+  },
+  resolve(){if(!this.active)return;this.active=false;const d=W.def,held=this.ward.hp>0;let cry=this.cryGain,core=0,bonus=0;
+    if(held){d.nights++;d.lvl=Math.min(1e6,d.lvl+1);bonus=5+2*Math.min(d.nights,20);cry+=bonus;d.cry+=bonus;if(Math.random()<.15){core=1;d.core++}}
+    else d.lvl=Math.max(0,d.lvl-1);
+    this.last={held,kills:this.kills,cry,core};this.state.length=0;for(const w of this.pool)w.alive=false;
+    if(this.fxOn){if(held)logJ('Đêm '+d.nights+': vòm cổ ngữ giữ vững, Mun nhặt được '+bonus+' tinh thể.');else logJ('Đêm qua vòm cổ ngữ vỡ, ma sương tan dần trước bình minh. Mun vẫn nhặt được '+this.kills+' tinh thể.')}
+  },
+  step(dt,h){const fight=this.nightAt(h)&&!W.def.calm;if(fight&&!this.active)this.begin(h);else if(!fight&&this.active)this.resolve();this.on=fight;
+    if(dt>0&&this.active&&!this.lost){let left=Math.min(dt,3);while(left>0){const d=Math.min(.1,left);this.sim(d);left-=d}}this.hud()},
+  simNight(){this.begin();this.fxOn=false;for(let t=0;t<300;t+=.25)this.sim(.25);this.resolve();this.fxOn=true;const r=this.last;return{held:r.held,kills:r.kills,cry:r.cry,core:r.core,pot:this.pot}},
+  startNight(){hour=21.45;plan(schedule(hour,rainy()),true);applyTime(hour,-1);W.def.calm=0;if(this.active)this.resolve();this.begin();this.on=true;this.hud();saveW()},
+  hud(){const el=$('nightHud');if(!el)return;if(!this.on){el.hidden=true;return}if(!this.hudTop)this.build();if(!this.hudTop)return;const now=performance.now();if(now-this.hudAt<250)return;this.hudAt=now;
+    const pct=this.ward.max?Math.max(0,Math.min(100,this.ward.hp/this.ward.max*100)):100;
+    el.hidden=false;this.hudTop.textContent='Đêm '+(W.def.nights+1)+' · Sóng '+this.wave+'/6';this.hudBar.style.width=pct.toFixed(1)+'%';this.hudGain.textContent='Tan: '+this.kills+' · +'+this.cryGain+' tinh thể'},
+  cost(k,a){const d=W.def;
+    if(k=='build'&&(a===1||a===2))return a===1?{coins:60,cry:10,core:0}:{coins:120,cry:25,core:0};
+    if(k=='tw'&&a>=0&&a<3)return d.tw[a]>=10?null:{coins:0,cry:12*d.tw[a]*d.tw[a],core:0};
+    if(k=='ward')return d.ward>=12?null:{coins:0,cry:15*d.ward*d.ward,core:0};
+    if(k=='unlock'&&(a=='star'||a=='frost'))return d.charms.includes(a)?null:(a=='star'?{coins:0,cry:30,core:0}:{coins:0,cry:30,core:1});
+    if(k=='pick'&&this.NAME.includes(a))return{coins:0,cry:0,core:0};
+    return null},
+  why(k,a){const d=W.def;if(k=='calm')return'';if(k=='pick')return!d.charms.includes(a)?'Chưa mở.':(d.charm==a?'Đang dùng.':'');const c=this.cost(k,a);if(!c)return k=='unlock'?'Đã mở.':'Đã tối đa.';
+    if(c.coins&&Math.floor(W.coins)<c.coins)return'Còn thiếu '+(c.coins-Math.floor(W.coins))+' xu.';
+    if(c.cry&&Math.floor(d.cry)<c.cry)return'Còn thiếu '+(c.cry-Math.floor(d.cry))+' tinh thể.';
+    if(c.core&&Math.floor(d.core)<c.core)return'Còn thiếu '+c.core+' lõi sương.';return''},
+  buy(k,a){const d=W.def,c=this.cost(k,a);if(k=='calm'){d.calm=d.calm?0:1;if(d.calm&&this.active){this.active=false;this.state.length=0;for(const w of this.pool)w.alive=false}}else{if(!c||this.why(k,a))return;W.coins-=c.coins||0;d.cry-=c.cry||0;d.core-=c.core||0;
+    if(k=='build')d.tw[a]=1;else if(k=='tw')d.tw[a]++;else if(k=='ward'){d.ward++;this.ward.max=100+35*(d.ward-1);if(this.active)this.ward.hp+=35}
+    else if(k=='unlock')d.charms.push(a);else if(k=='pick')d.charm=a}
+    logJ(k=='calm'?(d.calm?'Mun ghi: đêm nay không có ma sương.':'Mun xóa dòng “đêm yên” trong sổ.'):'Mun ghi thêm vào sổ phòng thủ: '+this.label(k,a)+'.');saveW();this.render(true)},
+  label(k,a){const d=W.def;if(k=='build')return'dựng tháp '+(a+1);if(k=='tw')return'nâng tháp '+(a+1)+' lên cấp '+d.tw[a];if(k=='ward')return'vòm cổ ngữ lên cấp '+d.ward;if(k=='unlock')return'mở '+({star:'Mưa sao',frost:'Sương giá'}[a]);if(k=='pick')return'chọn '+({bolt:'Cầu lửa',star:'Mưa sao',frost:'Sương giá'}[a]);return'đêm yên'},
+  render(force){const el=$('lDef');if(!el||el.hidden)return;const d=W.def,sig=[d.tw.join(),d.ward,d.charm,d.charms.join(),Math.floor(d.cry),Math.floor(d.core),d.nights,d.lvl,d.calm,Math.floor(W.coins),this.on].join();
+    if(!force&&sig===this.sig)return;this.sig=sig;el.textContent='';
+    const sum=document.createElement('div');sum.className='dSum';sum.textContent='Tinh thể: '+Math.floor(d.cry)+' · Lõi sương: '+Math.floor(d.core)+' · Đêm đã giữ: '+d.nights+' · Mức ma sương: '+d.lvl;el.append(sum);
+    const row=(name,nm,label,k,a)=>{const li=document.createElement('div'),b=document.createElement('b'),s=document.createElement('span'),btn=document.createElement('button');li.className='dRow';b.textContent=name;s.className='nm';s.textContent=nm;li.append(b,s);btn.textContent=label;const why=this.why(k,a);btn.disabled=!!why;btn.title=why;btn.onclick=()=>this.buy(k,a);li.append(btn);el.append(li)};
+    row('Vòm cổ ngữ','cấp '+d.ward+' / 12',d.ward>=12?'Đã tối đa':'Nâng · '+15*d.ward*d.ward+' tinh thể','ward');
+    for(let i=0;i<3;i++){const t=d.tw[i];if(t)row('Tháp '+(i+1),'cấp '+t+' / 10',t>=10?'Đã tối đa':'Nâng · '+12*t*t+' tinh thể','tw',i);
+      else{const c=this.cost('build',i);row('Tháp '+(i+1),'chưa dựng','Dựng · '+c.coins+' xu + '+c.cry+' tinh thể','build',i)}}
+    for(const k of this.NAME){const cn={bolt:'Cầu lửa',star:'Mưa sao',frost:'Sương giá'}[k];if(d.charms.includes(k))row(cn,d.charm==k?'đang dùng':'đã mở',d.charm==k?'Đang dùng':'Chọn','pick',k);
+      else row(cn,'chưa mở',k=='star'?'Mở · 30 tinh thể':'Mở · 30 tinh thể + 1 lõi','unlock',k)}
+    row('Đêm yên',d.calm?'không có ma sương':'ma sương vẫn lên',d.calm?'Tắt':'Bật','calm');
   }
 };
 const Life={};
@@ -2586,7 +2675,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get def(){return Def},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -2930,6 +3019,7 @@ function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on|
   if(flashK>0){const f=flashK*(.65+.35*Math.sin(U.time.value*70));bounce.intensity+=f*2.4;fill.intensity+=f*1.6;U.zen.value.lerp(col('#dfe8ff'),f*.35);U.hor.value.lerp(col('#dfe8ff'),f*.5)}
   // who should be doing what (Mun's tasks first find their slots)
   Mun.step(sdt);
+  Def.step(speed>0&&!scrubbing?dt*speed:0,hour);
   const id=schedule(hour,rainy());
   if(id!=AG.cur&&!scrubbing)plan(id,speed>=30);
   if(speed>0)stepAgent(sdt,simT);
@@ -3031,7 +3121,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Away.show();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Away.show();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
