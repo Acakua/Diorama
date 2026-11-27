@@ -55,6 +55,12 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #lTasks .nm{flex:1 1 auto;min-width:0}#lTasks .wh{font:400 12px/1.3 var(--ui);color:var(--ink-dim);text-align:right;font-variant-numeric:tabular-nums}
 #lTasks li.done .nm{text-decoration:line-through;text-decoration-color:var(--glass-on);color:var(--ink-dim)}#lTasks li.done .wh{color:var(--glass-on)}
 #lTasks li.empty{display:block;color:var(--ink-dim);font-style:italic}#lTasks .x{align-self:center;padding:3px 8px;font-size:14px;line-height:1}
+#ledger #lOrders{list-style:none;margin:0;padding:0}
+#ledger #lOrders li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint);font:400 14px/1.35 var(--display)}
+#ledger #lOrders li b{flex:1 1 100%;font-weight:500}#ledger #lOrders .nm{font:400 12px/1.3 var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
+#ledger #lOrders .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);text-align:right;font-variant-numeric:tabular-nums}
+#ledger #lOrders button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lOrders button:disabled{opacity:.45;cursor:default}#ledger #lOrders .x{align-self:center}
+#ledger #lOrders li.empty{display:block;color:var(--ink-dim);font-style:italic}
 #ledger .seg button:disabled,#sGo:disabled{opacity:.45;cursor:default}
 /* the card that opens over a workplace on the island */
 #spot{position:fixed;width:min(250px,calc(100vw - 32px));background:#14201fd9;border:1px solid var(--ink-faint);border-radius:3px;padding:12px 14px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
@@ -105,6 +111,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 <aside id="ledger" hidden aria-label="Sổ của Mun"><button id="lClose" aria-label="Đóng sổ của Mun">×</button>
   <h2>Sổ của Mun<svg class="paw" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="5.6" cy="10" rx="2.2" ry="2.8"/><ellipse cx="9.6" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="14.4" cy="5.6" rx="2.2" ry="2.8"/><ellipse cx="18.4" cy="10" rx="2.2" ry="2.8"/><path d="M12 11.2c-3.2 0-6 3.3-6 6.1 0 1.9 1.4 2.9 3.1 2.9 1.2 0 2-.6 2.9-.6s1.7.6 2.9.6c1.7 0 3.1-1 3.1-2.9 0-2.8-2.8-6.1-6-6.1z"/></svg></h2>
   <h3>Kho chung</h3><div id="lStore"></div>
+  <h3>Đơn hạc giấy</h3><ul id="lOrders"></ul>
   <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
   <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
   <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
@@ -2004,7 +2011,7 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[]};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0};
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
   const p={late:r()<.2,morning:one(W.wood>=15?['practice','gather','laundry','sweep']:['chop','chop','gather','laundry','sweep']),a:one(['read','practice','nap','study','knit','brew']),b:one(['fish','harvest','brew','gather','play']),c:'tea',fly:r()<.7,eve:one(['stars','night','scope','knit']),wd};
   if(wd==0){p.morning='sweep';p.eve='wards'}else if(wd==1){p.morning='gather';p.a='brew'}else if(wd==2){p.morning='practice';p.a='study'}else if(wd==3){p.morning='gather';p.b='fish'}else if(wd==4){p.a='bake'}else if(wd==5){p.b='fish';p.c='picnic';p.late=r()<.5;letter=false}
@@ -2017,7 +2024,7 @@ function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWan
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
-  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''}))}))}catch(e){}}
+  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
@@ -2029,8 +2036,14 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   W.coins=int(q.coins,0,0,1e6);
   W.tasks=Array.isArray(q.tasks)?q.tasks.filter(t=>t&&typeof t=='object'&&typeof t.a=='string'&&Object.hasOwn(TASK,t.a)).slice(0,3)
     .map(t=>({a:t.a,done:t.done?1:0,n:int(t.n,0,0,999),d:int(t.d,W.day,1,1e6),w:['full','none'].includes(t.w)?t.w:''})).filter(t=>!(t.done&&t.d<W.day)):[];
+  W.orderN=int(q.orderN,0,0,1e6);const seen=new Set();
+  W.orders=Array.isArray(q.orders)?q.orders.filter(o=>{if(!o||typeof o!='object'||!Number.isInteger(o.t)||o.t<0||o.t>=Orders.ORDER_T.length||seen.has(o.t)||!o.need||typeof o.need!='object'||Array.isArray(o.need))return false;
+    const keys=Object.keys(o.need);if(!keys.length||!keys.every(k=>Orders.K.includes(k)&&Number.isInteger(o.need[k])&&o.need[k]>=1&&o.need[k]<=20))return false;
+    if(!Number.isInteger(o.pay)||o.pay<1||o.pay>1000||!Number.isInteger(o.d))return false;seen.add(o.t);return true})
+    .slice(0,2).map(o=>({id:int(o.id,0,0,1e6),t:o.t,need:{...o.need},pay:o.pay,d:int(o.d,1,1,1e6)})):[];
+  for(const o of W.orders)W.orderN=Math.max(W.orderN,o.id);
   if(Array.isArray(q.pump))q.pump.forEach((g,i)=>{const p=furn.pumpkins[i];if(p)p.g=num(g,p.g,0,1)})}catch(e){}}
-function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
+function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();Orders.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
 /* ---------- Mun's ledger: the shared stores and the day's tasks ---------- */
 // Mun keeps the stores and writes down up to three tasks a day. Linh fits each one into a free slot of her day and does it her way; her meals,
 // morning chores, the hens' feed, her flight, supper, evenings and her own special plans stay as they are. A task is one of her activities and
@@ -2095,7 +2108,7 @@ const Mun={sig:'',
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){const el=$('ledger');if(!el||el.hidden)return;const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
       S=[['củi',f(W.wood)+'/18'],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
@@ -2105,6 +2118,36 @@ const Mun={sig:'',
     if(!W.tasks.length){const li=document.createElement('li');li.className='empty';li.textContent='Chưa có việc nào. Linh đang sống theo ý mình.';L.append(li)}
     $('lCount').textContent=' · '+W.tasks.length+'/3';
     for(const b of $('lAdd').children){const why=this.cant(b.dataset.a);b.disabled=!!why;b.title=why}}};
+const Orders={sig:'',
+  K:['eggs','fish','stock','potions','wood'],
+  UNIT:{eggs:'quả trứng',fish:'con cá',stock:'quả bí',potions:'chai thuốc',wood:'khúc củi'},
+  ORDER_T:[
+    {from:'Bà Sáu đảo Mây Thấp',need:{eggs:3},pay:14},
+    {from:'Tiệm trà đảo Gió',need:{potions:1,eggs:2},pay:28},
+    {from:'Ông lái đò Mù Sương',need:{fish:4},pay:29},
+    {from:'Thư viện đảo Đá',need:{wood:5},pay:12},
+    {from:'Cô thợ rèn đảo Lửa',need:{wood:4,fish:2},pay:24},
+    {from:'Lũ trẻ đảo Bèo',need:{fish:3,eggs:2},pay:31},
+    {from:'Bếp nhà Thanh Lam',need:{stock:2},pay:24},
+    {from:'Hội phù thủy tập sự',need:{potions:2},pay:36}
+  ],
+  create(t){const o={id:++W.orderN,t,need:{...this.ORDER_T[t].need},pay:this.ORDER_T[t].pay,d:W.day};W.orders.push(o);
+    logJ('Một con hạc giấy đậu xuống bậu cửa: '+this.ORDER_T[t].from+' đặt hàng.');note('Có đơn hàng mới bằng hạc giấy. Mở Sổ của Mun để xem.',5);return o},
+  arrive(){const pool=this.ORDER_T.map((_,i)=>i).filter(i=>!W.orders.some(o=>o.t===i));if(!pool.length)return null;return this.create(pool[Math.floor(Math.random()*pool.length)])},
+  newDay(){W.orders=W.orders.filter(o=>W.day-o.d<2);const n=Math.random()<.5?2:1;for(let i=0;i<n&&W.orders.length<2;i++)this.arrive()},
+  build(){if(!W.orders.length&&!W.orderN){this.arrive();saveW()}},
+  can(o){const f=v=>Math.floor(v||0),miss=[];for(const k in o.need){const n=o.need[k]-f(W[k]);if(n>0)miss.push('Còn thiếu '+n+' '+this.UNIT[k])}return miss.join(', ')},
+  send(i){const o=W.orders[i];if(!o||this.can(o))return;for(const k in o.need)W[k]-=o.need[k];W.coins+=o.pay;W.orders.splice(i,1);if(typeof updStore=='function')updStore();logJ('Linh buộc gói hàng vào chân hạc giấy gửi '+this.ORDER_T[o.t].from+'. Mun ghi thêm '+o.pay+' xu.');saveW()},
+  drop(i){if(!W.orders[i])return;W.orders.splice(i,1);saveW()},
+  render(force){const L=$('lOrders');if(!L)return;const f=v=>Math.floor(v||0),
+      sig=W.orders.map(o=>o.id+':'+o.t+':'+Object.entries(o.need).map(([k,n])=>k+n).join(',')+':'+o.pay+':'+o.d).join('|')+'|'+this.K.map(k=>f(W[k])).join();
+    if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
+    W.orders.forEach((o,i)=>{const t=this.ORDER_T[o.t],li=document.createElement('li'),b=document.createElement('b'),need=document.createElement('span'),pay=document.createElement('span'),go=document.createElement('button'),x=document.createElement('button');
+      b.textContent=t.from;need.className='nm';need.textContent=Object.entries(o.need).map(([k,n])=>f(W[k])+'/'+n+' '+this.UNIT[k]).join(' · ');pay.className='wh';pay.textContent='+'+o.pay+' xu';
+      go.textContent='Gửi hàng';const why=this.can(o);go.disabled=!!why;go.title=why;go.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.send(j)};
+      x.className='x';x.textContent='×';x.setAttribute('aria-label','Bỏ đơn của '+t.from);x.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.drop(j)};
+      li.append(b,need,pay,go,x);L.append(li)});
+    if(!W.orders.length){const li=document.createElement('li');li.className='empty';li.textContent='Chưa có đơn nào. Hạc giấy thường tới vào buổi sáng.';L.append(li)}}};
 const Life={};
 function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,...o});
   // pumpkins that grow, a pile by the door, logs that come and go
@@ -2466,7 +2509,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -2911,7 +2954,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
