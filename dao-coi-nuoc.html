@@ -84,6 +84,15 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #ledger #lDef .dRow{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:6px 0;border-bottom:1px solid var(--ink-faint)}
 #ledger #lDef .dRow b{flex:1 1 100%;font-weight:500}#ledger #lDef .dRow .nm{color:var(--ink-dim)}#ledger #lDef .dRow .wh{color:var(--glass-on);font-variant-numeric:tabular-nums}
 #ledger #lDef button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lDef button:disabled{opacity:.45;cursor:default}
+/* the kitchen: what is in the cupboard, what Linh is cooking and what she eats before a night */
+#ledger #lDish{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-bottom:8px}
+#ledger #lDish div{border:1px solid var(--ink-faint);border-radius:3px;padding:5px 8px 4px;font:400 11.5px/1.3 var(--ui);color:var(--ink-dim)}
+#ledger #lDish b{font:400 18px/1.1 var(--display);font-variant-numeric:tabular-nums;color:var(--ink);margin-right:5px}
+#ledger #lCook{list-style:none;margin:0 0 8px;padding:0}
+#ledger #lCook li{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--ink-faint);font:400 13px/1.35 var(--display)}
+#ledger #lCook .wh{font:400 12px/1.3 var(--ui);color:var(--ink-dim);font-variant-numeric:tabular-nums}
+#ledger #lCook li.empty{display:block;color:var(--ink-dim);font-style:italic}
+#ledger #lRecipes,#ledger #lMeal{margin:0 0 8px}
 </style>
 
 <canvas id="w" aria-label="Hòn đảo nổi có cối nước và cô gái phép thuật tên Linh đang sống trên đó. Kéo để xoay."></canvas>
@@ -131,6 +140,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
   <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
   <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
   <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
+  <h3>Bếp và chạn</h3><div id="lDish"></div><ul id="lCook"></ul>
+  <p class="pNote">Linh nấu lần lượt từng món trong hàng. Nguyên liệu trừ ngay khi dặn nấu; chọn bữa tối trước đêm để được thêm sức.</p>
+  <div class="seg" id="lRecipes" role="group" aria-label="Nấu món"></div>
+  <p class="pNote">Bữa tối trước đêm</p><div class="seg" id="lMeal" role="group" aria-label="Bữa tối trước đêm"></div>
   <h3>Nâng cấp</h3><ul id="lUpg"></ul>
   <h3>Phòng thủ</h3><div id="lDef"></div>
 </aside>
@@ -2029,7 +2042,7 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{},def:{tw:[1,0,0],ward:1,charm:'bolt',charms:['bolt'],cry:0,core:0,nights:0,lvl:0,calm:0}};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{},def:{tw:[1,0,0],ward:1,charm:'bolt',charms:['bolt'],cry:0,core:0,nights:0,lvl:0,calm:0,ate:0,ateK:''},dish:{soup:0,pie:0,omelet:0,tea:0},dishEver:{},cookQ:[],meal:null};
 function has(k){return!!W.upg[k]}
 function woodMax(){return has('rack')?30:18}
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
@@ -2044,7 +2057,8 @@ function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWan
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,hour:+hour.toFixed(2),at:Date.now(),wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
-  def:{tw:W.def.tw.slice(),ward:W.def.ward,charm:W.def.charm,charms:W.def.charms.slice(),cry:W.def.cry,core:W.def.core,nights:W.def.nights,lvl:W.def.lvl,calm:W.def.calm},
+  def:{tw:W.def.tw.slice(),ward:W.def.ward,charm:W.def.charm,charms:W.def.charms.slice(),cry:W.def.cry,core:W.def.core,nights:W.def.nights,lvl:W.def.lvl,calm:W.def.calm,ate:W.def.ate,ateK:W.def.ateK},
+  dish:{...W.dish},dishEver:{...W.dishEver},cookQ:W.cookQ.map(q=>({k:q.k,left:+q.left.toFixed(3)})),meal:W.meal,
   coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg)}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
@@ -2057,6 +2071,7 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   const d=W.def,qd=q.def&&typeof q.def=='object'?q.def:{},DC=['bolt','star','frost'];
   d.tw=[0,1,2].map(i=>int(qd.tw&&qd.tw[i],i===0?1:0,0,10));d.ward=int(qd.ward,1,1,12);
   d.cry=Math.floor(num(qd.cry,0,0,1e6));d.core=Math.floor(num(qd.core,0,0,1e4));d.nights=int(qd.nights,0,0,1e6);d.lvl=int(qd.lvl,0,0,1e6);d.calm=qd.calm?1:0;
+  d.ate=int(qd.ate,0,0,1e6);d.ateK=Object.hasOwn(RECIPE,qd.ateK)?qd.ateK:'';
   d.charms=Array.isArray(qd.charms)?DC.filter(k=>qd.charms.includes(k)):[];if(!d.charms.includes('bolt'))d.charms.unshift('bolt');
   d.charm=DC.includes(qd.charm)&&d.charms.includes(qd.charm)?qd.charm:'bolt';
   // Mun's book: coins, and at most three tasks naming a known activity; tasks done on an earlier day were already crossed out
@@ -2070,6 +2085,10 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
     if(!Number.isInteger(o.pay)||o.pay<1||o.pay>1000||!Number.isInteger(o.d))return false;seen.add(o.t);return true})
     .slice(0,2).map(o=>({id:int(o.id,0,0,1e6),t:o.t,need:{...o.need},pay:o.pay,d:int(o.d,1,1,1e6)})):[];
   for(const o of W.orders)W.orderN=Math.max(W.orderN,o.id);
+  // the kitchen: old saves get empty dishes, an empty queue and no supper plan
+  {const dish={},ever={};for(const k in RECIPE){dish[k]=int(q.dish&&q.dish[k],0,0,99);ever[k]=(q.dishEver&&q.dishEver[k])?1:0}W.dish=dish;W.dishEver=ever;
+    W.cookQ=Array.isArray(q.cookQ)?q.cookQ.filter(x=>x&&Object.hasOwn(RECIPE,x.k)&&Number.isFinite(+x.left)).slice(0,3).map(x=>({k:x.k,left:num(x.left,0,0,2)})):[];
+    W.meal=Object.hasOwn(RECIPE,q.meal)?q.meal:null}
   if(Array.isArray(q.pump))q.pump.forEach((g,i)=>{const p=furn.pumpkins[i];if(p)p.g=num(g,p.g,0,1)})}catch(e){}}
 function newDay(){W.day++;newDayLife2();for(const e of Crit.eggs||[])e.visible=true;makePlan();Mun.newDay();Orders.newDay();const x=W.plan;{const t=W.wx&&W.wx.t;logJ(x.late?'Hôm nay Linh dậy muộn.':t=='rain'?'Trời có vẻ sắp mưa.':t=='storm'?'Mây đen kéo về từ sớm, chắc hôm nay có giông.':t=='snow'?'Trời lạnh hẳn, có lẽ tuyết sẽ rơi.':t=='fog'?'Sáng nay sương mù phủ kín đảo.':t=='cloudy'?'Trời nhiều mây.':'Một ngày mới trên đảo.')}saveW()}
 /* ---------- Mun's ledger: the shared stores and the day's tasks ---------- */
@@ -2136,7 +2155,7 @@ const Mun={sig:'',
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);Def.render(force);Kitchen.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
       S=[['củi',f(W.wood)+'/'+woodMax()],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
@@ -2147,8 +2166,8 @@ const Mun={sig:'',
     $('lCount').textContent=' · '+W.tasks.length+'/3';
     for(const b of $('lAdd').children){const why=this.cant(b.dataset.a);b.disabled=!!why;b.title=why}}};
 const Orders={sig:'',
-  K:['eggs','fish','stock','potions','wood'],
-  UNIT:{eggs:'quả trứng',fish:'con cá',stock:'quả bí',potions:'chai thuốc',wood:'khúc củi'},
+  K:['eggs','fish','stock','potions','wood','soup','pie','omelet','tea'],
+  UNIT:{eggs:'quả trứng',fish:'con cá',stock:'quả bí',potions:'chai thuốc',wood:'khúc củi',soup:'bát súp bí',pie:'chiếc bánh cá',omelet:'đĩa trứng chiên',tea:'ấm trà sương'},
   ORDER_T:[
     {from:'Bà Sáu đảo Mây Thấp',need:{eggs:3},pay:14},
     {from:'Tiệm trà đảo Gió',need:{potions:1,eggs:2},pay:28},
@@ -2157,21 +2176,30 @@ const Orders={sig:'',
     {from:'Cô thợ rèn đảo Lửa',need:{wood:4,fish:2},pay:24},
     {from:'Lũ trẻ đảo Bèo',need:{fish:3,eggs:2},pay:31},
     {from:'Bếp nhà Thanh Lam',need:{stock:2},pay:24},
-    {from:'Hội phù thủy tập sự',need:{potions:2},pay:36}
+    {from:'Hội phù thủy tập sự',need:{potions:2},pay:36},
+    {from:'Quán trọ đảo Mây Thấp',need:{soup:2},pay:62},
+    {from:'Đoàn lữ khách gió bấc',need:{pie:1,omelet:1},pay:67},
+    {from:'Đài thiên văn đảo Đá',need:{tea:1},pay:48},
+    {from:'Nhà chòi lũ trẻ đảo Bèo',need:{omelet:2},pay:53}
   ],
   create(t){const o={id:++W.orderN,t,need:{...this.ORDER_T[t].need},pay:this.ORDER_T[t].pay,d:W.day};W.orders.push(o);
     logJ('Một con hạc giấy đậu xuống bậu cửa: '+this.ORDER_T[t].from+' đặt hàng.');note('Có đơn hàng mới bằng hạc giấy. Mở Sổ của Mun để xem.',5);return o},
-  arrive(){const pool=this.ORDER_T.map((_,i)=>i).filter(i=>!W.orders.some(o=>o.t===i));if(!pool.length)return null;return this.create(pool[Math.floor(Math.random()*pool.length)])},
+  /** A dish order is only sent once Linh has cooked that dish at least once. */
+  cooked(k){return Object.hasOwn(RECIPE,k)?!!W.dishEver[k]:true},
+  arrive(){const pool=this.ORDER_T.map((_,i)=>i).filter(i=>!W.orders.some(o=>o.t===i)&&Object.keys(this.ORDER_T[i].need).every(k=>this.cooked(k)));if(!pool.length)return null;return this.create(pool[Math.floor(Math.random()*pool.length)])},
   newDay(){W.orders=W.orders.filter(o=>W.day-o.d<2);const n=Math.random()<.5?2:1;for(let i=0;i<n&&W.orders.length<2;i++)this.arrive()},
   build(){if(!W.orders.length&&!W.orderN){this.arrive();saveW()}},
-  can(o){const f=v=>Math.floor(v||0),miss=[];for(const k in o.need){const n=o.need[k]-f(W[k]);if(n>0)miss.push('Còn thiếu '+n+' '+this.UNIT[k])}return miss.join(', ')},
-  send(i){const o=W.orders[i];if(!o||this.can(o))return;for(const k in o.need)W[k]-=o.need[k];W.coins+=o.pay;W.orders.splice(i,1);if(typeof updStore=='function')updStore();logJ('Linh buộc gói hàng vào chân hạc giấy gửi '+this.ORDER_T[o.t].from+'. Mun ghi thêm '+o.pay+' xu.');saveW()},
+  /** Dishes are counted in the cupboard, raw goods in the shared stores. */
+  have(k){return Object.hasOwn(RECIPE,k)?Math.floor(W.dish[k]||0):Math.floor(W[k]||0)},
+  spend(k,n){if(Object.hasOwn(RECIPE,k))W.dish[k]=Math.max(0,(W.dish[k]||0)-n);else W[k]=Math.max(0,(W[k]||0)-n)},
+  can(o){const miss=[];for(const k in o.need){const n=o.need[k]-this.have(k);if(n>0)miss.push('Còn thiếu '+n+' '+this.UNIT[k])}return miss.join(', ')},
+  send(i){const o=W.orders[i];if(!o||this.can(o))return;for(const k in o.need)this.spend(k,o.need[k]);W.coins+=o.pay;W.orders.splice(i,1);if(typeof updStore=='function')updStore();logJ('Linh buộc gói hàng vào chân hạc giấy gửi '+this.ORDER_T[o.t].from+'. Mun ghi thêm '+o.pay+' xu.');saveW()},
   drop(i){if(!W.orders[i])return;W.orders.splice(i,1);saveW()},
-  render(force){const L=$('lOrders');if(!L)return;const f=v=>Math.floor(v||0),
-      sig=W.orders.map(o=>o.id+':'+o.t+':'+Object.entries(o.need).map(([k,n])=>k+n).join(',')+':'+o.pay+':'+o.d).join('|')+'|'+this.K.map(k=>f(W[k])).join();
+  render(force){const L=$('lOrders');if(!L)return;
+      const sig=W.orders.map(o=>o.id+':'+o.t+':'+Object.entries(o.need).map(([k,n])=>k+n).join(',')+':'+o.pay+':'+o.d).join('|')+'|'+this.K.map(k=>this.have(k)).join();
     if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
     W.orders.forEach((o,i)=>{const t=this.ORDER_T[o.t],li=document.createElement('li'),b=document.createElement('b'),need=document.createElement('span'),pay=document.createElement('span'),go=document.createElement('button'),x=document.createElement('button');
-      b.textContent=t.from;need.className='nm';need.textContent=Object.entries(o.need).map(([k,n])=>f(W[k])+'/'+n+' '+this.UNIT[k]).join(' · ');pay.className='wh';pay.textContent='+'+o.pay+' xu';
+      b.textContent=t.from;need.className='nm';need.textContent=Object.entries(o.need).map(([k,n])=>this.have(k)+'/'+n+' '+this.UNIT[k]).join(' · ');pay.className='wh';pay.textContent='+'+o.pay+' xu';
       go.textContent='Gửi hàng';const why=this.can(o);go.disabled=!!why;go.title=why;go.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.send(j)};
       x.className='x';x.textContent='×';x.setAttribute('aria-label','Bỏ đơn của '+t.from);x.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.drop(j)};
       li.append(b,need,pay,go,x);L.append(li)});
@@ -2214,6 +2242,10 @@ const Away={
     W.eggs=Math.max(0,Math.floor(W.eggs+morn*(has('coop')?5:3)));
     W.stock=Math.max(0,Math.floor(W.stock+Math.floor(ih/8*(has('patch')?1.6:1))-this.eat.pump));
     W.potions=Math.max(0,Math.floor(W.potions+Math.floor(ih/12*(has('kettle')?2:1))));
+    const cooked={};let remain=ih;
+    while(W.cookQ.length){const head=W.cookQ[0];if(remain<head.left){head.left-=remain;break}
+      remain-=head.left;const k=head.k;W.dish[k]=Math.min(99,W.dish[k]+1);W.dishEver[k]=1;cooked[k]=(cooked[k]||0)+1;W.cookQ.shift()}
+    this.cooked=cooked;
     this.sum={ih,from,to:snap(),orders:W.orders.filter(o=>!before.has(o.id)).length};
     const na=cross(4.5);this.nightRes=null;for(let i=0;i<na;i++)this.nightRes=Def.simNight();
     this.capped=ih>=24;saveW();
@@ -2236,6 +2268,8 @@ const Away={
     const eat=[];if(this.eat.wood)eat.push(this.eat.wood+' khúc củi');if(this.eat.pump)eat.push(this.eat.pump+' quả bí');
     if(eat.length)line('Bếp đã dùng '+eat.join(' và ')+'.');
     if(s.orders)line('Có '+s.orders+' đơn hàng mới bằng hạc giấy.');
+    const ck=this.cooked||{},done=Object.keys(ck).map(k=>ck[k]+' '+DISHU[k]);
+    if(done.length)line('Bếp nấu xong '+done.join(', ')+'.');
     if(this.nightRes){const r=this.nightRes;line(r.held?'Đêm qua vòm giữ vững: '+r.kills+' ma sương tan, +'+r.cry+' tinh thể.':'Đêm qua vòm vỡ: '+r.kills+' ma sương tan, không có tiền thưởng.');if(r.pot)line('Linh đã ném một chai thuốc vào vòm giữa đêm.')}
     if(this.capped)line('Mun chỉ ghi được một ngày, phần còn lại Linh ngủ quên mất.');
     $('lAwayOk').onclick=()=>{el.hidden=true};
@@ -2252,7 +2286,13 @@ const Def={
   build(){this.sig='';const el=$('nightHud');if(el&&!this.hudTop){el.innerHTML='<div class="nhTop"></div><i class="nhBar"><i></i></i><div class="nhGain"></div>';this.hudTop=el.querySelector('.nhTop');this.hudBar=el.querySelector('.nhBar i');this.hudGain=el.querySelector('.nhGain')}this.render(true)},
   nightAt(h){return h>=21||h<4.5},
   waveAt(k){return(21.5+k*1.15-21)*40},
-  begin(h){const d=W.def;this.L=d.lvl;this.ward.max=100+35*(d.ward-1);this.ward.hp=this.ward.max;this.time=0;this.wave=0;this.pending=0;this.pendN=0;this.spawnAcc=0;this.kills=0;this.cryGain=0;this.coreGain=0;this.pot=false;this.lost=false;this.active=true;this.charmT=0;this.towerT=[0,0,0];this.seq=0;this.state.length=0;for(const w of this.pool)w.alive=false;for(const f of this.fx)f.type='';if(h!==undefined){this.time=((h-21+24)%24)*40;while(this.wave<6&&this.time>=this.waveAt(this.wave))this.wave++}},
+  begin(h){const d=W.def;this.L=d.lvl;
+    const resumed=h!==undefined&&(h<4.5||h>=21)&&d.ate===(h>=21?W.day:W.day-1);
+    if(resumed&&Object.hasOwn(RECIPE,d.ateK))this.buff=d.ateK;
+    else{this.buff=W.meal&&Object.hasOwn(RECIPE,W.meal)&&Math.floor(W.dish[W.meal])>=1?W.meal:null;
+      if(this.buff){d.ate=W.day;d.ateK=this.buff;W.dish[this.buff]--;if(this.fxOn)note('Linh ăn '+RECIPE[this.buff].name+' trước khi lên vòm.')}
+      else{d.ate=0;d.ateK=''}}
+    this.ward.max=(100+35*(d.ward-1))*(this.buff=='omelet'?1.2:1);this.ward.hp=this.ward.max;this.time=0;this.wave=0;this.pending=0;this.pendN=0;this.spawnAcc=0;this.kills=0;this.cryGain=0;this.coreGain=0;this.pot=false;this.lost=false;this.active=true;this.charmT=0;this.towerT=[0,0,0];this.seq=0;this.state.length=0;for(const w of this.pool)w.alive=false;for(const f of this.fx)f.type='';if(h!==undefined){this.time=((h-21+24)%24)*40;while(this.wave<6&&this.time>=this.waveAt(this.wave))this.wave++}},
   take(){for(let i=0;i<this.pool.length;i++){const w=this.pool[i];if(!w.alive){w.alive=true;return w}}return null},
   spawn(){const w=this.take();if(!w)return;w.a=Math.random()*6.283185307179586;w.p=0;w.max=18*(1+.08*this.L);w.hp=w.max;w.slow=0;w.id=++this.seq;this.state.push(w)},
   emit(type,fx,fz,tx,tz){if(!this.fxOn)return;const f=this.fx[this.fxI++%64];f.type=type;f.from[0]=fx;f.from[1]=fz;f.to[0]=tx;f.to[1]=tz;f.t=+this.time.toFixed(2)},
@@ -2262,12 +2302,12 @@ const Def={
   sim(dt){if(this.lost)return;this.time+=dt;
     while(this.wave<6&&this.time>=this.waveAt(this.wave)){this.pendN=3+this.wave+Math.floor(this.L*.4);this.pending+=this.pendN;this.wave++}
     if(this.pending>0){this.spawnAcc+=dt*this.pendN/8;while(this.spawnAcc>=1&&this.pending>0&&this.state.length<40){this.spawnAcc--;this.pending--;this.spawn()}}
-    for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];w.p+=dt/14*(w.slow>0?.5:1);w.slow=Math.max(0,w.slow-dt)}
-    for(let i=0;i<3;i++){const t=W.def.tw[i];if(!t)continue;this.towerT[i]-=dt;if(this.towerT[i]>0)continue;const q=this.TW[i],w=this.towerTarget(q);if(!w)continue;this.towerT[i]=1;this.emit('shot',q[0],q[1],this.RAD*Math.cos(w.a),this.RAD*Math.sin(w.a));this.hurt(w,5+4*(t-1),q[0],q[1],false)}
+    for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];w.p+=dt/14*(w.slow>0?.5:1)*(this.buff=='tea'?.85:1);w.slow=Math.max(0,w.slow-dt)}
+    for(let i=0;i<3;i++){const t=W.def.tw[i];if(!t)continue;this.towerT[i]-=dt;if(this.towerT[i]>0)continue;const q=this.TW[i],w=this.towerTarget(q);if(!w)continue;this.towerT[i]=1;this.emit('shot',q[0],q[1],this.RAD*Math.cos(w.a),this.RAD*Math.sin(w.a));this.hurt(w,(5+4*(t-1))*(this.buff=='soup'?1.2:1),q[0],q[1],false)}
     const ch=W.def.charm,sx=HOUSE.tower[0],sz=HOUSE.tower[1];this.charmT-=dt;
-    if(this.charmT<=0){if(ch=='bolt'){this.charmT=3;const w=this.target();if(w)this.hurt(w,22,sx,sz,ch)}
-      else if(ch=='star'){this.charmT=6;const lead=this.target();if(lead)for(let i=this.state.length-1;i>=0;i--){const w=this.state[i],da=Math.atan2(Math.sin(w.a-lead.a),Math.cos(w.a-lead.a));if(Math.abs(da)*this.RAD<=4)this.hurt(w,12,sx,sz,ch)}}
-      else{this.charmT=5;for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];if(w.p>.5)this.hurt(w,6,sx,sz,ch)}}}
+    if(this.charmT<=0){if(ch=='bolt'){this.charmT=3*(this.buff=='pie'?.75:1);const w=this.target();if(w)this.hurt(w,22,sx,sz,ch)}
+      else if(ch=='star'){this.charmT=6*(this.buff=='pie'?.75:1);const lead=this.target();if(lead)for(let i=this.state.length-1;i>=0;i--){const w=this.state[i],da=Math.atan2(Math.sin(w.a-lead.a),Math.cos(w.a-lead.a));if(Math.abs(da)*this.RAD<=4)this.hurt(w,12,sx,sz,ch)}}
+      else{this.charmT=5*(this.buff=='pie'?.75:1);for(let i=this.state.length-1;i>=0;i--){const w=this.state[i];if(w.p>.5)this.hurt(w,6,sx,sz,ch)}}}
     let atWard=0;for(const w of this.state)if(w.p>=1)atWard++;
     if(atWard)this.ward.hp-=2.5*atWard*dt;
     if(!this.pot&&W.potions>=1&&this.ward.hp<this.ward.max*.35){this.pot=true;W.potions--;this.ward.hp=Math.min(this.ward.max,this.ward.hp+this.ward.max*.4);if(this.fxOn)note('Linh ném một chai thuốc vào vòm, vòm sáng rực trở lại.')}
@@ -2320,7 +2360,7 @@ const Def={
       D.beam.setColorAt(seg,D.col.copy(c).multiplyScalar(fade));if(++seg>=64)break}
     D.beam.count=seg;D.beam.instanceMatrix.needsUpdate=true;if(D.beam.instanceColor)D.beam.instanceColor.needsUpdate=true;
     for(let i=0;i<40;i++){const w=Def.state[i],pv=D.prev[i];if(w){pv.id=w.id;pv.a=w.a;pv.p=Math.min(w.p,1);pv.on=1}else pv.on=0}},
-  simNight(){this.begin();this.fxOn=false;for(let t=0;t<300;t+=.25)this.sim(.25);this.resolve();this.fxOn=true;const r=this.last;return{held:r.held,kills:r.kills,cry:r.cry,core:r.core,pot:this.pot}},
+  simNight(){this.fxOn=false;this.begin();for(let t=0;t<300;t+=.25)this.sim(.25);this.resolve();this.fxOn=true;const r=this.last;return{held:r.held,kills:r.kills,cry:r.cry,core:r.core,pot:this.pot}},
   startNight(){hour=21.45;plan(schedule(hour,rainy()),true);applyTime(hour,-1);W.def.calm=0;if(this.active)this.resolve();this.begin();this.on=true;this.hud();saveW()},
   hud(){const el=$('nightHud');if(!el)return;if(!this.on){el.hidden=true;return}if(!this.hudTop)this.build();if(!this.hudTop)return;const now=performance.now();if(now-this.hudAt<250)return;this.hudAt=now;
     const pct=this.ward.max?Math.max(0,Math.min(100,this.ward.hp/this.ward.max*100)):100;
@@ -2351,6 +2391,43 @@ const Def={
     for(const k of this.NAME){const cn={bolt:'Cầu lửa',star:'Mưa sao',frost:'Sương giá'}[k];if(d.charms.includes(k))row(cn,d.charm==k?'đang dùng':'đã mở',d.charm==k?'Đang dùng':'Chọn','pick',k);
       else row(cn,'chưa mở',k=='star'?'Mở · 30 tinh thể':'Mở · 30 tinh thể + 1 lõi','unlock',k)}
     row('Đêm yên',d.calm?'không có ma sương':'ma sương vẫn lên',d.calm?'Tắt':'Bật','calm');
+  }
+};
+/* Linh's kitchen: raw stores become dishes, which sell better and can be eaten before a night */
+const RECIPE={
+  soup:{name:'Súp bí',need:{stock:1,wood:1},cook:1,sell:26,desc:'Tháp bắn mạnh thêm 20%.'},
+  pie:{name:'Bánh cá',need:{fish:2,eggs:1,wood:1},cook:1.5,sell:34,desc:'Phép bắn nhanh hơn 25%.'},
+  omelet:{name:'Trứng chiên thảo mộc',need:{eggs:3,wood:1},cook:.5,sell:22,desc:'Vòm dày thêm 20%.'},
+  tea:{name:'Trà sương',need:{potions:1,cry:3},cook:1,sell:40,desc:'Ma sương leo chậm hơn 15%.'}
+};
+const ING={stock:'bí',wood:'củi',fish:'cá',eggs:'trứng',potions:'thuốc',cry:'tinh thể'};
+const INGU={stock:'quả bí',wood:'khúc củi',fish:'con cá',eggs:'quả trứng',potions:'chai thuốc',cry:'tinh thể'};
+const DISHU={soup:'bát súp bí',pie:'chiếc bánh cá',omelet:'đĩa trứng chiên',tea:'ấm trà sương'};
+const Kitchen={sig:'',
+  /** Crystals are kept with the ward; every other ingredient lives in Mun's stores. */
+  have(k){return Math.floor(k=='cry'?W.def.cry:(W[k]||0))},
+  spend(k,n){if(k=='cry')W.def.cry=Math.max(0,W.def.cry-n);else W[k]=Math.max(0,(W[k]||0)-n)},
+  /** Why recipe k cannot be started now, or '' when it can. */
+  can(k){if(!Object.hasOwn(RECIPE,k))return'Không có món này.';if(W.cookQ.length>=3)return'Bếp đã có 3 món trong hàng.';
+    const miss=[];for(const i in RECIPE[k].need){const n=RECIPE[k].need[i]-this.have(i);if(n>0)miss.push('Còn thiếu '+n+' '+INGU[i]+'.')}return miss.join(' ')},
+  /** Ingredients are taken the moment a dish joins the queue, not when it is finished. */
+  queue(k){if(!Object.hasOwn(RECIPE,k)||this.can(k))return;for(const i in RECIPE[k].need)this.spend(i,RECIPE[k].need[i]);
+    W.cookQ.push({k,left:RECIPE[k].cook});logJ('Mun dặn Linh nấu '+RECIPE[k].name+'.');saveW();this.render(true)},
+  choose(k){if(k&&!Object.hasOwn(RECIPE,k))return;W.meal=k;saveW();this.render(true)},
+  /** One frame: only the head of the queue counts down, in island hours and only while time runs. */
+  step(dt){if(!(dt>0)||!(speed>0))return;const q=W.cookQ;if(!q.length)return;
+    q[0].left-=dt*speed*24/DAY_S;if(q[0].left>0)return;
+    const k=q[0].k;W.dish[k]=Math.min(99,W.dish[k]+1);W.dishEver[k]=1;q.shift();
+    logJ('Linh nấu xong '+RECIPE[k].name+'. Mun cất vào chạn.');saveW();this.sig=''},
+  build(){this.sig='';this.render(true)},
+  render(force){const el=$('ledger');if(!el||el.hidden)return;const f=v=>Math.floor(v||0),
+    sig=['stock','wood','fish','eggs','potions','cry'].map(i=>f(this.have(i))).join()+':'+Object.keys(RECIPE).map(k=>f(W.dish[k])).join()+W.cookQ.map(q=>q.k+Math.ceil(q.left*60)).join()+'|'+W.meal;
+    if(!force&&sig===this.sig)return;this.sig=sig;
+    const D=$('lDish');D.textContent='';for(const k in RECIPE){const d=document.createElement('div'),b=document.createElement('b'),s=document.createElement('span');b.textContent=f(W.dish[k]);s.textContent=RECIPE[k].name;d.append(b,s);D.append(d)}
+    const Q=$('lCook');Q.textContent='';if(!W.cookQ.length){const li=document.createElement('li');li.className='empty';li.textContent='Bếp đang rảnh.';Q.append(li)}
+    else W.cookQ.forEach((q,i)=>{const li=document.createElement('li'),n=document.createElement('span'),w=document.createElement('span');n.textContent=(i?'chờ · ':'')+RECIPE[q.k].name;w.className='wh';w.textContent='còn '+Math.max(0,Math.ceil(q.left*60))+' phút';li.append(n,w);Q.append(li)});
+    const R=$('lRecipes');R.textContent='';for(const k in RECIPE){const b=document.createElement('button'),why=this.can(k);b.textContent=RECIPE[k].name+' · '+Object.entries(RECIPE[k].need).map(([i,n])=>n+' '+ING[i]).join(', ');b.title=why||RECIPE[k].desc;b.disabled=!!why;b.onclick=()=>{this.queue(k);this.render(true)};R.append(b)}
+    const M=$('lMeal');M.textContent='';for(const k of['Không',...Object.keys(RECIPE).filter(k=>f(W.dish[k])>=1)]){const b=document.createElement('button');b.textContent=k=='Không'?'Không':RECIPE[k].name;b.setAttribute('aria-pressed',(k=='Không'?!W.meal:W.meal==k)?'true':'false');b.title=k=='Không'?'Không ăn gì trước đêm.':RECIPE[k].desc;b.onclick=()=>{this.choose(k=='Không'?null:k);this.render(true)};M.append(b)}
   }
 };
 function buildDefence(){const D=Place.def={};
@@ -2737,7 +2814,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get def(){return Def},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get away(){return Away},get def(){return Def},get kitchen(){return Kitchen},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -3081,7 +3158,7 @@ function frame(now,manual){if(!manual){requestAnimationFrame(frame);if(Bench.on|
   if(flashK>0){const f=flashK*(.65+.35*Math.sin(U.time.value*70));bounce.intensity+=f*2.4;fill.intensity+=f*1.6;U.zen.value.lerp(col('#dfe8ff'),f*.35);U.hor.value.lerp(col('#dfe8ff'),f*.5)}
   // who should be doing what (Mun's tasks first find their slots)
   Mun.step(sdt);
-  Def.step(speed>0&&!scrubbing?dt*speed:0,hour);Def.draw(dt);
+  Def.step(speed>0&&!scrubbing?dt*speed:0,hour);Def.draw(dt);if(speed>0&&!scrubbing)Kitchen.step(dt);
   const id=schedule(hour,rainy());
   if(id!=AG.cur&&!scrubbing)plan(id,speed>=30);
   if(speed>0)stepAgent(sdt,simT);
@@ -3183,7 +3260,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Away.show();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();Away.init();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildDefence();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();Def.build();Kitchen.build();Away.show();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
