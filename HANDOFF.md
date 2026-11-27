@@ -47,3 +47,22 @@
 - Mẹo chụp: mùa/thời tiết ép bằng `__dao.W.seaWant/wxWant` được **lưu** vào `localStorage['dao-world']`;
   trả về `-1`/`null` sau khi chụp. Khung Browser phải đang hiện, không thì rAF dừng.
 - Còn mở: Linh (VRM) giật khi hiện lần đầu (bộ nhớ `reference-shader-compile-measurement`).
+
+## 4. Thành game quản lý chill (27/11/2026)
+
+Người dùng: "làm liên tục cho tới khi thành một game hoàn chỉnh có thể chơi", chiến đấu = **giữ đảo
+ban đêm** (AFK). Kế hoạch và trạng thái: `production/plans/game-v1.md`; phạm vi:
+`design/game-brief.md` mục "Phạm vi v2". Mọi mốc do worker `free-*` viết, Claude soát.
+
+- Vòng chơi: nhờ Linh làm việc (củi, cá, trứng, bí, thuốc) → gửi đơn hạc giấy lấy xu (G1) → mua
+  nâng cấp (G2) → nấu món ở bếp để bán hoặc ăn trước đêm (G4) → đêm 21:00–04:30 ma sương leo mép
+  đảo, tháp và bùa của Linh tự bắn, thắng được tinh thể nâng tháp/vòm (G5a, G5b) → thuyền chợ bán
+  hàng dư, đổi xu lấy tinh thể; 10 mục tiêu đảo, xong hết thì khép "Chương một" (G7). Vắng nhà tối
+  đa một ngày đảo vẫn chạy và Mun kể lại (G3). Sổ chia 4 tab, chấm báo, hướng dẫn lần đầu (G6).
+- Thử nhanh: `__dao.def.startNight()`, `__dao.def.simNight()`, `__dao.kitchen`, `__dao.market`,
+  `__dao.goals`, `__dao.orders`, `__dao.upg`, `__dao.away`. Khung Browser hay bị hãm ~1 rAF/giây:
+  đẩy logic bằng lời gọi trực tiếp (`Kitchen.step(1)`, `Def.step`), không chờ khung.
+- Hiệu năng trận đêm: 38 ma sương cùng lúc không đổi CPU (~4,9 ms) hay GPU (~118 W ở Cao)
+  (`production/qa/evidence/G8-night-perf/`).
+- Còn mở: Gemini duyệt mỹ thuật trận đêm (≈03/12); vắng nhà ngắn qua 19:00 vẫn có thể trừ 1 củi;
+  luống trồng theo mùa hoãn.

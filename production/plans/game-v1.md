@@ -12,8 +12,8 @@ chiến đấu = **giữ đảo ban đêm** (AFK, trên đảo 3D). Phạm vi: `
 | G5b giữ đảo đêm: hình 3D (ma sương, tháp, tia) | G5b-night-defence-3d.md | free-art, 2 vòng | xong (acad15b); chờ Gemini duyệt mỹ thuật (≈03/12) |
 | G4 bếp: món ăn bán được, ăn trước đêm | G4-kitchen-recipes.md | free-builder, 2 vòng | xong (f3a01ae) |
 | G6 sổ chia tab, chấm báo, HUD đêm, hướng dẫn | G6-ledger-ui.md | free-ui | xong (1af60ed) |
-| G7 thuyền chợ, tinh thể bằng xu, mục tiêu đảo, chương một | G7-market-goals.md | free-builder | đang làm |
-| G8 chơi thử, cân bằng, đo hiệu năng đêm, xuất bản | | trưởng phòng | chờ |
+| G7 thuyền chợ, tinh thể bằng xu, mục tiêu đảo, chương một | G7-market-goals.md | free-builder | xong (530915a) |
+| G8 chơi thử, cân bằng, đo hiệu năng đêm, xuất bản | | trưởng phòng | đo xong (G8-night-perf); xuất bản |
 
 Luống trồng theo mùa (G4 cũ) hoãn: bếp đã nối nông trại với phòng thủ.
 
