@@ -61,6 +61,11 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
 #ledger #lOrders .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on);text-align:right;font-variant-numeric:tabular-nums}
 #ledger #lOrders button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lOrders button:disabled{opacity:.45;cursor:default}#ledger #lOrders .x{align-self:center}
 #ledger #lOrders li.empty{display:block;color:var(--ink-dim);font-style:italic}
+#ledger #lUpg{list-style:none;margin:0;padding:0}
+#ledger #lUpg li{display:flex;align-items:baseline;flex-wrap:wrap;gap:3px 8px;padding:7px 0;border-bottom:1px solid var(--ink-faint)}
+#ledger #lUpg li b{flex:1 1 100%;font-weight:500}#ledger #lUpg .nm{font:400 12px/1.3 var(--ui);color:var(--ink-dim)}
+#ledger #lUpg .wh{font:400 12px/1.3 var(--ui);color:var(--glass-on)}
+#ledger #lUpg button{padding:3px 8px;font-size:12px;line-height:1}#ledger #lUpg button:disabled{opacity:.45;cursor:default}
 #ledger .seg button:disabled,#sGo:disabled{opacity:.45;cursor:default}
 /* the card that opens over a workplace on the island */
 #spot{position:fixed;width:min(250px,calc(100vw - 32px));background:#14201fd9;border:1px solid var(--ink-faint);border-radius:3px;padding:12px 14px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
@@ -115,6 +120,7 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--glass-on);outli
   <h3>Việc hôm nay<span id="lCount"></span></h3><ul id="lTasks"></ul>
   <h3>Nhờ Linh</h3><div class="seg" id="lAdd" role="group" aria-label="Nhờ Linh làm việc"></div>
   <p class="pNote">Mỗi ngày ghi được 3 việc. Linh xếp việc vào lúc rảnh và làm theo cách của cô; việc chưa xong để hôm sau, không có hạn chót. Bấm vào đống củi, bến câu, chuồng gà, vườn bí hay tháp nấu thuốc trên đảo cũng được.</p>
+  <h3>Nâng cấp</h3><ul id="lUpg"></ul>
 </aside>
 <div id="spot" hidden role="dialog" aria-labelledby="sName"><button id="sClose" aria-label="Đóng">×</button><h3 id="sName"></h3><p id="sInfo"></p><button id="sGo"></button><p class="pNote" id="sNote"></p></div>
 <aside id="wxp" hidden aria-label="Mùa và thời tiết"><button id="wClose" aria-label="Đóng bảng mùa và thời tiết">×</button><h2>Mùa và thời tiết</h2>
@@ -1899,14 +1905,14 @@ function stepActs(dt,t,here,air,T,fwd){const C=Magic.C,id=AG.cur,on=here&&!air,[
   // brewing: bubbles, then the brew turns and is bottled
   if(id=='brew'&&on&&AG.spot>=1){const c=anim.houseG.localToWorld(q1.copy(anim.cauldron));if(k<.05)anim.brewM.uniforms.uC.value.setRGB(.35,1.5,.7);
     if(Math.random()<dt*14)Magic.emit(q2.set(c.x+rand(-.22,.22),c.y+.02,c.z+rand(-.22,.22)),q3.set(0,rand(.15,.35),0),Math.random()<.7?C.green:C.violet,rand(.8,1.6),.05,-.05,.97);
-    if(k>20&&!AG.ev){AG.ev=1;const P=AG.pots||(AG.pots=[{n:'thuốc ngủ ngon',col:'màu tím oải hương',c:new THREE.Color(.9,.5,1.6),k:C.violet},{n:'thuốc mọc rễ cho vườn bí',col:'màu xanh lá non',c:new THREE.Color(.4,1.6,.5),k:C.green},{n:'thuốc chống mưa',col:'màu xanh biển',c:new THREE.Color(.35,.9,1.8),k:C.aqua},{n:'thuốc phát sáng',col:'màu vàng mật ong',c:new THREE.Color(1.8,1.3,.3),k:C.gold}]),p=pick(P);
-      anim.brewM.uniforms.uC.value.copy(p.c);c.y+=.25;burst(c,p.k,46,1.1);W.potions=(W.potions||0)+1;moodAdd(.2);note('Vạc thuốc chuyển sang '+p.col+': mẻ '+p.n+' đã xong, Linh rót vào chai.',6);Mun.got('brew',1);saveW()}}
+    if(k>20&&!AG.ev){AG.ev=1;const n=has('kettle')?2:1,P=AG.pots||(AG.pots=[{n:'thuốc ngủ ngon',col:'màu tím oải hương',c:new THREE.Color(.9,.5,1.6),k:C.violet},{n:'thuốc mọc rễ cho vườn bí',col:'màu xanh lá non',c:new THREE.Color(.4,1.6,.5),k:C.green},{n:'thuốc chống mưa',col:'màu xanh biển',c:new THREE.Color(.35,.9,1.8),k:C.aqua},{n:'thuốc phát sáng',col:'màu vàng mật ong',c:new THREE.Color(1.8,1.3,.3),k:C.gold}]),p=pick(P);
+      anim.brewM.uniforms.uC.value.copy(p.c);c.y+=.25;burst(c,p.k,46,1.1);W.potions=(W.potions||0)+n;moodAdd(.2);note('Vạc thuốc chuyển sang '+p.col+': mẻ '+p.n+' đã xong, Linh rót vào chai.',6);Mun.got('brew',n);saveW()}}
   // gathering: herbs and mushrooms float up into the basket; the mosslings come to watch
   if(id=='gather'&&on){if(Math.random()<dt*.4){const a=rand(6.28),x=AG.x+Math.cos(a)*.6,z=AG.z+Math.sin(a)*.6;q1.set(x,hAt(x,z)+.05,z);for(let i=0;i<10;i++)Magic.emit(q1,q2.set(T.x-x,T.y-q1.y+.3,T.z-z).multiplyScalar(rand(.8,1.1)),C.gold,1,.04,.3,.97)}
     if(k>18&&!AG.ev){AG.ev=1;note(pick(['Giỏ đã đầy nấm hương và lá ngải. Một bé rêu tặng Linh cây nấm đỏ.','Linh hái được bó cỏ xạ hương; mấy bé rêu nhảy theo đến tận bìa rừng.','Hái đủ nấm cho nồi súp tối nay. Bé rêu đội nấm cứ bám gót không rời.']),6)}}
   // ember eggs: one by one they float into her basket
   if(id=='eggs'&&on){const left=Crit.eggs.filter(e=>e.visible);if(left.length&&k>2.5+(3-left.length)*2.6){const e=left[0];e.getWorldPosition(q1);e.visible=false;for(let i=0;i<14;i++)Magic.emit(q1,q2.set(T.x-q1.x,T.y-q1.y+.4,T.z-q1.z).multiplyScalar(rand(.9,1.1)),C.ember,.9,.05,.6,.97);
-    if(left.length==1){W.eggs=(W.eggs||0)+3;moodAdd(.1);note('Nhặt được ba quả trứng than hồng, còn ấm nóng như than lò.',6);Mun.got('eggs',3);saveW()}}}
+    if(left.length==1){const n=has('coop')?5:3;W.eggs=(W.eggs||0)+n;moodAdd(.1);note('Nhặt được '+(n==5?'năm':'ba')+' quả trứng than hồng, còn ấm nóng như than lò.',6);Mun.got('eggs',n);saveW()}}}
   // knitting, writing: small sparks from needles and quill
   if(id=='knit'&&on){if(Math.random()<dt*.9)Magic.emit(T,q2.set(rand(-.1,.1),.2,rand(-.1,.1)),C.violet,.9,.03);if(k>22&&!AG.ev){AG.ev=1;note('Chiếc khăn len dài thêm một gang tay; Mun đã kịp cuộn tròn trong đống len.',6)}}
   if((id=='study'||id=='reply')&&on&&Math.random()<dt*6)Magic.emit(T,q2.set(rand(-.05,.05),.12,rand(-.05,.05)),C.gold,.7,.025);
@@ -2011,7 +2017,9 @@ async function takeFile(file){if(!file)return;if(!/\.vrm$/i.test(file.name)){mod
   try{await loadVRM(await file.arrayBuffer(),true)}catch(e){console.error(e);modelMsg('Không đọc được file này. Hãy xuất lại từ VRoid Studio dưới dạng VRM rồi thử lại.')}}
 
 /* ---------- life: days differ, the world remembers ---------- */
-const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0};
+const W={day:1,wood:5,stock:1,fish:0,pump:null,plan:null,rain:null,journal:[],coins:0,tasks:[],orders:[],orderN:0,upg:{}};
+function has(k){return!!W.upg[k]}
+function woodMax(){return has('rack')?30:18}
 function makePlan(){const r=Math.random,one=a=>a[Math.floor(r()*a.length)],wd=(W.day-1)%7;let letter=r()<.3;
   const p={late:r()<.2,morning:one(W.wood>=15?['practice','gather','laundry','sweep']:['chop','chop','gather','laundry','sweep']),a:one(['read','practice','nap','study','knit','brew']),b:one(['fish','harvest','brew','gather','play']),c:'tea',fly:r()<.7,eve:one(['stars','night','scope','knit']),wd};
   if(wd==0){p.morning='sweep';p.eve='wards'}else if(wd==1){p.morning='gather';p.a='brew'}else if(wd==2){p.morning='practice';p.a='study'}else if(wd==3){p.morning='gather';p.b='fish'}else if(wd==4){p.a='bake'}else if(wd==5){p.b='fish';p.c='picnic';p.late=r()<.5;letter=false}
@@ -2024,7 +2032,7 @@ function rainy(){if(W.wxWant)return W.wxWant=='rain'||W.wxWant=='storm'||W.wxWan
 function logJ(t){W.journal.unshift({d:W.day,h:fmt(hour),t});if(W.journal.length>60)W.journal.pop();renderJ()}
 function renderJ(){const el=$('jList');if(!el||$('journal').hidden)return;el.textContent='';let d=null;for(const e of W.journal){if(e.d!==d){d=e.d;const h=document.createElement('h3');h.textContent='Ngày '+d;el.appendChild(h)}const p=document.createElement('p'),b=document.createElement('b');b.textContent=e.h+' ';p.append(b,e.t);el.appendChild(p)}}
 function saveW(){try{localStorage.setItem('dao-world',JSON.stringify({day:W.day,wood:W.wood,stock:W.stock,fish:W.fish,pump:furn.pumpkins.map(q=>+q.g.toFixed(3)),journal:W.journal.slice(0,40),eggs:W.eggs||0,potions:W.potions||0,seaWant:W.seaWant??-1,wxWant:W.wxWant||null,snowman:W.snowman||0,sown:W.sown||0,pileDay:W.pileDay||0,
-  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0}))}catch(e){}}
+  coins:W.coins||0,tasks:W.tasks.map(t=>({a:t.a,done:t.done?1:0,n:t.n,d:t.d,w:t.w||''})),orders:W.orders.map(o=>({id:o.id,t:o.t,need:o.need,pay:o.pay,d:o.d})),orderN:W.orderN||0,upg:Object.keys(W.upg)}))}catch(e){}}
 function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null');if(!q||typeof q!='object')return;
   // a save edited by hand or left by another version must never stop the page: keep only values of the right kind, inside their range
   const num=(v,d,lo,hi)=>v===null||v===''||!Number.isFinite(+v)?d:Math.min(hi,Math.max(lo,+v)),int=(v,d,lo,hi)=>Math.round(num(v,d,lo,hi));
@@ -2034,6 +2042,7 @@ function loadW(){try{const q=JSON.parse(localStorage.getItem('dao-world')||'null
   W.snowman=int(q.snowman,0,0,1e6);W.sown=int(q.sown,0,0,1e6);W.pileDay=int(q.pileDay,0,0,1e6);
   // Mun's book: coins, and at most three tasks naming a known activity; tasks done on an earlier day were already crossed out
   W.coins=int(q.coins,0,0,1e6);
+  W.upg=Array.isArray(q.upg)?q.upg.filter(k=>typeof k=='string'&&Object.hasOwn(UPG,k)).reduce((o,k)=>(o[k]=1,o),{}):{};
   W.tasks=Array.isArray(q.tasks)?q.tasks.filter(t=>t&&typeof t=='object'&&typeof t.a=='string'&&Object.hasOwn(TASK,t.a)).slice(0,3)
     .map(t=>({a:t.a,done:t.done?1:0,n:int(t.n,0,0,999),d:int(t.d,W.day,1,1e6),w:['full','none'].includes(t.w)?t.w:''})).filter(t=>!(t.done&&t.d<W.day)):[];
   W.orderN=int(q.orderN,0,0,1e6);const seen=new Set();
@@ -2075,7 +2084,7 @@ const Mun={sig:'',
       if(s!==now||AG.cur!==t.a)continue;
       if(!t.go){t.go=1;logJ('Mun gõ chân vào dòng “'+TASK[t.a].name+'” trong sổ, thế là Linh '+ACT[t.a].go+'.')}
       if(AG.walking)continue;if(!t.on){t.on=1;t.tt=0;this.arrive(t)}t.tt+=dt;
-      if(t.a=='chop'&&W.wood>=18)this.finish(t,'full');
+      if(t.a=='chop'&&W.wood>=woodMax())this.finish(t,'full');
       else if(t.a=='harvest'&&!t.n&&t.tt>5&&!AG.hq&&!this.ripeN())this.finish(t,'none')}
     if(lost)this.bind()},
   /** She has reached the place of a task. An extra egg round finds a fresh clutch: the ember hens lay again once the morning's eggs are gone. */
@@ -2087,7 +2096,7 @@ const Mun={sig:'',
     logJ(why=='full'?'Đống củi đã đầy, Linh gạch luôn dòng “'+k.name+'” trong sổ của Mun.':why=='none'?'Vườn chưa có quả bí nào chín. Linh nhổ cỏ cho luống bí rồi gạch dòng “'+k.name+'” trong sổ của Mun.':'Gạch dòng “'+k.name+'” trong sổ của Mun: thêm '+t.n+' '+k.unit+'.');
     if(k.once)this.bind();saveW();this.sig=''},
   /** Why task a cannot be written down now, or '' when it can. */
-  cant(a){return W.tasks.length>=3?'Sổ hôm nay đã đủ 3 việc.':a=='chop'&&W.wood>=18?'Đống củi đã đầy.':''},
+  cant(a){return W.tasks.length>=3?'Sổ hôm nay đã đủ 3 việc.':a=='chop'&&W.wood>=woodMax()?'Đống củi đã đầy.':''},
   /** Writes a task into the book and places it in her day; returns it, or null when it cannot be written. */
   add(a){if(!Object.hasOwn(TASK,a)||this.cant(a))return null;const t={a,done:0,n:0,d:W.day,w:'',slot:null};W.tasks.push(t);this.bind();saveW();return t},
   drop(i){const t=W.tasks[i];if(!t||t.done)return;W.tasks.splice(i,1);this.bind();saveW()},
@@ -2103,13 +2112,13 @@ const Mun={sig:'',
   /** The same as a sentence, for the workplace card just after Mun writes the task down. */
   when(t){const s=this.state(t);return s=='chờ trời tạnh'||s=='đang trú mưa'?'Trời đang mưa, Linh chờ tạnh rồi làm.':s=='sắp làm'||s.startsWith('đang')?'Linh đi làm ngay.':s.startsWith('khoảng')?'Linh sẽ làm '+s+'.':'Hôm nay hết giờ rảnh, Linh để mai làm.'},
   /** The store a workplace fills, for its card. */
-  stock(a){const f=v=>Math.floor(v||0);return a=='chop'?'Củi trong kho: '+f(W.wood)+'/18 khúc.':a=='fish'?'Cá trong kho: '+f(W.fish)+' con.':
+  stock(a){const f=v=>Math.floor(v||0);return a=='chop'?'Củi trong kho: '+f(W.wood)+'/'+woodMax()+' khúc.':a=='fish'?'Cá trong kho: '+f(W.fish)+' con.':
     a=='eggs'?'Trứng trong kho: '+f(W.eggs)+' quả. Sáng nào Linh cũng tự nhặt một lượt; Mun nhờ thì cô nhặt thêm lứa mới.':a=='harvest'?'Bí trong kho: '+f(W.stock)+' quả. Ngoài vườn có '+this.ripeN()+' quả đã chín.':'Thuốc trong kho: '+f(W.potions)+' chai.'},
   build(){$('lAdd').innerHTML=Object.keys(TASK).map(a=>`<button data-a="${a}">${TASK[a].name}</button>`).join('');
     for(const b of $('lAdd').children)b.onclick=()=>{if(this.add(b.dataset.a))this.render(true)}},
   /** Redraws the book when it is open and something in it has changed. */
-  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
-      S=[['củi',f(W.wood)+'/18'],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
+  render(force){const el=$('ledger');if(!el||el.hidden)return;Orders.render(force);Upg.render(force);const st=W.tasks.map(t=>this.state(t)),f=v=>Math.floor(v||0),
+      S=[['củi',f(W.wood)+'/'+woodMax()],['bí',f(W.stock)],['cá',f(W.fish)],['trứng',f(W.eggs)],['thuốc',f(W.potions)],['xu',f(W.coins)]],sig=S.join()+'|'+W.tasks.map((t,i)=>t.a+st[i]).join();
     if(!force&&sig===this.sig)return;this.sig=sig;
     $('lStore').innerHTML=S.map(([k,v])=>`<div><b>${v}</b><span>${k}</span></div>`).join('');
     const L=$('lTasks');L.textContent='';
@@ -2148,6 +2157,24 @@ const Orders={sig:'',
       x.className='x';x.textContent='×';x.setAttribute('aria-label','Bỏ đơn của '+t.from);x.onclick=()=>{const j=W.orders.findIndex(u=>u.id===o.id);if(j>=0)this.drop(j)};
       li.append(b,need,pay,go,x);L.append(li)});
     if(!W.orders.length){const li=document.createElement('li');li.className='empty';li.textContent='Chưa có đơn nào. Hạc giấy thường tới vào buổi sáng.';L.append(li)}}};
+const UPG={
+  rack:{name:'Giá củi thứ hai',cost:50,desc:'Gắn thêm một giá củi, kho chứa được ba mươi khúc.'},
+  coop:{name:'Ổ rơm êm cho gà',cost:80,desc:'Ổ rơm êm cho gà đẻ thêm hai quả mỗi lứa.'},
+  patch:{name:'Phân bón phép',cost:120,desc:'Rắc phân bón phép vào luống, bí lớn nhanh hơn khi tưới.'},
+  rod:{name:'Cần câu bạc',cost:100,desc:'Cần câu bạc nên cá cắn câu nhanh hơn.'},
+  kettle:{name:'Vạc đồng lớn',cost:140,desc:'Vạc đồng lớn hơn, mỗi mẻ thuốc được hai chai.'}
+};
+const Upg={sig:'',
+  build(){this.sig='';this.render(true)},
+  can(k){const u=UPG[k];if(!u)return'Không có món này.';if(has(k))return'Đã có.';const lack=u.cost-Math.floor(W.coins);return lack>0?'Còn thiếu '+lack+' xu.':''},
+  buy(k){const u=UPG[k];if(!u||has(k)||this.can(k))return;W.coins-=u.cost;W.upg[k]=1;logJ('Mun dốc túi xu mua '+u.name+'. '+u.desc);note(u.name+': '+u.desc,6);updStore();saveW();this.render(true)},
+  render(force){const L=$('lUpg');if(!L)return;const sig=Object.keys(UPG).map(k=>(has(k)?1:0)+':'+Math.floor(W.coins)).join();
+    if(!force&&sig===this.sig)return;this.sig=sig;L.textContent='';
+    for(const k in UPG){const u=UPG[k],li=document.createElement('li'),b=document.createElement('b'),d=document.createElement('span');
+      b.textContent=u.name;d.className='nm';d.textContent=u.desc;li.append(b,d);
+      if(has(k)){const own=document.createElement('span');own.className='wh';own.textContent='Đã có';li.append(own)}
+      else{const btn=document.createElement('button');btn.textContent='Mua · '+u.cost+' xu';const why=this.can(k);btn.disabled=!!why;btn.title=why;btn.onclick=()=>this.buy(k);li.append(btn)}
+      L.append(li)}}};
 const Life={};
 function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,...o});
   // pumpkins that grow, a pile by the door, logs that come and go
@@ -2156,8 +2183,8 @@ function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({co
   Life.pump=new THREE.InstancedMesh(pg,pm,furn.pumpkins.length);Life.pump.castShadow=true;Life.pump.receiveShadow=true;Life.pump.frustumCulled=false;island.add(Life.pump);
   Life.pile=new THREE.InstancedMesh(pg,pm,6);Life.pile.castShadow=true;Life.pile.frustumCulled=false;island.add(Life.pile);Life.pileSpots=[[1.0,2.2],[1.2,2.32],[.95,2.46],[1.25,2.56],[1.42,2.24],[1.1,2.62]].map(a=>{const q=hl(a[0],a[1]);return[q[0],FLOOR,q[1]]});
   Life.fly=new THREE.Mesh(pg,std('#e0822a',.55));Life.fly.visible=false;Life.fly.castShadow=true;scene.add(Life.fly);
-  const lg=new THREE.CylinderGeometry(.09,.09,.62,8);lg.rotateX(Math.PI/2);Life.logs=new THREE.InstancedMesh(lg,std('#7c5636',.85,{map:woodMat.map}),18);Life.logs.castShadow=true;Life.logs.frustumCulled=false;island.add(Life.logs);
-  Life.logSpots=[];{const x0=WOODPILE[0]+1.25,z=WOODPILE[1],y0=hAt(x0,z);for(let r=0;r<4;r++)for(let i=0;i<5;i++)if(Life.logSpots.length<18)Life.logSpots.push([x0+i*.19+r*.09,y0+.09+r*.165,z+rand(-.02,.02)])}
+  const lg=new THREE.CylinderGeometry(.09,.09,.62,8);lg.rotateX(Math.PI/2);Life.logs=new THREE.InstancedMesh(lg,std('#7c5636',.85,{map:woodMat.map}),30);Life.logs.castShadow=true;Life.logs.frustumCulled=false;island.add(Life.logs);
+  Life.logSpots=[];{const x0=WOODPILE[0]+1.25,z=WOODPILE[1],y0=hAt(x0,z);for(let r=0;r<4;r++)for(let i=0;i<5;i++)if(Life.logSpots.length<18)Life.logSpots.push([x0+i*.19+r*.09,y0+.09+r*.165,z+rand(-.02,.02)]);const z2=z-.75,y2=hAt(x0,z2);for(let r=0;r<3;r++)for(let i=0;i<5-r;i++)Life.logSpots.push([x0+i*.19+r*.09,y2+.09+r*.165,z2+rand(-.02,.02)])}
   updGarden();updStore();
   // Mun, the black cat
   const fur=std('#17141f',.62),eye=std('#ffd76a',.25,{emissive:'#ffb830',emissiveIntensity:1.6}),pink=std('#c98a8f',.5);const g=new THREE.Group();scene.add(g);const add=(p,geo,m,x,y,z,sx=1,sy=sx,sz=sx)=>{const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;p.add(o);return o};
@@ -2169,7 +2196,7 @@ function buildLife(){const std=(c,r=.8,o={})=>new THREE.MeshStandardMaterial({co
 }
 function updGarden(){const c=new THREE.Color(),a=new THREE.Color('#6f8a3a'),b=new THREE.Color('#e4832a'),o=new THREE.Object3D();furn.pumpkins.forEach((q,i)=>{const s=q.max*(.32+.68*q.g);o.position.set(q.x,q.y+s*.66,q.z);o.scale.setScalar(s);o.rotation.y=i;o.updateMatrix();Life.pump.setMatrixAt(i,o.matrix);Life.pump.setColorAt(i,c.copy(a).lerp(b,sstep(.45,.95,q.g)))});Life.pump.instanceMatrix.needsUpdate=true;if(Life.pump.instanceColor)Life.pump.instanceColor.needsUpdate=true}
 function updStore(){const o=new THREE.Object3D(),c=new THREE.Color('#e4832a');Life.pile.count=Math.min(6,W.stock);Life.pileSpots.forEach((q,i)=>{const s=.14+(i%3)*.012;o.position.set(q[0],q[1]+s*.66,q[2]);o.scale.setScalar(s);o.rotation.y=i*2;o.updateMatrix();Life.pile.setMatrixAt(i,o.matrix);Life.pile.setColorAt(i,c)});Life.pile.instanceMatrix.needsUpdate=true;if(Life.pile.instanceColor)Life.pile.instanceColor.needsUpdate=true;
-  Life.logs.count=Math.min(18,W.wood);Life.logSpots.forEach((q,i)=>{o.position.set(q[0],q[1],q[2]);o.scale.setScalar(1);o.rotation.y=0;o.updateMatrix();Life.logs.setMatrixAt(i,o.matrix)});Life.logs.instanceMatrix.needsUpdate=true}
+  Life.logs.count=Math.min(30,W.wood);Life.logSpots.forEach((q,i)=>{o.position.set(q[0],q[1],q[2]);o.scale.setScalar(1);o.rotation.y=0;o.updateMatrix();Life.logs.setMatrixAt(i,o.matrix)});Life.logs.instanceMatrix.needsUpdate=true}
 function note(t,sec=5,log=true){AG.note=t;AG.noteT=sec;if(log)logJ(t)}
 function burst(p0,c,n=40,sp=1.6){const p=p0.clone(),v=new V3();for(let i=0;i<n;i++)Magic.emit(p,v.copy(unit()).multiplyScalar(sp*rand(.45,1)),c,rand(.7,1.4),.075,.75)}
 function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,fwd);AG.noteT=(AG.noteT||0)-dt;AG.startle=Math.max(0,(AG.startle||0)-dt);
@@ -2178,8 +2205,8 @@ function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,
     else if(id!='sleep')logJ('Linh '+ACT[id].txt);saveW()}
   if(AG.burn>0){AG.burn-=dt;if(Math.random()<dt*5){const q=new V3(-2.2*HS,.3*HS+.5,-.5*HS).applyAxisAngle(mv.c.set(0,1,0),H.rot).add(mv.c.set(H.x,H.y,H.z));spawnSprite(pool.smoke,q,mv.b.set(rand(-.1,.1),.45,rand(-.1,.1)),2.6,.22,.34,.5)}}
   // chopping fills the pile, watering grows the vegetables
-  if(AG.cur=='chop'&&here){const c=Math.floor(t/2.5);if(c!==AG.cc){AG.cc=c;AG.cn=(AG.cn||0)+1;if(AG.cn%3==0&&W.wood<18){W.wood++;updStore();if(W.wood==18)note('Đống củi đã đầy, đủ cho cả mùa lạnh.');Mun.got('chop',1)}}}
-  if(AG.cur=='water'&&here){AG.gT=(AG.gT||0)+dt;for(const q of furn.pumpkins)q.g=Math.min(1,q.g+dt*.0085);if(AG.gT>1){AG.gT=0;updGarden()}}
+  if(AG.cur=='chop'&&here){const c=Math.floor(t/2.5);if(c!==AG.cc){AG.cc=c;AG.cn=(AG.cn||0)+1;if(AG.cn%3==0&&W.wood<woodMax()){W.wood++;updStore();if(W.wood==woodMax())note('Đống củi đã đầy, đủ cho cả mùa lạnh.');Mun.got('chop',1)}}}
+  if(AG.cur=='water'&&here){AG.gT=(AG.gT||0)+dt;for(const q of furn.pumpkins)q.g=Math.min(1,q.g+dt*.0085*(has('patch')?1.6:1));if(AG.gT>1){AG.gT=0;updGarden()}}
   // practising spells: sometimes it works
   if(AG.cur=='practice'&&here){if(!AG.pT){AG.pOk=Math.random()<.58;AG.pCol=[C.violet,C.aqua,C.gold,C.green][Math.floor(rand(4))]}AG.pT+=dt;const k=AG.pT;
     if(k<6.5){Magic.tipGlow.visible=true;Magic.tipGlow.scale.setScalar(.08+k*.05);Magic.tipGlow.material.color.copy(AG.pCol).multiplyScalar(.7);if(Math.random()<dt*50){mv.b.copy(unit()).multiplyScalar(.55);mv.a2=mv.a2||new V3();mv.a2.copy(T).add(mv.b);Magic.emit(mv.a2,mv.b.multiplyScalar(-1.5),AG.pCol,.5,.04)}AG.pd=0}
@@ -2191,7 +2218,7 @@ function stepLife(dt,t,here,air,T,fwd){const C=Magic.C;stepActs(dt,t,here,air,T,
   // evening sparks
   if(AG.cur=='stars'&&here){AG.sT=(AG.sT||0)+dt;if(AG.sT>5.5){AG.sT=0;mv.b.set(AG.x+rand(-1.5,1.5),AG.y+rand(3,4.6),AG.z+rand(-1.5,1.5));burst(mv.b,[C.violet,C.gold,C.aqua][Math.floor(rand(3))],50,1.5)}if(Math.random()<dt*.05){mv.b.set(rand(-14,14),14,-14);for(let i=0;i<20;i++)Magic.emit(mv.a.copy(mv.b).addScaledVector(mv.c.set(.8,-.5,.2),i*.28),mv.c.set(0,0,0),C.white,.6+i*.02,.09);moodAdd(.15);note('Một ngôi sao băng vừa vụt qua. Linh kịp ước một điều.')}}
   // a fish landing in the basket gets counted
-  if(AG.cur=='fish'&&here){const c=Math.floor(t/20),u=(t%20)/20;if(u>.97&&AG.fc2!==c){AG.fc2=c;W.fish++;if(W.fish%3==1)note('Lại thêm một con cá vào giỏ. Mun ngồi canh, không rời mắt.');Mun.got('fish',1);Sound.chirp&&Sound.chirp(false)}}
+  if(AG.cur=='fish'&&here){const p=has('rod')?13:20,c=Math.floor(t/p),u=(t%p)/p;if(u>.97&&AG.fc2!==c){AG.fc2=c;W.fish++;if(W.fish%3==1)note('Lại thêm một con cá vào giỏ. Mun ngồi canh, không rời mắt.');Mun.got('fish',1);Sound.chirp&&Sound.chirp(false)}}
   stepCat(dt,t)}
 function stepCat(dt,t){const K=Life.cat;K.tt+=dt;const asleep=AG.cur=='sleep'&&!AG.walking;const air=AG.y-groundAt(AG.x,AG.z)>.22;
   if(K.tt>.14&&!air){K.tt=0;K.trail.push([AG.x,AG.z]);if(K.trail.length>9)K.trail.shift()}
@@ -2509,7 +2536,7 @@ addEventListener('dragover',e=>e.preventDefault());addEventListener('drop',e=>{e
 addEventListener('keydown',e=>{if(e.key=='h'||e.key=='H')$('hud').classList.toggle('off');if(e.key=='p'||e.key=='P')$('bPerf').click()});
 canvas.addEventListener('dblclick',e=>{const r=new THREE.Raycaster();r.setFromCamera(new THREE.Vector2(e.clientX/innerWidth*2-1,-(e.clientY/innerHeight)*2+1),camera);const hit=r.intersectObject(terrain)[0];if(!hit)return;follow=false;setPressed($('bFollow'),false);
   const t=hit.point.clone();t.y+=.5;const d=camera.position.clone().sub(controls.target);d.setLength(Math.max(7,d.length()*.45));camGoal={pos:t.clone().add(d),target:t,t:1.2}});
-window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
+window.__dao={get ev(){return Ev},get crit2(){return Crit2},get place(){return Place},set anchor(v){anchor=v},get deep(){return Deep},get crit(){return Crit},get V(){return V},get P(){return P_},get anim(){return anim},get life(){return Life},get orders(){return Orders},get upg(){return Upg},get hens(){return hens},get world(){return{STREAM,N,TREES,PINES,HOUSE,H,HS,FLOOR,GARDEN,COOP,HENS,RING,CIRCLE,DECK,R,hAt,groundAt,hl,hinv,samp,GW}},setHour:h=>{hour=h;plan(schedule(hour,rainy()),true);applyTime(hour,-1)},get agent(){return AG},setView:(p,t)=>{camera.position.set(...p);controls.target.set(...t);controls.update()},toggleRoof:v=>{roofManual=v},unload:()=>unloadVRM(false),reload:()=>loadBundled(),W,Cine,newDay,goto:id=>plan(id,false),loadUrl:async u=>{const r=await fetch(u);await loadVRM(await r.arrayBuffer(),false);return{v0:V.v0,s:V.s,name:V.vrm.meta?.name}},settle:(n=60)=>{for(let i=0;i<n;i++){simT+=.05;stepAgent(.05,simT);stepHens(.05,simT,hour);Magic.tick(.05)}focus=camera.position.distanceTo(controls.target);roofLift=roofManual?1:0;anim.roof.position.set(0,roofLift*4.2,-roofLift*1.7);anim.roof.rotation.x=-roofLift*.3;},
   layoutCheck:(spd=1.2)=>{const out={far:[],nodesWater:[],edgeWater:[],edgeHouse:[],edgeGarden:[],edgeTrees:[],unreach:[],timing:null};
     const okWater=new Set(['bE|bW','dbank|dockEnd']);const gateOK=new Set(['gate|gIn','gIn|g1','g1|g2','g2|g3']);
     for(const k in N){const[x,z]=N[k];if(Math.hypot(x,z)>R-.9)out.far.push(k);if(k!=='dockEnd'&&samp(GW,x,z)<.06&&!insideHouse(x,z))out.nodesWater.push(k)}
@@ -2954,7 +2981,7 @@ window.__dao.interiorCheck=(r=.12)=>{const B=anim.blk,SEATS={tableS:['chair1'],d
   for(const id in ACT){const q=ACT[id];if(!q.inside)continue;if(q.spots){const S=q.spots.map(s=>hinv(s[1][0],s[1][1]));let h=seg(L(q.spots[0][0]),S[0],[]);for(let i=0;i<S.length&&!h;i++)if(!(q.once&&i==S.length-1))h=seg(S[i],S[(i+1)%S.length],[]);if(h)out.acts.push(id+':'+h);continue}
     if(!q.at)continue;const p=q.at(),h=seg(L(q.node),hinv(p[0],p[1]),SEATS[q.node]||[]);if(h)out.acts.push(id+':'+h)}
   return out};
-buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();
+buildTerrain(TX);buildBowl();buildDepths();buildWater();buildTrees();buildGrass();buildHouse();buildYard();buildZones();buildAtmos();buildPerson();buildMagic();loadW();makePlan();Mun.bind();buildLife();buildHens();buildCreatures();buildPlaces();buildCreatures2();buildLife2();buildSpots();Mun.build();Orders.build();Upg.build();
 Object.assign(window.__dao,{mun:Mun,card:Card,spots:SPOTS,spotAt,TASK,SLOTS});
 for(const u of[aoQ,prepQ]){u.material.uniforms.near.value=camera.near;u.material.uniforms.far.value=camera.far}
 Seas.build();perfInit();Inner.scan();trimCasters();window.__dao.perf.fold=foldRigid();window.__dao.perf.frozen=freezeStatic(window.__dao.perf.fold.held);buildWeather();WxUI.build();Sea.step(0);plan(schedule(hour,false),true);AG.y=groundAt(AG.x,AG.z);
